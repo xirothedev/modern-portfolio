@@ -41,6 +41,21 @@ export function CreativeHero() {
       targetY = e.clientY - rect.top
     })
 
+    // Function to check if point is inside octagon
+    const isInsideOctagon = (x: number, y: number, centerX: number, centerY: number, size: number) => {
+      const dx = Math.abs(x - centerX)
+      const dy = Math.abs(y - centerY)
+
+      // Octagon bounds check
+      const cornerCut = size * 0.3 // How much to cut the corners
+
+      if (dx <= size - cornerCut && dy <= size - cornerCut) return true
+      if (dx <= size && dy <= size) {
+        return dx - (size - cornerCut) + (dy - (size - cornerCut)) <= cornerCut
+      }
+      return false
+    }
+
     // Particle class
     class Particle {
       x: number
@@ -105,16 +120,18 @@ export function CreativeHero() {
       }
     }
 
-    // Create particle grid
+    // Create particle grid within octagon
     const particlesArray: Particle[] = []
-    const particleCount = 1000
-    const gridSize = 30
+    const gridSize = 25
 
     function init() {
       particlesArray.length = 0
 
       const canvasWidth = canvas.width / devicePixelRatio
       const canvasHeight = canvas.height / devicePixelRatio
+      const centerX = canvasWidth / 2
+      const centerY = canvasHeight / 2
+      const octagonSize = Math.min(canvasWidth, canvasHeight) * 0.35
 
       const numX = Math.floor(canvasWidth / gridSize)
       const numY = Math.floor(canvasHeight / gridSize)
@@ -123,7 +140,11 @@ export function CreativeHero() {
         for (let x = 0; x < numX; x++) {
           const posX = x * gridSize + gridSize / 2
           const posY = y * gridSize + gridSize / 2
-          particlesArray.push(new Particle(posX, posY))
+
+          // Only create particles inside the octagon
+          if (isInsideOctagon(posX, posY, centerX, centerY, octagonSize)) {
+            particlesArray.push(new Particle(posX, posY))
+          }
         }
       }
     }
@@ -176,12 +197,166 @@ export function CreativeHero() {
 
   return (
     <motion.div
-      className="w-full h-[400px] md:h-[500px] relative"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
+      className="w-full h-[400px] md:h-[500px] relative flex items-center justify-center"
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 1, ease: "easeOut" }}
     >
-      <canvas ref={canvasRef} className="w-full h-full" style={{ display: "block" }} />
+      {/* Background glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
+
+      {/* Octagonal container */}
+      <div className="relative">
+        {/* Octagonal border decoration */}
+        <div
+          className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-purple-500/20 border-2 border-purple-500/30"
+          style={{
+            clipPath: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)",
+            width: "100%",
+            height: "100%",
+          }}
+        />
+
+        {/* Inner octagonal glow */}
+        <div
+          className="absolute inset-2 bg-gradient-to-br from-purple-400/10 via-pink-400/10 to-purple-400/10 blur-sm"
+          style={{
+            clipPath: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)",
+          }}
+        />
+
+        {/* Canvas with octagonal clipping */}
+        <div
+          className="relative overflow-hidden"
+          style={{
+            clipPath: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)",
+            width: "400px",
+            height: "400px",
+          }}
+        >
+          <canvas ref={canvasRef} className="w-full h-full" style={{ display: "block" }} />
+        </div>
+
+        {/* Decorative corner elements */}
+        <motion.div
+          className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-purple-400 rounded-full"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.6, 1, 0.6],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+          }}
+        />
+
+        <motion.div
+          className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-pink-400 rounded-full"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.6, 1, 0.6],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        />
+
+        <motion.div
+          className="absolute top-1/2 -left-2 transform -translate-y-1/2 w-3 h-3 bg-purple-300 rounded-full"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.6, 1, 0.6],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+            delay: 0.5,
+          }}
+        />
+
+        <motion.div
+          className="absolute top-1/2 -right-2 transform -translate-y-1/2 w-3 h-3 bg-pink-300 rounded-full"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.6, 1, 0.6],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+            delay: 1.5,
+          }}
+        />
+
+        {/* Floating geometric elements */}
+        <motion.div
+          className="absolute top-8 left-8 w-2 h-2 bg-purple-400/60 transform rotate-45"
+          animate={{
+            rotate: [45, 225, 45],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+          }}
+        />
+
+        <motion.div
+          className="absolute bottom-8 right-8 w-2 h-2 bg-pink-400/60 rounded-full"
+          animate={{
+            y: [-5, 5, -5],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "easeInOut",
+            delay: 1,
+          }}
+        />
+
+        {/* Interactive hint */}
+        <motion.div
+          className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-zinc-500 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2, duration: 1 }}
+        >
+          Move your cursor to interact
+        </motion.div>
+      </div>
+
+      {/* Ambient floating particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-purple-400/20 rounded-full"
+            style={{
+              left: `${20 + i * 10}%`,
+              top: `${20 + i * 8}%`,
+            }}
+            animate={{
+              y: [-15, 15, -15],
+              x: [-8, 8, -8],
+              opacity: [0.2, 0.6, 0.2],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              duration: 5 + Math.random() * 2,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+              delay: Math.random() * 3,
+            }}
+          />
+        ))}
+      </div>
     </motion.div>
   )
 }

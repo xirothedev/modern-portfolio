@@ -1,12 +1,12 @@
-# Creative Portfolio
+# Xiro's Creative Portfolio
 
-A modern and responsive creative portfolio built using [v0.dev](https://v0.dev) by Vercel.
+A modern and responsive creative portfolio built using [v0.dev](https://v0.dev) by Vercel. This portfolio showcases Xiro's creative work.
 
 ![Creative Portfolio Preview](./preview.png)
 
 ## Live Demo
 
-Check out the live demo: [https://v0-creative-portfolio-o7.vercel.app/](https://v0-creative-portfolio-o7.vercel.app/)
+Check out the live demo: [https://xiro-creative-portfolio.vercel.app/](https://xiro-creative-portfolio.vercel.app/)
 
 ## Features
 
@@ -30,7 +30,7 @@ To run this project locally, follow these steps:
 
 1. Clone the repository:
    \`\`\`bash
-   git clone https://github.com/shinekyaw/Creative-Portfolio.git
+   git clone https://github.com/xirothedev/Creative-Portfolio.git
    \`\`\`
 
 2. Navigate to the project directory:
@@ -76,4 +76,4 @@ Contributions are welcome! If you have suggestions for improvements, please open
 
 ## License
 
-This project is open source and available under the [MIT License](./LICENSE).
+This project is open source and available under the [MIT License](./LICENSE). Copyright (c) 2024 Xiro

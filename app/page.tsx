@@ -3,7 +3,6 @@ import { ArrowRight, Github, Linkedin, Mail } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { ProjectCard } from "@/components/project-card"
-import { SkillBadge } from "@/components/skill-badge"
 import { Timeline } from "@/components/timeline"
 import { ContactForm } from "@/components/contact-form"
 import { CreativeHero } from "@/components/creative-hero"
@@ -12,6 +11,7 @@ import { MouseFollower } from "@/components/mouse-follower"
 import { ScrollProgress } from "@/components/scroll-progress"
 import { SectionHeading } from "@/components/section-heading"
 import { GlassmorphicCard } from "@/components/glassmorphic-card"
+import { SkillsWithProjects } from "@/components/skills-with-projects"
 
 export default function Portfolio() {
   return (
@@ -38,9 +38,7 @@ export default function Portfolio() {
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
               <span className="block">Hi, I'm</span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-                Shine Kyaw Kyaw Aung
-              </span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Xiro</span>
             </h1>
             <p className="text-xl text-zinc-400 max-w-[600px]">
               I craft exceptional digital experiences with code, creativity, and a passion for innovation.
@@ -54,13 +52,13 @@ export default function Portfolio() {
               </Button>
               <Button
                 variant="outline"
-                className="border-zinc-700 text-pink-500 hover:text-pink-700 hover:border-zinc-500"
+                className="border-zinc-700 text-pink-500 hover:text-pink-700 hover:border-zinc-500 bg-transparent"
               >
                 Contact Me
               </Button>
             </div>
             <div className="flex gap-4 pt-4">
-              <Link href="https://github.com/shinekyaw" target="_blank" rel="noopener noreferrer">
+              <Link href="https://github.com/xirothedev" target="_blank" rel="noopener noreferrer">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -70,7 +68,7 @@ export default function Portfolio() {
                   <span className="sr-only">GitHub</span>
                 </Button>
               </Link>
-              <Link href="https://www.linkedin.com/in/shinekyawkyawaung/" target="_blank" rel="noopener noreferrer">
+              <Link href="https://www.linkedin.com/in/xirothedev/" target="_blank" rel="noopener noreferrer">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -79,8 +77,8 @@ export default function Portfolio() {
                   <Linkedin className="h-5 w-5" />
                   <span className="sr-only">LinkedIn</span>
                 </Button>
-              </Link>             
-              <Link href="mailto:shinekyawkyawaung@gmail.com">
+              </Link>
+              <Link href="mailto:xirothedev@gmail.com">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -118,11 +116,7 @@ export default function Portfolio() {
             <div className="relative">
               <div className="absolute -inset-4 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-xl opacity-70"></div>
               <div className="relative aspect-square rounded-xl overflow-hidden border border-zinc-800">
-                <img
-                  src="/placeholder.svg?height=600&width=600"
-                  alt="Shine Kyaw Kyaw Aung"
-                  className="w-full h-full object-cover"
-                />
+                <img src="/placeholder.svg?height=600&width=600" alt="Xiro" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 w-full p-6">
                   <div className="flex items-center gap-2">
@@ -152,11 +146,11 @@ export default function Portfolio() {
                 <div className="grid grid-cols-2 gap-4 mt-8">
                   <div className="space-y-1">
                     <div className="text-sm text-zinc-500">Name</div>
-                    <div className="font-medium">Shine Kyaw Kyaw Aung</div>
+                    <div className="font-medium">Xiro</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-sm text-zinc-500">Email</div>
-                    <div className="font-medium">shinekyawkyawaung@gmail.com</div>
+                    <div className="font-medium">xirothedev@gmail.com</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-sm text-zinc-500">Location</div>
@@ -187,19 +181,8 @@ export default function Portfolio() {
         <div className="container relative z-10">
           <SectionHeading title="My Skills" subtitle="Technologies I work with" />
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-16">
-            <SkillBadge name="JavaScript" level={90} />
-            <SkillBadge name="TypeScript" level={85} />
-            <SkillBadge name="React" level={95} />
-            <SkillBadge name="Next.js" level={90} />
-            <SkillBadge name="Node.js" level={80} />
-            <SkillBadge name="HTML/CSS" level={95} />
-            <SkillBadge name="Tailwind CSS" level={90} />
-            <SkillBadge name="GraphQL" level={75} />
-            <SkillBadge name="PostgreSQL" level={70} />
-            <SkillBadge name="AWS" level={65} />
-            <SkillBadge name="Docker" level={60} />
-            <SkillBadge name="Git" level={85} />
+          <div className="mt-16">
+            <SkillsWithProjects />
           </div>
         </div>
       </section>
@@ -303,7 +286,7 @@ export default function Portfolio() {
                   </div>
                   <div>
                     <div className="text-sm text-zinc-500">Email</div>
-                    <div className="font-medium">shinekyawkyawaung@gmail.com</div>
+                    <div className="font-medium">xirothedev@gmail.com</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -312,7 +295,7 @@ export default function Portfolio() {
                   </div>
                   <div>
                     <div className="text-sm text-zinc-500">LinkedIn</div>
-                    <div className="font-medium">linkedin.com/in/shinekyawkyawaung</div>
+                    <div className="font-medium">linkedin.com/in/xirothedev</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -321,7 +304,7 @@ export default function Portfolio() {
                   </div>
                   <div>
                     <div className="text-sm text-zinc-500">GitHub</div>
-                    <div className="font-medium">github.com/shinekyaw</div>
+                    <div className="font-medium">github.com/xirothedev</div>
                   </div>
                 </div>
               </div>
@@ -345,15 +328,13 @@ export default function Portfolio() {
         <div className="container flex flex-col md:flex-row justify-between items-center gap-6">
           <div>
             <Link href="/" className="font-bold text-xl">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Shine</span>
-              <span className="text-white">KKA</span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Xiro</span>
+              <span className="text-white">Dev</span>
             </Link>
-            <p className="text-sm text-zinc-500 mt-2">
-              © {new Date().getFullYear()} Shine Kyaw Kyaw Aung. All rights reserved.
-            </p>
+            <p className="text-sm text-zinc-500 mt-2">© {new Date().getFullYear()} Xiro. All rights reserved.</p>
           </div>
           <div className="flex gap-4">
-            <Link href="https://github.com/shinekyaw" target="_blank" rel="noopener noreferrer">
+            <Link href="https://github.com/xirothedev" target="_blank" rel="noopener noreferrer">
               <Button
                 variant="ghost"
                 size="icon"
@@ -363,7 +344,7 @@ export default function Portfolio() {
                 <span className="sr-only">GitHub</span>
               </Button>
             </Link>
-            <Link href="https://www.linkedin.com/in/shinekyawkyawaung/" target="_blank" rel="noopener noreferrer">
+            <Link href="https://www.linkedin.com/in/xirothedev/" target="_blank" rel="noopener noreferrer">
               <Button
                 variant="ghost"
                 size="icon"
@@ -373,7 +354,7 @@ export default function Portfolio() {
                 <span className="sr-only">LinkedIn</span>
               </Button>
             </Link>
-            <Link href="mailto:shinekyawkyawaung@gmail.com">
+            <Link href="mailto:xirothedev@gmail.com">
               <Button
                 variant="ghost"
                 size="icon"
