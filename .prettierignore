@@ -1,0 +1,6 @@
+# Ignore artifacts:
+.github
+.husky
+.next
+node_modules
+pnpm-lock.yaml
