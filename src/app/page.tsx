@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { ProjectCard } from "@/components/project-card";
 import { Timeline } from "@/components/timeline";
@@ -127,6 +126,7 @@ export default function Portfolio() {
 								<Image
 									src="/thumbnail.jpeg"
 									alt="XiroTheDev"
+									sizes="100vw"
 									height={0}
 									width={0}
 									className="h-full w-full object-cover"
