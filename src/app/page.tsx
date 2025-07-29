@@ -13,7 +13,7 @@ import { SkillsWithProjects } from "@/components/skills-with-projects";
 import { Timeline } from "@/components/timeline";
 import { Button } from "@/components/ui/button";
 import { createTimeline, stagger, text } from "animejs";
-import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowRight, Github, Linkedin, Mail, MessageCircle, Facebook } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useLayoutEffect } from "react";
@@ -85,40 +85,52 @@ export default function Portfolio() {
 							</Button>
 						</div>
 						<div className="flex gap-4 pt-4">
-							<Link href="https://github.com/xirothedev" target="_blank" rel="noopener noreferrer">
-								<Button
-									variant="ghost"
-									size="icon"
-									className="rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-								>
-									<Github className="h-5 w-5" />
-									<span className="sr-only">GitHub</span>
-								</Button>
-							</Link>
-							<Link
-								href="https://www.linkedin.com/in/xirothedev/"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								<Button
-									variant="ghost"
-									size="icon"
-									className="rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-								>
-									<Linkedin className="h-5 w-5" />
-									<span className="sr-only">LinkedIn</span>
-								</Button>
-							</Link>
-							<Link href="mailto:lethanhtrung.trungle@gmail.com">
-								<Button
-									variant="ghost"
-									size="icon"
-									className="rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-								>
-									<Mail className="h-5 w-5" />
-									<span className="sr-only">Email</span>
-								</Button>
-							</Link>
+							{[
+								{
+									href: "https://github.com/xirothedev",
+									target: "_blank",
+									rel: "noopener noreferrer",
+									icon: <Github className="h-5 w-5" />,
+									label: "GitHub",
+								},
+								{
+									href: "https://www.linkedin.com/in/xirothedev/",
+									target: "_blank",
+									rel: "noopener noreferrer",
+									icon: <Linkedin className="h-5 w-5" />,
+									label: "LinkedIn",
+								},
+								{
+									href: "mailto:lethanhtrung.trungle@gmail.com",
+									icon: <Mail className="h-5 w-5" />,
+									label: "Email",
+								},
+								{
+									href: "https://discord.com/users/1216624112139632711",
+									target: "_blank",
+									rel: "noopener noreferrer",
+									icon: <MessageCircle className="h-5 w-5" />,
+									label: "Discord",
+								},
+								{
+									href: "https://www.facebook.com/xirothedev",
+									target: "_blank",
+									rel: "noopener noreferrer",
+									icon: <Facebook className="h-5 w-5" />,
+									label: "Facebook",
+								},
+							].map(({ href, target, rel, icon, label }) => (
+								<Link key={label} href={href} target={target} rel={rel}>
+									<Button
+										variant="ghost"
+										size="icon"
+										className="rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+									>
+										{icon}
+										<span className="sr-only">{label}</span>
+									</Button>
+								</Link>
+							))}
 						</div>
 					</div>
 					<div className="flex justify-center">
@@ -251,52 +263,44 @@ export default function Portfolio() {
 
 					<div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
 						<ProjectCard
-							title="E-commerce Platform"
-							description="A full-stack e-commerce platform built with Next.js, Stripe, and Prisma."
-							tags={["Next.js", "TypeScript", "Prisma", "Stripe"]}
-							image="/placeholder.svg?height=400&width=600"
-							demoUrl="https://example.com"
-							repoUrl="https://github.com"
+							title="Discord.js Template v14"
+							description="A robust template for rapid development of Discord bots with multi-language support, modular command/event handling, and PostgreSQL integration."
+							tags={["TypeScript", "Discord.js", "PostgreSQL", "Node.js"]}
+							image="/repositories/discord.js-template-v14.png"
+							demoUrl="https://v0-cyberpunk-server-dashboard.vercel.app"
+							repoUrl="https://github.com/xirothedev/discord.js-template-v14"
 						/>
 						<ProjectCard
-							title="Task Management App"
-							description="A collaborative task management application with real-time updates."
-							tags={["React", "Firebase", "Tailwind CSS", "Redux"]}
-							image="/placeholder.svg?height=400&width=600"
-							demoUrl="https://example.com"
-							repoUrl="https://github.com"
+							title="Discord Bot Dashboard"
+							description="A modern, intuitive platform for managing Discord bots with real-time monitoring and powerful customization features."
+							tags={["TypeScript", "React", "Next.js", "Discord API"]}
+							image="/repositories/discord-bot-dashboard.png"
+							demoUrl="https://github.com/xirothedev/discord-bot-dashboard"
+							repoUrl="https://github.com/xirothedev/discord-bot-dashboard"
 						/>
 						<ProjectCard
-							title="AI Content Generator"
-							description="An AI-powered content generation tool using OpenAI's GPT models."
-							tags={["Next.js", "OpenAI API", "Node.js", "MongoDB"]}
-							image="/placeholder.svg?height=400&width=600"
-							demoUrl="https://example.com"
-							repoUrl="https://github.com"
+							title="Xiro Discord Music Bot"
+							description="A robust, extensible Discord music bot supporting YouTube, Spotify, Apple Music, SoundCloud with advanced playlist management and audio filters."
+							tags={["TypeScript", "Discord.js", "Music API", "Audio Processing"]}
+							image="/repositories/xiro-discord-bot-music.png"
+							demoUrl="https://github.com/xirothedev/xiro-discord-bot-music"
+							repoUrl="https://github.com/xirothedev/xiro-discord-bot-music"
 						/>
 						<ProjectCard
-							title="Fitness Tracker"
-							description="A mobile-first fitness tracking application with data visualization."
-							tags={["React Native", "TypeScript", "D3.js", "Firebase"]}
-							image="/placeholder.svg?height=400&width=600"
-							demoUrl="https://example.com"
-							repoUrl="https://github.com"
+							title="Next.js 15 Template"
+							description="A modern, opinionated template for building scalable web applications with Next.js 15, providing best practices and optimized configuration."
+							tags={["Next.js", "TypeScript", "Tailwind CSS", "Best Practices"]}
+							image="/repositories/next-15-template.png"
+							demoUrl="https://github.com/xirothedev/next-15-template"
+							repoUrl="https://github.com/xirothedev/next-15-template"
 						/>
 						<ProjectCard
-							title="Weather Dashboard"
-							description="A beautiful weather dashboard with forecasts and historical data."
-							tags={["React", "Weather API", "Chart.js", "Styled Components"]}
-							image="/placeholder.svg?height=400&width=600"
-							demoUrl="https://example.com"
-							repoUrl="https://github.com"
-						/>
-						<ProjectCard
-							title="Portfolio Website"
-							description="This portfolio website built with Next.js and Tailwind CSS."
-							tags={["Next.js", "Tailwind CSS", "Framer Motion", "TypeScript"]}
-							image="/placeholder.svg?height=400&width=600"
-							demoUrl="https://example.com"
-							repoUrl="https://github.com"
+							title="Coming Soon"
+							description="An exciting new project is in development. Stay tuned for updates and be the first to know when it launches!"
+							tags={["In Development", "Coming Soon", "Stay Tuned"]}
+							image="/placeholder.png"
+							demoUrl="#"
+							repoUrl="#"
 						/>
 					</div>
 				</div>
@@ -366,6 +370,15 @@ export default function Portfolio() {
 										<div className="font-medium">github.com/xirothedev</div>
 									</div>
 								</div>
+								<div className="flex items-center gap-4">
+									<div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800">
+										<MessageCircle className="h-5 w-5 text-purple-400" />
+									</div>
+									<div>
+										<div className="text-sm text-zinc-500">Discord</div>
+										<div className="font-medium">@xirothedev</div>
+									</div>
+								</div>
 							</div>
 
 							<div className="mt-8 border-t border-zinc-800 pt-8">
@@ -397,36 +410,53 @@ export default function Portfolio() {
 						</p>
 					</div>
 					<div className="flex gap-4">
-						<Link href="https://github.com/xirothedev" target="_blank" rel="noopener noreferrer">
-							<Button
-								variant="ghost"
-								size="icon"
-								className="rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+						{[
+							{
+								href: "https://github.com/xirothedev",
+								icon: <Github className="h-5 w-5" />,
+								label: "GitHub",
+								external: true,
+							},
+							{
+								href: "https://www.linkedin.com/in/xirothedev/",
+								icon: <Linkedin className="h-5 w-5" />,
+								label: "LinkedIn",
+								external: true,
+							},
+							{
+								href: "mailto:xirothedev@gmail.com",
+								icon: <Mail className="h-5 w-5" />,
+								label: "Email",
+								external: false,
+							},
+							{
+								href: "https://discord.com/users/1216624112139632711",
+								icon: <MessageCircle className="h-5 w-5" />,
+								label: "Discord",
+								external: true,
+							},
+							{
+								href: "https://www.facebook.com/xirothedev",
+								icon: <Facebook className="h-5 w-5" />,
+								label: "Facebook",
+								external: true,
+							},
+						].map(({ href, icon, label, external }) => (
+							<Link
+								key={label}
+								href={href}
+								{...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
 							>
-								<Github className="h-5 w-5" />
-								<span className="sr-only">GitHub</span>
-							</Button>
-						</Link>
-						<Link href="https://www.linkedin.com/in/xirothedev/" target="_blank" rel="noopener noreferrer">
-							<Button
-								variant="ghost"
-								size="icon"
-								className="rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-							>
-								<Linkedin className="h-5 w-5" />
-								<span className="sr-only">LinkedIn</span>
-							</Button>
-						</Link>
-						<Link href="mailto:xirothedev@gmail.com">
-							<Button
-								variant="ghost"
-								size="icon"
-								className="rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-							>
-								<Mail className="h-5 w-5" />
-								<span className="sr-only">Email</span>
-							</Button>
-						</Link>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+								>
+									{icon}
+									<span className="sr-only">{label}</span>
+								</Button>
+							</Link>
+						))}
 					</div>
 				</div>
 			</footer>
