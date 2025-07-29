@@ -102,7 +102,10 @@ export default function Portfolio() {
 					</div>
 				</div>
 
-				<Link href="#about" className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+				<Link
+					href="#about"
+					className="absolute bottom-10 left-1/2 hidden -translate-x-1/2 animate-bounce lg:inline-block"
+				>
 					<div className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-white/20 p-1">
 						<div className="h-1.5 w-1.5 animate-pulse rounded-full bg-white/60"></div>
 					</div>
