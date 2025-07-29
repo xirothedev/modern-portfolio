@@ -5,20 +5,20 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { motion } from "motion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+	SiDocker,
+	SiExpress,
+	SiGit,
+	SiGraphql,
+	SiJavascript,
+	SiNestjs,
 	SiNextdotjs,
+	SiNodedotjs,
+	SiPostgresql,
+	SiReact,
+	SiRedis,
 	SiTailwindcss,
 	SiThreedotjs,
-	SiNestjs,
-	SiExpress,
-	SiDocker,
-	SiGraphql,
-	SiPostgresql,
-	SiJavascript,
 	SiTypescript,
-	SiRedis,
-	SiGit,
-	SiReact,
-	SiNodedotjs,
 } from "react-icons/si";
 import * as THREE from "three";
 
@@ -74,66 +74,66 @@ function TechLogos() {
 	// Define technology icons and their 3D positions
 	const techs = useMemo(
 		() => [
-			{ name: "react", position: [0, 0.9, 0] as [number, number, number], icon: <SiReact color="#61DAFB" /> },
+			{ name: "react", position: [0, 1, 0] as [number, number, number], icon: <SiReact color="#61DAFB" /> },
 			{
 				name: "nextjs",
-				position: [0.9, 0, 0] as [number, number, number],
+				position: [1, 0, 0] as [number, number, number],
 				icon: <SiNextdotjs color="#FFFFFF" />,
 			},
 			{
 				name: "threejs",
-				position: [-0.9, 0, 0] as [number, number, number],
+				position: [-1, 0, 0] as [number, number, number],
 				icon: <SiThreedotjs color="#FFFFFF" />,
 			},
 			{
 				name: "tailwind",
-				position: [0, -0.9, 0] as [number, number, number],
+				position: [0, -1, 0] as [number, number, number],
 				icon: <SiTailwindcss color="#38B2AC" />,
 			},
 			{
 				name: "nodejs",
-				position: [0, 0, 0.9] as [number, number, number],
+				position: [0, 0, 1] as [number, number, number],
 				icon: <SiNodedotjs color="#68A063" />,
 			},
-			{ name: "nestjs", position: [0, 0, -0.9] as [number, number, number], icon: <SiNestjs color="#EA2859" /> },
+			{ name: "nestjs", position: [0, 0, -1] as [number, number, number], icon: <SiNestjs color="#EA2859" /> },
 			{
 				name: "expressjs",
-				position: [0.45, 0.45, -0.45] as [number, number, number],
+				position: [0.5, 0.5, -0.5] as [number, number, number],
 				icon: <SiExpress color="#FFFFFF" />,
 			},
 			{
 				name: "docker",
-				position: [0.45, 0.45, 0.45] as [number, number, number],
+				position: [0.5, 0.5, 0.5] as [number, number, number],
 				icon: <SiDocker color="#1D63ED" />,
 			},
 			{
 				name: "graphql",
-				position: [-0.45, -0.45, 0.45] as [number, number, number],
+				position: [-0.5, -0.5, 0.5] as [number, number, number],
 				icon: <SiGraphql color="#F6009B" />,
 			},
 			{
 				name: "postgresql",
-				position: [-0.45, -0.45, -0.45] as [number, number, number],
+				position: [-0.5, -0.5, -0.5] as [number, number, number],
 				icon: <SiPostgresql color="#336791" />,
 			},
 			{
 				name: "javascript",
-				position: [0.45, -0.45, -0.45] as [number, number, number],
+				position: [0.5, -0.5, -0.5] as [number, number, number],
 				icon: <SiJavascript color="#F7DF1E" className="rounded-lg" />,
 			},
 			{
 				name: "typescript",
-				position: [-0.45, 0.45, -0.45] as [number, number, number],
+				position: [-0.5, 0.5, -0.5] as [number, number, number],
 				icon: <SiTypescript color="#3178C6" className="rounded-lg" />,
 			},
 			{
 				name: "redis",
-				position: [0.45, -0.45, 0.45] as [number, number, number],
+				position: [0.5, -0.5, 0.5] as [number, number, number],
 				icon: <SiRedis color="#FF4438" />,
 			},
 			{
 				name: "git",
-				position: [-0.45, 0.45, 0.45] as [number, number, number],
+				position: [-0.5, 0.5, 0.5] as [number, number, number],
 				icon: <SiGit color="#F05133" />,
 			},
 		],
@@ -240,12 +240,29 @@ function ParticleOctagon() {
 			for (let i = 0; i < TOTAL_PARTICLES; i++) {
 				const p = particles[i];
 
-				// TODO: Add complete mouse interaction physics here
-				// This would include:
-				// - Distance calculation from mouse to particle
-				// - Repulsion force based on distance
-				// - Return force to original position
-				// - Velocity damping for smooth movement
+				// Calculate distance from mouse to particle
+				const distanceToMouse = p.position.distanceTo(mouse);
+				const interactionRadius = 1.5; // Radius of mouse influence
+				const repulsionStrength = 0.02; // Strength of repulsion force
+				const returnStrength = 0.01; // Strength of return force to base position
+				const damping = 0.95; // Velocity damping for smooth movement
+
+				// Apply repulsion force when mouse is near
+				if (distanceToMouse < interactionRadius) {
+					const repulsionDirection = p.position.clone().sub(mouse).normalize();
+					const repulsionForce = repulsionDirection.multiplyScalar(
+						repulsionStrength * (1 - distanceToMouse / interactionRadius),
+					);
+					p.velocity.add(repulsionForce);
+				}
+
+				// Apply return force to original position
+				const returnDirection = p.basePosition.clone().sub(p.position);
+				const returnForce = returnDirection.multiplyScalar(returnStrength);
+				p.velocity.add(returnForce);
+
+				// Apply velocity damping for smooth movement
+				p.velocity.multiplyScalar(damping);
 
 				// Update particle position based on velocity
 				p.position.add(p.velocity);
@@ -292,6 +309,7 @@ function ParticleOctagon() {
  */
 export function CreativeHero() {
 	const [isReady, setIsReady] = useState<boolean>(false); // Track if component is ready to render
+	const [isLoading, setIsLoading] = useState<boolean>(true); // Track loading state
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	// Wait for container to be properly sized before rendering 3D scene
@@ -304,13 +322,14 @@ export function CreativeHero() {
 			const entry = entries[0];
 			if (entry && entry.contentRect.width > 0) {
 				setIsReady(true); // Mark component as ready
+				setIsLoading(false); // Mark loading as complete
 				observer.disconnect(); // Stop observing once ready
 			}
 		});
 
 		observer.observe(container);
 
-		// Cleanup observer on component unmount
+		// Cleanup observer and listener on component unmount
 		return () => {
 			observer.disconnect();
 		};
@@ -320,6 +339,13 @@ export function CreativeHero() {
 		<motion.div className="relative flex aspect-square h-[400px] cursor-all-scroll items-center justify-center md:h-[500px]">
 			{/* Background gradient blur effect */}
 			<div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 blur-3xl"></div>
+
+			{/* Loading state */}
+			{isLoading && (
+				<div className="absolute inset-0 flex items-center justify-center">
+					<div className="h-16 w-16 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+				</div>
+			)}
 
 			{/* Main container with fixed dimensions */}
 			<div className="relative" style={{ width: "400px", height: "400px" }}>
@@ -347,7 +373,14 @@ export function CreativeHero() {
 								{/* Camera controls */}
 								<OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
 							</>
-						) : null}
+						) : (
+							<div className="flex h-full w-full items-center justify-center">
+								<div className="text-center">
+									<div className="mb-4 text-4xl">🚀</div>
+									<div className="text-sm text-zinc-400">Interactive 3D Experience</div>
+								</div>
+							</div>
+						)}
 					</Canvas>
 				</div>
 

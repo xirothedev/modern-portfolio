@@ -19,7 +19,7 @@ const experiences = [
 		company: "Personal Projects",
 		period: "2025 - Now",
 		description:
-			"Deep learning of both frontend and backend simultaneously. Mastering React/Next.js, TypeScript, TailwindCSS, Shadcn UI for frontend. Simultaneously developing backend with Node.js, Express, NestJs and modern technologies.",
+			"Currently diving deep into both frontend and backend development simultaneously. Gradually becoming proficient in frontend technologies such as React/Next.js, TypeScript, TailwindCSS, and Shadcn UI, while also developing the backend using Node.js, Express, NestJS, and modern backend tools.",
 		technologies: ["React", "Next.js", "TypeScript", "TailwindCSS", "Shadcn UI", "Node.js", "Express", "NestJs"],
 		phase: "Phase IV: Simultaneous Deep Learning",
 		phaseDescription: "Parallel development of frontend and backend",

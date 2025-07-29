@@ -1,8 +1,7 @@
 "use client";
 
-import { AnimatedName } from "@/components/animated-name";
 import { ContactForm } from "@/components/contact-form";
-import { CreativeHero } from "@/components/creative-hero";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { FloatingNav } from "@/components/floating-nav";
 import { GlowingEffect } from "@/components/glowing-effect";
 import { MouseFollower } from "@/components/mouse-follower";
@@ -13,13 +12,33 @@ import { SkillsWithProjects } from "@/components/skills-with-projects";
 import { Timeline } from "@/components/timeline";
 import { Button } from "@/components/ui/button";
 import { createTimeline, stagger, text } from "animejs";
-import { ArrowRight, Github, Linkedin, Mail, MessageCircle, Facebook } from "lucide-react";
+import { ArrowRight, Download, Facebook, Github, Linkedin, Mail, MessageCircle } from "lucide-react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
+
+const AnimatedName = dynamic(
+	() => import("@/components/animated-name").then((mod) => ({ default: mod.AnimatedName })),
+	{
+		ssr: false,
+	},
+);
+
+const CreativeHero = dynamic(
+	() => import("@/components/creative-hero").then((mod) => ({ default: mod.CreativeHero })),
+	{
+		ssr: false,
+		loading: () => (
+			<div className="flex aspect-square h-[400px] items-center justify-center md:h-[500px]">
+				<div className="h-32 w-32 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+			</div>
+		),
+	},
+);
 
 export default function Portfolio() {
-	useLayoutEffect(() => {
+	useEffect(() => {
 		const { chars } = text.split("#description", {
 			chars: {
 				wrap: "clip",
@@ -134,7 +153,9 @@ export default function Portfolio() {
 						</div>
 					</div>
 					<div className="flex justify-center">
-						<CreativeHero />
+						<ErrorBoundary>
+							<CreativeHero />
+						</ErrorBoundary>
 					</div>
 				</div>
 
@@ -165,9 +186,10 @@ export default function Portfolio() {
 								<Image
 									src="/thumbnail.jpeg"
 									alt="XiroTheDev"
-									sizes="100vw"
+									sizes="(max-width: 768px) 100vw, 50vw"
 									height={0}
 									width={0}
+									priority
 									className="h-full w-full object-cover"
 								/>
 								<div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
@@ -224,11 +246,18 @@ export default function Portfolio() {
 									</div>
 								</div>
 
-								{/* <div className="mt-8">
-									<Button className="bg-zinc-800 text-white hover:bg-zinc-700">
-										Download Resume
-									</Button>
-								</div> */}
+								<div className="mt-8">
+									<Link
+										href="/lethanhtrung-webdeveloper-cv.pdf"
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<Button className="bg-zinc-800 text-white hover:bg-zinc-700">
+											<Download className="mr-2 h-4 w-4" />
+											Download Resume
+										</Button>
+									</Link>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -349,7 +378,7 @@ export default function Portfolio() {
 									</div>
 									<div>
 										<div className="text-sm text-zinc-500">Email</div>
-										<div className="font-medium">xirothedev@gmail.com</div>
+										<div className="font-medium">lethanhtrung.trungle@gmail.com</div>
 									</div>
 								</div>
 								<div className="flex items-center gap-4">
@@ -401,9 +430,9 @@ export default function Portfolio() {
 					<div>
 						<Link href="/" className="text-xl font-bold">
 							<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-								Xiro
+								Xiro{" "}
 							</span>
-							<span className="ml-1 text-white">The Dev</span>
+							<span className="text-white">The Dev</span>
 						</Link>
 						<p className="mt-2 text-sm text-zinc-500">
 							© {new Date().getFullYear()} Xiro The Dev. All rights reserved.
@@ -424,7 +453,7 @@ export default function Portfolio() {
 								external: true,
 							},
 							{
-								href: "mailto:xirothedev@gmail.com",
+								href: "mailto:lethanhtrung.trungle@gmail.com",
 								icon: <Mail className="h-5 w-5" />,
 								label: "Email",
 								external: false,

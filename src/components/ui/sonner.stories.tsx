@@ -33,7 +33,11 @@ export const Default: Story = {
 					description: "Sunday, December 03, 2023 at 9:00 AM",
 					action: {
 						label: "Undo",
-						onClick: () => console.log("Undo"),
+						onClick: () => {
+							if (process.env.NODE_ENV === "development") {
+								console.log("Undo");
+							}
+						},
 					},
 				})
 			}
@@ -142,7 +146,11 @@ export const WithAction: Story = {
 					description: "document.pdf has been uploaded to your account.",
 					action: {
 						label: "View",
-						onClick: () => console.log("View file"),
+						onClick: () => {
+							if (process.env.NODE_ENV === "development") {
+								console.log("View file");
+							}
+						},
 					},
 				})
 			}
@@ -162,11 +170,19 @@ export const WithMultipleActions: Story = {
 					description: "Your message has been delivered to the recipient.",
 					action: {
 						label: "Reply",
-						onClick: () => console.log("Reply"),
+						onClick: () => {
+							if (process.env.NODE_ENV === "development") {
+								console.log("Reply");
+							}
+						},
 					},
 					cancel: {
 						label: "Dismiss",
-						onClick: () => console.log("Dismiss"),
+						onClick: () => {
+							if (process.env.NODE_ENV === "development") {
+								console.log("Dismiss");
+							}
+						},
 					},
 				})
 			}
@@ -285,7 +301,11 @@ export const RichContent: Story = {
 					),
 					action: {
 						label: "Reply",
-						onClick: () => console.log("Reply to message"),
+						onClick: () => {
+							if (process.env.NODE_ENV === "development") {
+								console.log("Reply to message");
+							}
+						},
 					},
 				})
 			}
@@ -404,7 +424,11 @@ export const WithUpdate: Story = {
 						description: "Updated description",
 						action: {
 							label: "Updated Action",
-							onClick: () => console.log("Updated action"),
+							onClick: () => {
+								if (process.env.NODE_ENV === "development") {
+									console.log("Updated action");
+								}
+							},
 						},
 					});
 				}, 1000);

@@ -73,9 +73,9 @@ export function FloatingNav() {
 						<div className="relative flex items-center gap-1">
 							<Link href="#home" className="mr-4 text-lg font-bold">
 								<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-									Xiro
+									Xiro{" "}
 								</span>
-								<span className="ml-1 text-white">The Dev</span>
+								<span className="text-white">The Dev</span>
 							</Link>
 							{navItems.map((item) => (
 								<Link
@@ -87,12 +87,14 @@ export function FloatingNav() {
 									{item.name}
 								</Link>
 							))}
-							<Button
-								size="sm"
-								className="ml-2 rounded-full border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
-							>
-								Resume
-							</Button>
+							<Link href="/lethanhtrung-webdeveloper-cv.pdf" target="_blank" rel="noopener noreferrer">
+								<Button
+									size="sm"
+									className="ml-2 rounded-full border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
+								>
+									Resume
+								</Button>
+							</Link>
 						</div>
 					)}
 				</div>
@@ -117,9 +119,11 @@ export function FloatingNav() {
 								{item.name}
 							</Link>
 						))}
-						<Button className="mt-6 border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500">
-							Resume
-						</Button>
+						<Link href="/lethanhtrung-webdeveloper-cv.pdf" target="_blank" rel="noopener noreferrer">
+							<Button className="mt-6 border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500">
+								Resume
+							</Button>
+						</Link>
 					</div>
 				</motion.div>
 			)}

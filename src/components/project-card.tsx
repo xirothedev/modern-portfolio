@@ -4,10 +4,10 @@ import { ArrowUpRight, Github } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "./ui/dialog";
 
 interface ProjectCardProps {
 	title: string;
@@ -18,7 +18,7 @@ interface ProjectCardProps {
 	demoUrl?: string;
 }
 
-export function ProjectCard({ title, description, tags, image, demoUrl, repoUrl }: ProjectCardProps) {
+function ProjectCardComponent({ title, description, tags, image, demoUrl, repoUrl }: ProjectCardProps) {
 	const [isHovered, setIsHovered] = useState(false);
 	const isComingSoon = !demoUrl || demoUrl === "#";
 
@@ -51,6 +51,7 @@ export function ProjectCard({ title, description, tags, image, demoUrl, repoUrl 
 									<button
 										className="absolute inset-0 z-20 h-full w-full cursor-pointer border-0 bg-transparent p-0"
 										onClick={(e) => e.stopPropagation()}
+										aria-label={`View ${title} project details`}
 									>
 										<Image
 											src={image || "/placeholder.svg"}
@@ -68,6 +69,7 @@ export function ProjectCard({ title, description, tags, image, demoUrl, repoUrl 
 									showCloseButton={false}
 									className="max-h-[90vh] !w-[95vw] !max-w-[95vw] overflow-hidden border-zinc-700/50 bg-zinc-900/95 p-0 backdrop-blur-sm"
 								>
+									<DialogTitle className="sr-only">{title}</DialogTitle>
 									<div className="relative h-full max-h-[90vh] w-full overflow-y-auto">
 										<Image
 											src={image || "/placeholder.svg"}
@@ -164,3 +166,5 @@ export function ProjectCard({ title, description, tags, image, demoUrl, repoUrl 
 		</motion.div>
 	);
 }
+
+export const ProjectCard = memo(ProjectCardComponent);
