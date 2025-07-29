@@ -1,18 +1,19 @@
-import { NextResponse } from "next/server";
+import { createGitHubAPI } from "@/lib/github-api";
 import { formatGitHubTopics, sortTopicsByPriority } from "@/lib/github-topics";
+import { NextResponse } from "next/server";
 
-interface GitHubRepo {
-	name: string;
-	full_name: string;
-	description: string | null;
-	html_url: string;
-	stargazers_count: number;
-	forks_count: number;
-	language: string | null;
-	updated_at: string;
-	homepage: string | null;
-	topics: string[];
-}
+// interface GitHubRepo {
+// 	name: string;
+// 	full_name: string;
+// 	description: string | null;
+// 	html_url: string;
+// 	stargazers_count: number;
+// 	forks_count: number;
+// 	language: string | null;
+// 	updated_at: string;
+// 	homepage: string | null;
+// 	topics: string[];
+// }
 
 interface ProjectData {
 	title: string;
@@ -71,7 +72,16 @@ const PROJECTS = [
 
 export async function GET() {
 	try {
-		const githubToken = process.env.GITHUB_TOKEN;
+		// Try multiple sources for GitHub token
+		const githubToken =
+			process.env.GITHUB_TOKEN || process.env.NEXT_PUBLIC_GITHUB_TOKEN || process.env.VITE_GITHUB_TOKEN;
+
+		console.log("GitHub token found:", githubToken ? "Yes" : "No");
+		console.log("Environment variables:", {
+			NEXTJS_ENV: process.env.NEXTJS_ENV,
+			NODE_ENV: process.env.NODE_ENV,
+			hasGitHubToken: !!githubToken,
+		});
 
 		if (!githubToken) {
 			console.warn("GitHub token not found, using fallback data");
@@ -85,69 +95,41 @@ export async function GET() {
 					language: null,
 					languages: {},
 					lastUpdated: new Date().toISOString(),
+					isFromGitHub: false,
 				})),
 			});
 		}
+
+		// Create GitHub API instance with caching
+		const githubAPI = createGitHubAPI(githubToken);
+
+		// Log cache statistics
+		const cacheStats = githubAPI.getCacheStats();
+		console.log("📊 Cache stats:", cacheStats);
 
 		const projectsData: ProjectData[] = [];
 
 		for (const project of PROJECTS) {
 			try {
-				const response = await fetch(`https://api.github.com/repos/${project.repoName}`, {
-					headers: {
-						Authorization: `token ${githubToken}`,
-						Accept: "application/vnd.github.v3+json",
-					},
-					next: { revalidate: 3600 }, // Cache for 1 hour
-				});
+				console.log(`📦 Processing repository: ${project.repoName}`);
 
-				if (!response.ok) {
-					console.warn(`Failed to fetch ${project.repoName}: ${response.status}`);
-					// Use fallback data
-					projectsData.push({
-						...project,
-						tags: project.fallbackTags,
-						repoUrl: `https://github.com/${project.repoName}`,
-						stars: 0,
-						forks: 0,
-						language: null,
-						languages: {},
-						lastUpdated: new Date().toISOString(),
-						isFromGitHub: false,
-					});
-					continue;
-				}
+				// Fetch repository data with caching
+				const repoData = await githubAPI.getRepository(project.repoName);
+				console.log(`✅ Successfully fetched ${project.repoName}: ${repoData.stargazers_count} stars`);
 
-				const repoData: GitHubRepo = await response.json();
-
-				// Fetch languages for the repository
-				let languages: { [key: string]: number } = {};
-				try {
-					const languagesResponse = await fetch(
-						`https://api.github.com/repos/${project.repoName}/languages`,
-						{
-							headers: {
-								Authorization: `token ${githubToken}`,
-								Accept: "application/vnd.github.v3+json",
-							},
-							next: { revalidate: 3600 }, // Cache for 1 hour
-						},
-					);
-
-					if (languagesResponse.ok) {
-						languages = await languagesResponse.json();
-					}
-				} catch (error) {
-					console.warn(`Failed to fetch languages for ${project.repoName}:`, error);
-				}
+				// Fetch languages with caching
+				const languages = await githubAPI.getRepositoryLanguages(project.repoName);
+				console.log(`🌐 Languages for ${project.repoName}:`, Object.keys(languages));
 
 				// Use GitHub topics if available, otherwise use fallback tags
 				let tags: string[];
 				if (repoData.topics && repoData.topics.length > 0) {
 					const formattedTopics = formatGitHubTopics(repoData.topics);
 					tags = sortTopicsByPriority(formattedTopics);
+					console.log(`🏷️ Topics for ${project.repoName}:`, repoData.topics);
 				} else {
 					tags = project.fallbackTags;
+					console.log(`📝 Using fallback tags for ${project.repoName}:`, project.fallbackTags);
 				}
 
 				projectsData.push({
@@ -163,7 +145,10 @@ export async function GET() {
 					isFromGitHub: repoData.topics && repoData.topics.length > 0,
 				});
 			} catch (error) {
-				console.error(`Error fetching ${project.repoName}:`, error);
+				console.error(
+					`❌ Error processing ${project.repoName}:`,
+					error instanceof Error ? error.message : error,
+				);
 				// Use fallback data
 				projectsData.push({
 					...project,
@@ -179,9 +164,29 @@ export async function GET() {
 			}
 		}
 
+		// Log final cache statistics
+		const finalCacheStats = githubAPI.getCacheStats();
+		console.log("📊 Final cache stats:", finalCacheStats);
+
 		return NextResponse.json({ projects: projectsData });
 	} catch (error) {
-		console.error("Error in GitHub API route:", error);
-		return NextResponse.json({ error: "Failed to fetch GitHub data" }, { status: 500 });
+		console.error("Error in GitHub API route:", error instanceof Error ? error.message : error);
+		return NextResponse.json(
+			{
+				error: "Failed to fetch GitHub data",
+				projects: PROJECTS.map((project) => ({
+					...project,
+					tags: project.fallbackTags,
+					repoUrl: `https://github.com/${project.repoName}`,
+					stars: 0,
+					forks: 0,
+					language: null,
+					languages: {},
+					lastUpdated: new Date().toISOString(),
+					isFromGitHub: false,
+				})),
+			},
+			{ status: 500 },
+		);
 	}
 }

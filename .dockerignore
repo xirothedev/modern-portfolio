@@ -1,9 +1,15 @@
 .github
 .next
+.open-next
 .storybook
+.vscode
+.wrangler
+docs
 node_modules
+scripts
 npm-debug.log
 
+.dev.vars*
 .dockerignore
 .editorconfig
 .gitignore
@@ -11,10 +17,10 @@ npm-debug.log
 .prettierrc.json
 compose.yaml
 Dockerfile
-GITHUB_SETUP.md
 LICENSE.md
 Makefile
 SECURITY.md
 
 src/stories
 src/components/ui/**/*.stories.tsx
+

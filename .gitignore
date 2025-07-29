@@ -28,3 +28,10 @@ next-env.d.ts
 
 *storybook.log
 storybook-static
+
+# OpenNext
+/.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*

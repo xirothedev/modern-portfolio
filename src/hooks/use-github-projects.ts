@@ -39,8 +39,12 @@ export function useGitHubProjects(): UseGitHubProjectsReturn {
 					throw new Error("Failed to fetch projects");
 				}
 
-				const data = await response.json();
-				setProjects(data.projects || []);
+				const data: unknown = await response.json();
+				if (typeof data === "object" && data !== null && "projects" in data && Array.isArray(data.projects)) {
+					setProjects((data as { projects: ProjectData[] }).projects);
+				} else {
+					setProjects([]);
+				}
 			} catch (err) {
 				console.error("Error fetching GitHub projects:", err);
 				setError(err instanceof Error ? err.message : "Failed to fetch projects");
