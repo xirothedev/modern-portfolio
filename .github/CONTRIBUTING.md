@@ -30,7 +30,7 @@ We will systematically close all issues that are requests for general support an
 
 ## Found a Bug?
 
-If you find a bug in the source code, you can help us by [submitting an issue](#submitting-an-issue) to our [GitHub Repository](https://github.com/xirothedev/discord.js-template-v14/issues).
+If you find a bug in the source code, you can help us by [submitting an issue](#submitting-an-issue) to our [GitHub Repository](https://github.com/xirothedev/modern-portfolio/issues).
 Even better, you can [submit a Pull Request](#submitting-a-pull-request) with a fix.
 
 ## Missing a Feature?
@@ -49,13 +49,13 @@ Before you submit an issue, please search the issue tracker. An issue for your p
 
 We want to fix all the issues as soon as possible, but before fixing a bug, we need to reproduce and confirm it. In order to reproduce bugs, we require that you provide a minimal reproduction.
 
-You can file new issues by selecting from our [new issue templates](https://github.com/xirothedev/discord.js-template-v14/issues/new/choose) and filling out the template.
+You can file new issues by selecting from our [new issue templates](https://github.com/xirothedev/modern-portfolio/issues/new/choose) and filling out the template.
 
 ### Submitting a Pull Request (PR)
 
 Before you submit your Pull Request (PR) consider the following guidelines:
 
-1. Search [GitHub PRs](https://github.com/xirothedev/discord.js-template-v14/pulls) for an open or closed PR that relates to your submission.
+1. Search [GitHub PRs](https://github.com/xirothedev/modern-portfolio/pulls) for an open or closed PR that relates to your submission.
 2. Be sure that an issue describes the problem you're fixing, or documents the design for the feature you'd like to add.
 3. Please sign our [Contributor License Agreement (CLA)](#signing-the-cla) before sending PRs.
 4. [Fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) the repo.

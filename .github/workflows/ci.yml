@@ -1,43 +1,51 @@
-name: CI
-
-permissions:
-  contents: read
+name: CI & Docker Publish
 
 on:
   push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+    branches:
+      - main
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          fetch-depth: 0
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          version: 9
-          run_install: false
+          images: ghcr.io/xirothedev/modern-portfolio
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
-          node-version: 24.x
-          cache: 'pnpm'
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ghcr.io/xirothedev/modern-portfolio:latest
+            ghcr.io/xirothedev/modern-portfolio:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Run eslint
-        run: pnpm lint
-
-      - name: Run Prettier Format Check
-        run: pnpm format
-
-      - name: Type Check
-        run: pnpm typecheck
+      # Optional: add test step here if you have tests
+      # - name: Run tests
+      #   run: pnpm test

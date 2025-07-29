@@ -141,9 +141,9 @@ function TechLogos() {
 	);
 	return (
 		<group>
-			{techs.map((tech, index) => (
-				<Icon3D key={`${tech.name}-${index}`} position={tech.position} delay={index * 0.5}>
-					{tech.icon}
+			{techs.map(({ icon, name, position }, index) => (
+				<Icon3D key={`${name}-${index}`} position={position} delay={index * 0.5}>
+					{icon}
 				</Icon3D>
 			))}
 		</group>

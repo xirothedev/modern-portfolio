@@ -11,14 +11,14 @@ services:
         ports:
             - 3000:3000
         networks:
-            - my_network
+            - portfolio
 
     # Add more containers below (nginx, postgres, etc.)
 
 # Define a network, which allows containers to communicate
 # with each other, by using their container name as a hostname
 networks:
-    my_network:
+    portfolio:
         driver: bridge
         driver_opts:
             com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"

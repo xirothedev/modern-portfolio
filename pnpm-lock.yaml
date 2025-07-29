@@ -41,6 +41,9 @@ importers:
       embla-carousel-react:
         specifier: 8.6.0
         version: 8.6.0(react@19.0.0)
+      husky:
+        specifier: 9.1.7
+        version: 9.1.7
       input-otp:
         specifier: 1.4.2
         version: 1.4.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -72,8 +75,8 @@ importers:
         specifier: 7.61.1
         version: 7.61.1(react@19.0.0)
       react-icons:
-        specifier: 5.5.0
-        version: 5.5.0(react@19.0.0)
+        specifier: 4.12.0
+        version: 4.12.0(react@19.0.0)
       react-resizable-panels:
         specifier: 3.0.3
         version: 3.0.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -156,9 +159,6 @@ importers:
       eslint-plugin-storybook:
         specifier: ^9.0.18
         version: 9.0.18(eslint@9.32.0(jiti@2.5.1))(storybook@9.0.18(@testing-library/dom@10.4.1)(prettier@3.6.2))(typescript@5.0.2)
-      husky:
-        specifier: 9.1.7
-        version: 9.1.7
       playwright:
         specifier: ^1.54.1
         version: 1.54.1
@@ -3778,8 +3778,8 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
-  react-icons@5.5.0:
-    resolution: {integrity: sha512-MEFcXdkP3dLo8uumGI5xN3lDFNsRtrjbOEKDLD7yv76v4wpnEq2Lt2qeHaQOr34I/wPN3s3+N08WkQ+CW37Xiw==}
+  react-icons@4.12.0:
+    resolution: {integrity: sha512-IBaDuHiShdZqmfc/TwHu6+d6k2ltNCf3AszxNmjJc1KUfXdEeRJOKyNvLmAHaarhzGmTSVygNdyu8/opXv2gaw==}
     peerDependencies:
       react: '*'
 
@@ -8239,7 +8239,7 @@ snapshots:
     dependencies:
       react: 19.0.0
 
-  react-icons@5.5.0(react@19.0.0):
+  react-icons@4.12.0(react@19.0.0):
     dependencies:
       react: 19.0.0
 

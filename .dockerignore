@@ -1,11 +1,9 @@
 .next
-.git
 node_modules
 npm-debug.log
 
 .dockerignore
 Dockerfile
-README.md
 .editorconfig
 LICENSE.md
 SECURITY.md
