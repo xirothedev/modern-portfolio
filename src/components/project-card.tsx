@@ -1,13 +1,15 @@
 "use client";
 
-import { ArrowUpRight, Github } from "lucide-react";
+import { ArrowUpRight, GitFork, Github, Star } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, memo } from "react";
+import { memo, useState } from "react";
+import { GitHubInfoBadge } from "./github-info-badge";
+import { LanguageBar } from "./language-bar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
 
 interface ProjectCardProps {
 	title: string;
@@ -16,9 +18,26 @@ interface ProjectCardProps {
 	image: string;
 	repoUrl: string;
 	demoUrl?: string;
+	stars?: number;
+	forks?: number;
+	language?: string | null;
+	languages?: { [key: string]: number };
+	lastUpdated?: string;
+	isFromGitHub?: boolean;
 }
 
-function ProjectCardComponent({ title, description, tags, image, demoUrl, repoUrl }: ProjectCardProps) {
+function ProjectCardComponent({
+	title,
+	description,
+	tags,
+	image,
+	demoUrl,
+	repoUrl,
+	stars = 0,
+	forks = 0,
+	languages = {},
+	isFromGitHub = false,
+}: ProjectCardProps) {
 	const [isHovered, setIsHovered] = useState(false);
 	const isComingSoon = !demoUrl || demoUrl === "#";
 
@@ -89,68 +108,105 @@ function ProjectCardComponent({ title, description, tags, image, demoUrl, repoUr
 						)}
 					</div>
 
-					<div className="grow p-6">
-						<h3 className="mb-2 text-xl font-bold">{title}</h3>
-						<p className="mb-4 text-zinc-400">{description}</p>
-
-						<div className="mb-6 flex flex-wrap gap-2">
-							{tags.map((tag, index) => (
-								<Badge
-									key={index}
-									variant="secondary"
-									className="bg-zinc-700/50 text-zinc-300 hover:bg-zinc-700"
-								>
-									{tag}
-								</Badge>
-							))}
+					<div className="flex h-full flex-col p-6">
+						{/* Top content - title and description */}
+						<div className="flex-1">
+							<h3 className="mb-2 text-xl font-bold">{title}</h3>
+							<p className="text-zinc-400">{description}</p>
 						</div>
 
-						<div className="mt-auto flex justify-between border-t border-zinc-700/50 pt-4">
-							<Button
-								variant="ghost"
-								size="sm"
-								disabled={isComingSoon}
-								className={`${
-									isComingSoon
-										? "hover:text- cursor-not-allowed! text-zinc-500 hover:bg-transparent"
-										: "text-zinc-400 hover:bg-zinc-700/50 hover:text-white"
-								}`}
-								asChild
-							>
-								{!isComingSoon ? (
-									<Link href={repoUrl} target="_blank" rel="noopener noreferrer">
-										<Github className="mr-2 h-4 w-4" />
-										Code
-									</Link>
-								) : (
-									<div>
-										<Github className="mr-2 h-4 w-4" />
-										Code
-									</div>
-								)}
-							</Button>
-							<Button
-								size="sm"
-								disabled={isComingSoon}
-								className={`border-0 ${
-									isComingSoon
-										? "cursor-not-allowed! bg-zinc-600/50 text-zinc-400"
-										: "bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
-								}`}
-								asChild
-							>
-								{!isComingSoon ? (
-									<Link href={demoUrl} target="_blank" rel="noopener noreferrer">
-										Live Demo
-										<ArrowUpRight className="ml-2 h-4 w-4" />
-									</Link>
-								) : (
-									<div>
-										Coming Soon
-										<ArrowUpRight className="ml-2 h-4 w-4" />
-									</div>
-								)}
-							</Button>
+						{/* Bottom content - tags, stats, and buttons */}
+						<div className="mt-6 space-y-4">
+							{/* Tags */}
+							<div>
+								<div className="mb-2 flex flex-wrap gap-2">
+									{tags.map((tag, index) => (
+										<Badge
+											key={index}
+											variant="secondary"
+											className="bg-zinc-700/50 text-zinc-300 hover:bg-zinc-700"
+										>
+											{tag}
+										</Badge>
+									))}
+								</div>
+								<GitHubInfoBadge isFromGitHub={isFromGitHub} />
+							</div>
+
+							{/* GitHub Stats */}
+							{!isComingSoon && (stars > 0 || forks > 0 || Object.keys(languages).length > 0) && (
+								<div className="space-y-3">
+									{/* Stars and Forks */}
+									{(stars > 0 || forks > 0) && (
+										<div className="flex flex-wrap items-center gap-4 text-sm text-zinc-400">
+											{stars > 0 && (
+												<div className="flex items-center gap-1">
+													<Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+													<span>{stars.toLocaleString()}</span>
+												</div>
+											)}
+											{forks > 0 && (
+												<div className="flex items-center gap-1">
+													<GitFork className="h-3 w-3" />
+													<span>{forks.toLocaleString()}</span>
+												</div>
+											)}
+										</div>
+									)}
+
+									{/* Language Bar */}
+									<LanguageBar languages={languages} />
+								</div>
+							)}
+
+							{/* Buttons */}
+							<div className="flex justify-between border-t border-zinc-700/50 pt-4">
+								<Button
+									variant="ghost"
+									size="sm"
+									disabled={isComingSoon}
+									className={`${
+										isComingSoon
+											? "hover:text- cursor-not-allowed! text-zinc-500 hover:bg-transparent"
+											: "text-zinc-400 hover:bg-zinc-700/50 hover:text-white"
+									}`}
+									asChild
+								>
+									{!isComingSoon ? (
+										<Link href={repoUrl} target="_blank" rel="noopener noreferrer">
+											<Github className="mr-2 h-4 w-4" />
+											Code
+										</Link>
+									) : (
+										<div>
+											<Github className="mr-2 h-4 w-4" />
+											Code
+										</div>
+									)}
+								</Button>
+								<Button
+									size="sm"
+									disabled={isComingSoon}
+									className={`border-0 ${
+										isComingSoon
+											? "cursor-not-allowed! bg-zinc-600/50 text-zinc-400"
+											: "bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
+									}`}
+									asChild
+								>
+									{!isComingSoon ? (
+										<Link href={demoUrl} target="_blank" rel="noopener noreferrer">
+											Live Demo
+											<ArrowUpRight className="ml-2 h-4 w-4" />
+										</Link>
+									) : (
+										<div>
+											Coming Soon
+											<ArrowUpRight className="ml-2 h-4 w-4" />
+										</div>
+									)}
+								</Button>
+							</div>
 						</div>
 					</div>
 

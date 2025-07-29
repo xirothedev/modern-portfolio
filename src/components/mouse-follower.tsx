@@ -2,15 +2,35 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+export const SCROLL_BAR_SIZE = 16;
 
 export function MouseFollower() {
-	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-	const [isVisible, setIsVisible] = useState(false);
+	const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const [isHoveringClickable, setIsHoveringClickable] = useState(false);
+	const isMobile = useIsMobile();
 
 	useEffect(() => {
 		const handleMouseMove = (e: MouseEvent) => {
 			setMousePosition({ x: e.clientX, y: e.clientY });
+			// Check if mouse is over scrollbar
+			const { clientX, clientY } = e;
+			const winW = window.innerWidth;
+			const winH = window.innerHeight;
+			const scrollbarSize = SCROLL_BAR_SIZE;
+
+			// Check right vertical scrollbar
+			const isOverVerticalScrollbar = clientX >= winW - scrollbarSize;
+			// Check bottom horizontal scrollbar
+			const isOverHorizontalScrollbar = clientY >= winH - scrollbarSize;
+
+			if (isOverVerticalScrollbar || isOverHorizontalScrollbar) {
+				setIsVisible(false);
+				return;
+			}
+
 			setIsVisible(true);
 
 			// Check if the element under cursor has cursor-pointer or is an anchor/button tag (including parent elements)
@@ -25,7 +45,7 @@ export function MouseFollower() {
 
 				while (currentElement && currentElement !== document.body) {
 					const tagName = currentElement.tagName.toLowerCase();
-					if (tagName === "a" || tagName === "button" || tagName === "canvas") {
+					if (tagName === "a" || tagName === "button" || tagName === "canvas" || isMobile) {
 						isClickable = true;
 						break;
 					}
@@ -48,7 +68,7 @@ export function MouseFollower() {
 			window.removeEventListener("mousemove", handleMouseMove);
 			document.body.removeEventListener("mouseleave", handleMouseLeave);
 		};
-	}, []);
+	}, [isMobile]);
 
 	return (
 		<>

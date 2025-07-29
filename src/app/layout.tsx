@@ -1,6 +1,7 @@
 import type React from "react";
 import type { Metadata } from "next";
 import "./globals.css";
+import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
 	title: "Xiro The Dev - Web Developer",
@@ -15,7 +16,10 @@ export default function RootLayout({
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body id="home" className="scroll-smooth">
-				{children}
+				<div className="min-h-screen overflow-hidden bg-linear-to-b from-zinc-900 via-zinc-900 to-black text-white">
+					{children}
+					<Footer />
+				</div>
 			</body>
 		</html>
 	);

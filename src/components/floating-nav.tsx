@@ -56,7 +56,7 @@ export function FloatingNav() {
 						<div className="relative flex items-center justify-between">
 							<Link href="#home" className="text-lg font-bold">
 								<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-									Xiro
+									Xiro{" "}
 								</span>
 								<span className="text-white">The Dev</span>
 							</Link>
@@ -71,7 +71,7 @@ export function FloatingNav() {
 						</div>
 					) : (
 						<div className="relative flex items-center gap-1">
-							<Link href="#home" className="mr-4 text-lg font-bold">
+							<Link href="#home" className="mr-4 flex-shrink-0 text-lg font-bold whitespace-nowrap">
 								<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
 									Xiro{" "}
 								</span>

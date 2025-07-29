@@ -11,6 +11,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { SkillsWithProjects } from "@/components/skills-with-projects";
 import { Timeline } from "@/components/timeline";
 import { Button } from "@/components/ui/button";
+import { useGitHubProjects } from "@/hooks/use-github-projects";
 import { createTimeline, stagger, text } from "animejs";
 import { ArrowRight, Download, Facebook, Github, Linkedin, Mail, MessageCircle } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -38,6 +39,8 @@ const CreativeHero = dynamic(
 );
 
 export default function Portfolio() {
+	const { projects, loading, error } = useGitHubProjects();
+
 	useEffect(() => {
 		const { chars } = text.split("#description", {
 			chars: {
@@ -60,7 +63,7 @@ export default function Portfolio() {
 	}, []);
 
 	return (
-		<div className="min-h-screen overflow-hidden bg-linear-to-b from-zinc-900 via-zinc-900 to-black text-white">
+		<>
 			<MouseFollower />
 			<ScrollProgress />
 			<FloatingNav />
@@ -227,14 +230,16 @@ export default function Portfolio() {
 									to open-source projects, and staying up-to-date with the latest industry trends.
 								</p>
 
-								<div className="mt-8 grid grid-cols-2 gap-4">
+								<div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
 									<div className="space-y-1">
 										<div className="text-sm text-zinc-500">Full Name</div>
 										<div className="font-medium">Lê Thành Trung</div>
 									</div>
 									<div className="space-y-1">
 										<div className="text-sm text-zinc-500">Email</div>
-										<div className="font-medium">lethanhtrung.trungle@gmail.com</div>
+										<div className="max-w-[180px] truncate font-medium">
+											lethanhtrung.trungle@gmail.com
+										</div>
 									</div>
 									<div className="space-y-1">
 										<div className="text-sm text-zinc-500">Location</div>
@@ -291,46 +296,52 @@ export default function Portfolio() {
 					<SectionHeading title="Featured Projects" subtitle="Some of my recent work" />
 
 					<div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-						<ProjectCard
-							title="Discord.js Template v14"
-							description="A robust template for rapid development of Discord bots with multi-language support, modular command/event handling, and PostgreSQL integration."
-							tags={["TypeScript", "Discord.js", "PostgreSQL", "Node.js"]}
-							image="/repositories/discord.js-template-v14.png"
-							demoUrl="https://v0-cyberpunk-server-dashboard.vercel.app"
-							repoUrl="https://github.com/xirothedev/discord.js-template-v14"
-						/>
-						<ProjectCard
-							title="Discord Bot Dashboard"
-							description="A modern, intuitive platform for managing Discord bots with real-time monitoring and powerful customization features."
-							tags={["TypeScript", "React", "Next.js", "Discord API"]}
-							image="/repositories/discord-bot-dashboard.png"
-							demoUrl="https://github.com/xirothedev/discord-bot-dashboard"
-							repoUrl="https://github.com/xirothedev/discord-bot-dashboard"
-						/>
-						<ProjectCard
-							title="Xiro Discord Music Bot"
-							description="A robust, extensible Discord music bot supporting YouTube, Spotify, Apple Music, SoundCloud with advanced playlist management and audio filters."
-							tags={["TypeScript", "Discord.js", "Music API", "Audio Processing"]}
-							image="/repositories/xiro-discord-bot-music.png"
-							demoUrl="https://github.com/xirothedev/xiro-discord-bot-music"
-							repoUrl="https://github.com/xirothedev/xiro-discord-bot-music"
-						/>
-						<ProjectCard
-							title="Next.js 15 Template"
-							description="A modern, opinionated template for building scalable web applications with Next.js 15, providing best practices and optimized configuration."
-							tags={["Next.js", "TypeScript", "Tailwind CSS", "Best Practices"]}
-							image="/repositories/next-15-template.png"
-							demoUrl="https://github.com/xirothedev/next-15-template"
-							repoUrl="https://github.com/xirothedev/next-15-template"
-						/>
-						<ProjectCard
-							title="Coming Soon"
-							description="An exciting new project is in development. Stay tuned for updates and be the first to know when it launches!"
-							tags={["In Development", "Coming Soon", "Stay Tuned"]}
-							image="/placeholder.png"
-							demoUrl="#"
-							repoUrl="#"
-						/>
+						{loading ? (
+							// Loading skeleton
+							<>
+								{[...Array(6)].map((_, index) => (
+									<div key={index} className="h-80 animate-pulse rounded-xl bg-zinc-800/50">
+										<div className="h-48 rounded-t-xl bg-zinc-700/50"></div>
+										<div className="space-y-4 p-6">
+											<div className="h-6 rounded bg-zinc-700/50"></div>
+											<div className="h-4 w-3/4 rounded bg-zinc-700/50"></div>
+											<div className="flex gap-2">
+												<div className="h-6 w-16 rounded bg-zinc-700/50"></div>
+												<div className="h-6 w-20 rounded bg-zinc-700/50"></div>
+											</div>
+										</div>
+									</div>
+								))}
+							</>
+						) : error ? (
+							// Error state
+							<div className="col-span-full py-12 text-center">
+								<div className="mb-4 text-red-400">Failed to load projects</div>
+								<Button
+									onClick={() => window.location.reload()}
+									variant="outline"
+									className="border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-zinc-300"
+								>
+									Try Again
+								</Button>
+							</div>
+						) : (
+							// Projects from GitHub API
+							<>
+								{projects.map((project) => (
+									<ProjectCard key={project.repoName} {...project} />
+								))}
+								{/* Coming Soon card */}
+								<ProjectCard
+									title="Coming Soon"
+									description="An exciting new project is in development. Stay tuned for updates and be the first to know when it launches!"
+									tags={["In Development", "Coming Soon", "Stay Tuned"]}
+									image="/placeholder.png"
+									demoUrl="#"
+									repoUrl="#"
+								/>
+							</>
+						)}
 					</div>
 				</div>
 			</section>
@@ -372,42 +383,38 @@ export default function Portfolio() {
 							/>
 							<h3 className="mb-6 text-2xl font-bold">Contact Information</h3>
 							<div className="space-y-6">
-								<div className="flex items-center gap-4">
-									<div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800">
-										<Mail className="h-5 w-5 text-purple-400" />
+								{[
+									{
+										icon: <Mail className="h-5 w-5 text-purple-400" />,
+										label: "Email",
+										value: "lethanhtrung.trungle@gmail.com",
+									},
+									{
+										icon: <Linkedin className="h-5 w-5 text-purple-400" />,
+										label: "LinkedIn",
+										value: "linkedin.com/in/xirothedev",
+									},
+									{
+										icon: <Github className="h-5 w-5 text-purple-400" />,
+										label: "GitHub",
+										value: "github.com/xirothedev",
+									},
+									{
+										icon: <MessageCircle className="h-5 w-5 text-purple-400" />,
+										label: "Discord",
+										value: "@xirothedev",
+									},
+								].map((item, idx) => (
+									<div key={idx} className="flex items-center gap-4">
+										<div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800">
+											{item.icon}
+										</div>
+										<div>
+											<div className="text-sm text-zinc-500">{item.label}</div>
+											<div className="font-medium">{item.value}</div>
+										</div>
 									</div>
-									<div>
-										<div className="text-sm text-zinc-500">Email</div>
-										<div className="font-medium">lethanhtrung.trungle@gmail.com</div>
-									</div>
-								</div>
-								<div className="flex items-center gap-4">
-									<div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800">
-										<Linkedin className="h-5 w-5 text-purple-400" />
-									</div>
-									<div>
-										<div className="text-sm text-zinc-500">LinkedIn</div>
-										<div className="font-medium">linkedin.com/in/xirothedev</div>
-									</div>
-								</div>
-								<div className="flex items-center gap-4">
-									<div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800">
-										<Github className="h-5 w-5 text-purple-400" />
-									</div>
-									<div>
-										<div className="text-sm text-zinc-500">GitHub</div>
-										<div className="font-medium">github.com/xirothedev</div>
-									</div>
-								</div>
-								<div className="flex items-center gap-4">
-									<div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800">
-										<MessageCircle className="h-5 w-5 text-purple-400" />
-									</div>
-									<div>
-										<div className="text-sm text-zinc-500">Discord</div>
-										<div className="font-medium">@xirothedev</div>
-									</div>
-								</div>
+								))}
 							</div>
 
 							<div className="mt-8 border-t border-zinc-800 pt-8">
@@ -423,72 +430,6 @@ export default function Portfolio() {
 					</div>
 				</div>
 			</section>
-
-			{/* Footer */}
-			<footer className="border-t border-zinc-800 py-12">
-				<div className="container flex flex-col items-center justify-between gap-6 md:flex-row">
-					<div>
-						<Link href="/" className="text-xl font-bold">
-							<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-								Xiro{" "}
-							</span>
-							<span className="text-white">The Dev</span>
-						</Link>
-						<p className="mt-2 text-sm text-zinc-500">
-							© {new Date().getFullYear()} Xiro The Dev. All rights reserved.
-						</p>
-					</div>
-					<div className="flex gap-4">
-						{[
-							{
-								href: "https://github.com/xirothedev",
-								icon: <Github className="h-5 w-5" />,
-								label: "GitHub",
-								external: true,
-							},
-							{
-								href: "https://www.linkedin.com/in/xirothedev/",
-								icon: <Linkedin className="h-5 w-5" />,
-								label: "LinkedIn",
-								external: true,
-							},
-							{
-								href: "mailto:lethanhtrung.trungle@gmail.com",
-								icon: <Mail className="h-5 w-5" />,
-								label: "Email",
-								external: false,
-							},
-							{
-								href: "https://discord.com/users/1216624112139632711",
-								icon: <MessageCircle className="h-5 w-5" />,
-								label: "Discord",
-								external: true,
-							},
-							{
-								href: "https://www.facebook.com/xirothedev",
-								icon: <Facebook className="h-5 w-5" />,
-								label: "Facebook",
-								external: true,
-							},
-						].map(({ href, icon, label, external }) => (
-							<Link
-								key={label}
-								href={href}
-								{...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-							>
-								<Button
-									variant="ghost"
-									size="icon"
-									className="rounded-full bg-zinc-800/50 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-								>
-									{icon}
-									<span className="sr-only">{label}</span>
-								</Button>
-							</Link>
-						))}
-					</div>
-				</div>
-			</footer>
-		</div>
+		</>
 	);
 }

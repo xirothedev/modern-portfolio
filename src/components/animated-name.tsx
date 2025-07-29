@@ -1,29 +1,56 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { useEffect, useState } from "react";
 
+const gradients = [
+	{ from: "#a78bfa", to: "#ec4899" },
+	{ from: "#ec4899", to: "#a78bfa" },
+	{ from: "#60a5fa", to: "#a78bfa" },
+	{ from: "#a78bfa", to: "#3b82f6" },
+	{ from: "#ec4899", to: "#f97316" },
+	{ from: "#f97316", to: "#ec4899" },
+];
+
 export function AnimatedName() {
-	const [currentColorIndex, setCurrentColorIndex] = useState(0);
-	const colors = [
-		"from-purple-400 to-pink-600",
-		"from-pink-400 to-purple-600",
-		"from-blue-400 to-purple-600",
-		"from-purple-400 to-blue-600",
-		"from-pink-400 to-orange-600",
-		"from-orange-400 to-pink-600",
-	];
+	const [index, setIndex] = useState(0);
+
+	const progress = useMotionValue(0);
+	const smoothProgress = useSpring(progress, { stiffness: 40, damping: 20 });
+
+	const fromColor = useTransform(
+		smoothProgress,
+		[0, 1],
+		[gradients[index].from, gradients[(index + 1) % gradients.length].from],
+	);
+
+	const toColor = useTransform(
+		smoothProgress,
+		[0, 1],
+		[gradients[index].to, gradients[(index + 1) % gradients.length].to],
+	);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			setCurrentColorIndex((prev) => (prev + 1) % colors.length);
+			// animate from 0 to 1, then reset and advance index
+			progress.set(0); // start from 0
+			progress.set(1); // instantly set to 1 to trigger spring
+
+			setTimeout(() => {
+				setIndex((prev) => (prev + 1) % gradients.length);
+				progress.set(0); // reset to 0 for next transition
+			}, 1000); // duration of transition
 		}, 5000);
 
 		return () => clearInterval(interval);
-	}, [colors.length]);
+	}, [progress]);
 
 	const text = "Xiro The Dev";
 	const letters = text.split("");
+	const backgroundImage = useTransform(
+		[fromColor, toColor],
+		([from, to]) => `linear-gradient(to right, ${from}, ${to})`,
+	);
 
 	return (
 		<motion.span
@@ -35,7 +62,11 @@ export function AnimatedName() {
 			{letters.map((letter, index) => (
 				<motion.span
 					key={index}
-					className={`inline-block bg-gradient-to-r ${colors[currentColorIndex]} bg-clip-text text-transparent transition-all duration-1000 ease-in-out`}
+					className="inline-block bg-clip-text text-transparent"
+					style={{
+						backgroundImage,
+						backgroundSize: "200% 200%",
+					}}
 					initial={{ opacity: 0, y: 30, rotateX: -90 }}
 					animate={{
 						opacity: 1,
