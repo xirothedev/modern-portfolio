@@ -9,8 +9,8 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 # Copy only package manager files for dependency install
-COPY package.json pnpm-lock.yaml* .npmrc* ./
-RUN corepack enable pnpm && pnpm install --frozen-lockfile --prod
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
 
 # ---------- Builder ----------
 FROM base AS builder

@@ -1,9 +1,20 @@
+.github
 .next
+.storybook
 node_modules
 npm-debug.log
 
 .dockerignore
-Dockerfile
 .editorconfig
+.gitignore
+.prettierignore
+.prettierrc.json
+compose.yaml
+Dockerfile
+GITHUB_SETUP.md
 LICENSE.md
+Makefile
 SECURITY.md
+
+src/stories
+src/components/ui/**/*.stories.tsx
