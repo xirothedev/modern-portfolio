@@ -1,19 +1,45 @@
-import Link from "next/link";
-import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ProjectCard } from "@/components/project-card";
-import { Timeline } from "@/components/timeline";
+"use client";
+
+import { AnimatedName } from "@/components/animated-name";
 import { ContactForm } from "@/components/contact-form";
 import { CreativeHero } from "@/components/creative-hero";
 import { FloatingNav } from "@/components/floating-nav";
+import { GlowingEffect } from "@/components/glowing-effect";
 import { MouseFollower } from "@/components/mouse-follower";
+import { ProjectCard } from "@/components/project-card";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { SectionHeading } from "@/components/section-heading";
-import { GlassmorphicCard } from "@/components/glassmorphic-card";
 import { SkillsWithProjects } from "@/components/skills-with-projects";
+import { Timeline } from "@/components/timeline";
+import { Button } from "@/components/ui/button";
+import { createTimeline, stagger, text } from "animejs";
+import { ArrowRight, Github, Linkedin, Mail } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useLayoutEffect } from "react";
 
 export default function Portfolio() {
+	useLayoutEffect(() => {
+		const { chars } = text.split("#description", {
+			chars: {
+				wrap: "clip",
+				clone: "bottom",
+			},
+		});
+
+		createTimeline().add(
+			chars,
+			{
+				y: "-100%",
+				loop: true,
+				loopDelay: 3750,
+				duration: 750,
+				ease: "inOut(2)",
+			},
+			stagger(150, { from: "first" }),
+		);
+	}, []);
+
 	return (
 		<div className="min-h-screen overflow-hidden bg-linear-to-b from-zinc-900 via-zinc-900 to-black text-white">
 			<MouseFollower />
@@ -38,11 +64,9 @@ export default function Portfolio() {
 						</div>
 						<h1 className="text-5xl font-bold tracking-tight md:text-7xl">
 							<span className="block">Hi, I&apos;m</span>
-							<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-								Xiro The Dev
-							</span>
+							<AnimatedName />
 						</h1>
-						<p className="max-w-[600px] text-xl text-zinc-400">
+						<p id="description" className="max-w-[600px] text-xl text-zinc-400">
 							I craft exceptional digital experiences with code, creativity, and a passion for innovation.
 						</p>
 						<div className="flex flex-wrap gap-4 pt-4">
@@ -145,7 +169,14 @@ export default function Portfolio() {
 						</div>
 
 						<div className="space-y-6">
-							<GlassmorphicCard>
+							<div className="relative rounded-2xl border border-zinc-700/50 bg-zinc-800/50 p-8 backdrop-blur-sm">
+								<GlowingEffect
+									disabled={false}
+									proximity={50}
+									spread={30}
+									borderWidth={2}
+									movementDuration={1.5}
+								/>
 								<p className="text-lg text-zinc-300">
 									I&apos;m a passionate software engineer with experience building web applications
 									and digital products. I specialize in frontend development with React and Next.js,
@@ -181,12 +212,12 @@ export default function Portfolio() {
 									</div>
 								</div>
 
-								<div className="mt-8">
+								{/* <div className="mt-8">
 									<Button className="bg-zinc-800 text-white hover:bg-zinc-700">
 										Download Resume
 									</Button>
-								</div>
-							</GlassmorphicCard>
+								</div> */}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -298,7 +329,14 @@ export default function Portfolio() {
 					<SectionHeading title="Get In Touch" subtitle="Let's work together" />
 
 					<div className="mt-16 grid grid-cols-1 items-center gap-12 md:grid-cols-2">
-						<GlassmorphicCard>
+						<div className="relative rounded-2xl border border-zinc-700/50 bg-zinc-800/50 p-8 backdrop-blur-sm">
+							<GlowingEffect
+								disabled={false}
+								proximity={50}
+								spread={30}
+								borderWidth={2}
+								movementDuration={1.5}
+							/>
 							<h3 className="mb-6 text-2xl font-bold">Contact Information</h3>
 							<div className="space-y-6">
 								<div className="flex items-center gap-4">
@@ -334,10 +372,10 @@ export default function Portfolio() {
 								<h4 className="mb-4 text-lg font-medium">Current Status</h4>
 								<div className="flex items-center gap-2">
 									<div className="h-3 w-3 animate-pulse rounded-full bg-green-500"></div>
-									<span>Available for freelance work and full-time opportunities</span>
+									<span>Available for freelance work and remote part-time opportunities</span>
 								</div>
 							</div>
-						</GlassmorphicCard>
+						</div>
 
 						<ContactForm />
 					</div>

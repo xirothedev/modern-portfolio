@@ -3,20 +3,20 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Xiro The Dev - Web Developer",
-  description: "Xiro's Portfolio - Full Stack & Discord Bot Developer",
+	title: "Xiro The Dev - Web Developer",
+	description: "Xiro's Portfolio - Full Stack & Discord Bot Developer",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body id="home" className="scroll-smooth">
-        {children}
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" suppressHydrationWarning>
+			<body id="home" className="scroll-smooth">
+				{children}
+			</body>
+		</html>
+	);
 }

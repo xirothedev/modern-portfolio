@@ -8,127 +8,121 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const navItems = [
-  { name: "About", href: "#about" },
-  { name: "Skills", href: "#skills" },
-  { name: "Projects", href: "#projects" },
-  { name: "Experience", href: "#experience" },
-  { name: "Contact", href: "#contact" },
+	{ name: "About", href: "#about" },
+	{ name: "Skills", href: "#skills" },
+	{ name: "Projects", href: "#projects" },
+	{ name: "Experience", href: "#experience" },
+	{ name: "Contact", href: "#contact" },
 ];
 
 export function FloatingNav() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const isMobile = useIsMobile();
+	const [isVisible, setIsVisible] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
+	const isMobile = useIsMobile();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
+	useEffect(() => {
+		const handleScroll = () => {
+			if (window.scrollY > 100) {
+				setIsVisible(true);
+			} else {
+				setIsVisible(false);
+			}
+		};
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+		window.addEventListener("scroll", handleScroll);
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, []);
 
-  const handleNavClick = () => {
-    if (isMobile) {
-      setIsOpen(false);
-    }
-  };
+	const handleNavClick = () => {
+		if (isMobile) {
+			setIsOpen(false);
+		}
+	};
 
-  return (
-    <>
-      <motion.div
-        className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 ${
-          isVisible ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        initial={{ y: -100 }}
-        animate={{ y: isVisible ? 0 : -100 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="relative px-4 py-3 rounded-full bg-zinc-800/80 backdrop-blur-md border border-zinc-700/50 shadow-lg">
-          <div className="absolute -inset-0.5 bg-linear-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-sm opacity-50"></div>
+	return (
+		<>
+			<motion.div
+				className={`fixed top-6 left-1/2 z-50 -translate-x-1/2 ${
+					isVisible ? "opacity-100" : "pointer-events-none opacity-0"
+				}`}
+				initial={{ y: -100 }}
+				animate={{ y: isVisible ? 0 : -100 }}
+				transition={{ duration: 0.3 }}
+			>
+				<div className="relative rounded-full border border-zinc-700/50 bg-zinc-800/80 px-4 py-3 shadow-lg backdrop-blur-md">
+					<div className="absolute -inset-0.5 rounded-full bg-linear-to-r from-purple-500/20 to-pink-500/20 opacity-50 blur-sm"></div>
 
-          {isMobile ? (
-            <div className="relative flex items-center justify-between">
-              <Link href="#home" className="font-bold text-lg">
-                <span className="bg-clip-text text-transparent bg-linear-to-r from-purple-400 to-pink-600">
-                  Xiro
-                </span>
-                <span className="text-white">The Dev</span>
-              </Link>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-zinc-400 hover:text-white hover:bg-zinc-700/50"
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                {isOpen ? (
-                  <X className="h-5 w-5" />
-                ) : (
-                  <Menu className="h-5 w-5" />
-                )}
-              </Button>
-            </div>
-          ) : (
-            <div className="relative flex items-center gap-1">
-              <Link href="#home" className="font-bold text-lg mr-4">
-                <span className="bg-clip-text text-transparent bg-linear-to-r from-purple-400 to-pink-600">
-                  Xiro
-                </span>
-                <span className="text-white ml-1">The Dev</span>
-              </Link>
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="px-3 py-1 text-sm font-medium text-zinc-400 hover:text-white transition-colors"
-                  onClick={handleNavClick}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              <Button
-                size="sm"
-                className="ml-2 rounded-full bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 border-0"
-              >
-                Resume
-              </Button>
-            </div>
-          )}
-        </div>
-      </motion.div>
+					{isMobile ? (
+						<div className="relative flex items-center justify-between">
+							<Link href="#home" className="text-lg font-bold">
+								<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+									Xiro
+								</span>
+								<span className="text-white">The Dev</span>
+							</Link>
+							<Button
+								variant="ghost"
+								size="icon"
+								className="text-zinc-400 hover:bg-zinc-700/50 hover:text-white"
+								onClick={() => setIsOpen(!isOpen)}
+							>
+								{isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+							</Button>
+						</div>
+					) : (
+						<div className="relative flex items-center gap-1">
+							<Link href="#home" className="mr-4 text-lg font-bold">
+								<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+									Xiro
+								</span>
+								<span className="ml-1 text-white">The Dev</span>
+							</Link>
+							{navItems.map((item) => (
+								<Link
+									key={item.name}
+									href={item.href}
+									className="px-3 py-1 text-sm font-medium text-zinc-400 transition-colors hover:text-white"
+									onClick={handleNavClick}
+								>
+									{item.name}
+								</Link>
+							))}
+							<Button
+								size="sm"
+								className="ml-2 rounded-full border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
+							>
+								Resume
+							</Button>
+						</div>
+					)}
+				</div>
+			</motion.div>
 
-      {/* Mobile menu */}
-      {isMobile && (
-        <motion.div
-          className={`fixed inset-0 z-40 bg-black/90 backdrop-blur-md ${
-            isOpen ? "block" : "hidden"
-          }`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isOpen ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="flex flex-col items-center justify-center h-full">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="px-8 py-4 text-2xl font-medium text-white hover:text-purple-400 transition-colors"
-                onClick={handleNavClick}
-              >
-                {item.name}
-              </Link>
-            ))}
-            <Button className="mt-6 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500 border-0">
-              Resume
-            </Button>
-          </div>
-        </motion.div>
-      )}
-    </>
-  );
+			{/* Mobile menu */}
+			{isMobile && (
+				<motion.div
+					className={`fixed inset-0 z-40 bg-black/90 backdrop-blur-md ${isOpen ? "block" : "hidden"}`}
+					initial={{ opacity: 0 }}
+					animate={{ opacity: isOpen ? 1 : 0 }}
+					transition={{ duration: 0.3 }}
+				>
+					<div className="flex h-full flex-col items-center justify-center">
+						{navItems.map((item) => (
+							<Link
+								key={item.name}
+								href={item.href}
+								className="px-8 py-4 text-2xl font-medium text-white transition-colors hover:text-purple-400"
+								onClick={handleNavClick}
+							>
+								{item.name}
+							</Link>
+						))}
+						<Button className="mt-6 border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500">
+							Resume
+						</Button>
+					</div>
+				</motion.div>
+			)}
+		</>
+	);
 }
