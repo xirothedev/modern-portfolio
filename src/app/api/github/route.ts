@@ -107,12 +107,15 @@ export async function GET() {
 		const cacheStats = githubAPI.getCacheStats();
 		console.log("📊 Cache stats:", cacheStats);
 
-		const projectsData: ProjectData[] = [];
-
-		for (const project of PROJECTS) {
+		// Parallelize API calls for better performance
+		const projectPromises = PROJECTS.map(async (project) => {
 			try {
-				const repoData = await githubAPI.getRepository(project.repoName);
-				const languages = await githubAPI.getRepositoryLanguages(project.repoName);
+				// Fetch repository data and languages in parallel
+				const [repoData, languages] = await Promise.all([
+					githubAPI.getRepository(project.repoName),
+					githubAPI.getRepositoryLanguages(project.repoName),
+				]);
+
 				let tags: string[];
 				if (repoData.topics && repoData.topics.length > 0) {
 					const formattedTopics = formatGitHubTopics(repoData.topics);
@@ -121,7 +124,7 @@ export async function GET() {
 					tags = project.fallbackTags;
 				}
 
-				projectsData.push({
+				return {
 					...project,
 					tags,
 					repoUrl: repoData.html_url,
@@ -132,14 +135,14 @@ export async function GET() {
 					lastUpdated: repoData.updated_at,
 					demoUrl: project.demoUrl || repoData.homepage || undefined,
 					isFromGitHub: repoData.topics && repoData.topics.length > 0,
-				});
+				};
 			} catch (error) {
 				console.error(
 					`❌ Error processing ${project.repoName}:`,
 					error instanceof Error ? error.message : error,
 				);
 				// Use fallback data
-				projectsData.push({
+				return {
 					...project,
 					tags: project.fallbackTags,
 					repoUrl: `https://github.com/${project.repoName}`,
@@ -149,9 +152,12 @@ export async function GET() {
 					languages: {},
 					lastUpdated: new Date().toISOString(),
 					isFromGitHub: false,
-				});
+				};
 			}
-		}
+		});
+
+		// Wait for all promises to resolve
+		const projectsData = await Promise.all(projectPromises);
 
 		return NextResponse.json({ projects: projectsData });
 	} catch (error) {

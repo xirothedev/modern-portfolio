@@ -16,4 +16,4 @@ scripts/
 # Build artifacts
 .next/
 node_modules/
-*.log 
+*.log

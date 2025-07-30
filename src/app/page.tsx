@@ -9,6 +9,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { SkillsWithProjects } from "@/components/skills-with-projects";
 import { Timeline } from "@/components/timeline";
 import { Button } from "@/components/ui/button";
+import { HeroSkeleton, ProjectCardSkeleton } from "@/components/loading-skeleton";
 import { useGitHubProjects } from "@/hooks/use-github-projects";
 import { createTimeline, stagger, text } from "animejs";
 import { ArrowRight, Download, Facebook, Github, Linkedin, Mail, MessageCircle } from "lucide-react";
@@ -28,11 +29,7 @@ const CreativeHero = dynamic(
 	() => import("@/components/creative-hero").then((mod) => ({ default: mod.CreativeHero })),
 	{
 		ssr: false,
-		loading: () => (
-			<div className="flex aspect-square h-[400px] items-center justify-center md:h-[500px]">
-				<div className="h-32 w-32 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
-			</div>
-		),
+		loading: () => <HeroSkeleton />,
 	},
 );
 
@@ -292,17 +289,7 @@ export default function Portfolio() {
 							// Loading skeleton
 							<>
 								{[...Array(6)].map((_, index) => (
-									<div key={index} className="h-80 animate-pulse rounded-xl bg-zinc-800/50">
-										<div className="h-48 rounded-t-xl bg-zinc-700/50"></div>
-										<div className="space-y-4 p-6">
-											<div className="h-6 rounded bg-zinc-700/50"></div>
-											<div className="h-4 w-3/4 rounded bg-zinc-700/50"></div>
-											<div className="flex gap-2">
-												<div className="h-6 w-16 rounded bg-zinc-700/50"></div>
-												<div className="h-6 w-20 rounded bg-zinc-700/50"></div>
-											</div>
-										</div>
-									</div>
+									<ProjectCardSkeleton key={index} />
 								))}
 							</>
 						) : error ? (
