@@ -1,10 +1,11 @@
-import type React from "react";
-import type { Metadata, Viewport } from "next";
-import "./globals.css";
 import Footer from "@/components/footer";
-import { Analytics } from "@vercel/analytics/next";
 import { MouseFollower } from "@/components/mouse-follower";
 import { ScrollProgress } from "@/components/scroll-progress";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/next";
+import type { Metadata, Viewport } from "next";
+import type React from "react";
+import "./globals.css";
 
 export const metadata: Metadata = {
 	title: "Xiro The Dev - Web Developer",
@@ -47,6 +48,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
+			<GoogleAnalytics gaId="0OtymWYNjcT0a_R2_ULRMuZrJa1-ZJmd-o8QWTDV64k" />
+			<GoogleTagManager gtmId="GTM-MMWR3898" />
+
 			<head>
 				{/* Preconnect to external domains */}
 				<link rel="preconnect" href="https://fonts.googleapis.com" />
