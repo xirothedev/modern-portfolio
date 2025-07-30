@@ -35,3 +35,7 @@ storybook-static
 # wrangler files
 .wrangler
 .dev.vars*
+
+# wse woker
+public/sw*
+public/swe-worker*

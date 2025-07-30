@@ -2,35 +2,6 @@ import { createGitHubAPI } from "@/lib/github-api";
 import { formatGitHubTopics, sortTopicsByPriority } from "@/lib/github-topics";
 import { NextResponse } from "next/server";
 
-// interface GitHubRepo {
-// 	name: string;
-// 	full_name: string;
-// 	description: string | null;
-// 	html_url: string;
-// 	stargazers_count: number;
-// 	forks_count: number;
-// 	language: string | null;
-// 	updated_at: string;
-// 	homepage: string | null;
-// 	topics: string[];
-// }
-
-interface ProjectData {
-	title: string;
-	repoName: string;
-	description: string;
-	tags: string[];
-	image: string;
-	demoUrl?: string;
-	repoUrl: string;
-	stars: number;
-	forks: number;
-	language: string | null;
-	languages: { [key: string]: number };
-	lastUpdated: string;
-	isFromGitHub: boolean;
-}
-
 const PROJECTS = [
 	{
 		title: "Modern Portfolio",

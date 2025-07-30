@@ -23,6 +23,8 @@ LICENSE.md
 Makefile
 SECURITY.md
 
+public/sw*
+public/swe-worker*
 src/stories
 src/components/ui/**/*.stories.tsx
 

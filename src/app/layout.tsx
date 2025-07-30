@@ -8,6 +8,10 @@ import type React from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
+	metadataBase: new URL(
+		process.env.NEXT_PUBLIC_BASE_URL ??
+			(process.env.NODE_ENV === "production" ? "https://xiro-portfolio.vercel.app" : "http://localhost:3000"),
+	),
 	title: "Xiro The Dev - Web Developer",
 	description: "Xiro's Portfolio - Full Stack & Discord Bot Developer",
 	keywords: ["Web Developer", "Full Stack", "Discord Bot", "React", "Next.js", "TypeScript"],
@@ -47,7 +51,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang="en" dir="ltr" suppressHydrationWarning>
 			<GoogleAnalytics gaId="G-MGK3BM8C3J" />
 			<GoogleTagManager gtmId="GTM-MMWR3898" />
 
