@@ -41,7 +41,7 @@ export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormP
 				if (!result.valid) {
 					setErrorMessage(result.message ?? "Server error");
 				}
-			} catch (error) {
+			} catch {
 				setTokenValid(false);
 				setErrorMessage("Error validating token");
 			} finally {

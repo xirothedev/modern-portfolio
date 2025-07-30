@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+  previewFeatures = ["postgresqlExtensions", "relationJoins"]
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
+  engineType      = "library"
+  relationMode    = "prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  repoName  String   @unique
+  createdAt DateTime @default(now())
+
+  allowTokens Token[]
+}
+
+model Token {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  expireAt  DateTime
+  isRevoked Boolean   @default(false)
+  isUsed    Boolean   @default(false)
+  usedAt    DateTime?
+  usedBy    String?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+}
