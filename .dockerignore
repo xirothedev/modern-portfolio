@@ -9,7 +9,7 @@ node_modules
 scripts
 npm-debug.log
 
-.env.vars
+.dev.vars
 .dockerignore
 .editorconfig
 .gitignore
