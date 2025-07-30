@@ -3,6 +3,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Footer from "@/components/footer";
 import { Analytics } from "@vercel/analytics/next";
+import { MouseFollower } from "@/components/mouse-follower";
+import { ScrollProgress } from "@/components/scroll-progress";
 
 export const metadata: Metadata = {
 	title: "Xiro The Dev - Web Developer",
@@ -62,6 +64,13 @@ export default function RootLayout({
 				<link rel="dns-prefetch" href="//vercel.live" />
 			</head>
 			<body id="home" className="scroll-smooth">
+				<MouseFollower />
+				<ScrollProgress />
+				<div className="pointer-events-none absolute inset-0 z-0">
+					<div className="animate-blob absolute top-20 left-10 h-72 w-72 rounded-full bg-purple-500 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+					<div className="animate-blob animation-delay-2000 absolute top-40 right-10 h-72 w-72 rounded-full bg-yellow-500 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+					<div className="animate-blob animation-delay-4000 absolute bottom-20 left-1/3 h-72 w-72 rounded-full bg-pink-500 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+				</div>
 				<div className="min-h-screen overflow-hidden bg-linear-to-b from-zinc-900 via-zinc-900 to-black text-white">
 					{children}
 					<Footer />

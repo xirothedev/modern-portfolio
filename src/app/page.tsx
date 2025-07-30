@@ -4,9 +4,7 @@ import { ContactForm } from "@/components/contact-form";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { FloatingNav } from "@/components/floating-nav";
 import { GlowingEffect } from "@/components/glowing-effect";
-import { MouseFollower } from "@/components/mouse-follower";
 import { ProjectCard } from "@/components/project-card";
-import { ScrollProgress } from "@/components/scroll-progress";
 import { SectionHeading } from "@/components/section-heading";
 import { SkillsWithProjects } from "@/components/skills-with-projects";
 import { Timeline } from "@/components/timeline";
@@ -64,18 +62,10 @@ export default function Portfolio() {
 
 	return (
 		<>
-			<MouseFollower />
-			<ScrollProgress />
 			<FloatingNav />
 
 			{/* Hero Section */}
 			<section className="relative flex min-h-screen items-center justify-center overflow-hidden">
-				<div className="absolute inset-0 z-0">
-					<div className="animate-blob absolute top-20 left-10 h-72 w-72 rounded-full bg-purple-500 opacity-20 mix-blend-multiply blur-3xl filter"></div>
-					<div className="animate-blob animation-delay-2000 absolute top-40 right-10 h-72 w-72 rounded-full bg-yellow-500 opacity-20 mix-blend-multiply blur-3xl filter"></div>
-					<div className="animate-blob animation-delay-4000 absolute bottom-20 left-1/3 h-72 w-72 rounded-full bg-pink-500 opacity-20 mix-blend-multiply blur-3xl filter"></div>
-				</div>
-
 				<div className="relative z-10 container grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
 					<div className="space-y-6">
 						<div className="inline-block">

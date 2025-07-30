@@ -82,16 +82,7 @@ const PROJECTS = [
 export async function GET() {
 	try {
 		// Try multiple sources for GitHub token
-		const githubToken =
-			process.env.GITHUB_TOKEN || process.env.NEXT_PUBLIC_GITHUB_TOKEN || process.env.VITE_GITHUB_TOKEN;
-
-		console.log("GitHub token found:", githubToken ? "Yes" : "No");
-		console.log("Environment variables:", {
-			NEXTJS_ENV: process.env.NEXTJS_ENV,
-			NODE_ENV: process.env.NODE_ENV,
-			hasGitHubToken: !!githubToken,
-		});
-
+		const githubToken = process.env.GITHUB_TOKEN;
 		if (!githubToken) {
 			console.warn("GitHub token not found, using fallback data");
 			return NextResponse.json({
@@ -110,7 +101,7 @@ export async function GET() {
 		}
 
 		// Create GitHub API instance with caching
-		const githubAPI = createGitHubAPI(githubToken);
+		const githubAPI = createGitHubAPI();
 
 		// Log cache statistics
 		const cacheStats = githubAPI.getCacheStats();
@@ -120,25 +111,14 @@ export async function GET() {
 
 		for (const project of PROJECTS) {
 			try {
-				console.log(`📦 Processing repository: ${project.repoName}`);
-
-				// Fetch repository data with caching
 				const repoData = await githubAPI.getRepository(project.repoName);
-				console.log(`✅ Successfully fetched ${project.repoName}: ${repoData.stargazers_count} stars`);
-
-				// Fetch languages with caching
 				const languages = await githubAPI.getRepositoryLanguages(project.repoName);
-				console.log(`🌐 Languages for ${project.repoName}:`, Object.keys(languages));
-
-				// Use GitHub topics if available, otherwise use fallback tags
 				let tags: string[];
 				if (repoData.topics && repoData.topics.length > 0) {
 					const formattedTopics = formatGitHubTopics(repoData.topics);
 					tags = sortTopicsByPriority(formattedTopics);
-					console.log(`🏷️ Topics for ${project.repoName}:`, repoData.topics);
 				} else {
 					tags = project.fallbackTags;
-					console.log(`📝 Using fallback tags for ${project.repoName}:`, project.fallbackTags);
 				}
 
 				projectsData.push({
@@ -172,10 +152,6 @@ export async function GET() {
 				});
 			}
 		}
-
-		// Log final cache statistics
-		const finalCacheStats = githubAPI.getCacheStats();
-		console.log("📊 Final cache stats:", finalCacheStats);
 
 		return NextResponse.json({ projects: projectsData });
 	} catch (error) {

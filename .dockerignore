@@ -2,6 +2,7 @@
 .next
 .open-next
 .storybook
+.vercel
 .vscode
 .wrangler
 docs

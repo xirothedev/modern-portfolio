@@ -3,14 +3,7 @@ import { createGitHubAPI } from "@/lib/github-api";
 
 export async function GET() {
 	try {
-		const githubToken =
-			process.env.GITHUB_TOKEN || process.env.NEXT_PUBLIC_GITHUB_TOKEN || process.env.VITE_GITHUB_TOKEN;
-
-		if (!githubToken) {
-			return NextResponse.json({ error: "GitHub token not found" }, { status: 401 });
-		}
-
-		const githubAPI = createGitHubAPI(githubToken);
+		const githubAPI = createGitHubAPI();
 		const cacheStats = githubAPI.getCacheStats();
 		const rateLimit = await githubAPI.getRateLimit();
 
@@ -37,7 +30,7 @@ export async function DELETE(request: NextRequest) {
 			return NextResponse.json({ error: "GitHub token not found" }, { status: 401 });
 		}
 
-		const githubAPI = createGitHubAPI(githubToken);
+		const githubAPI = createGitHubAPI();
 
 		if (key) {
 			// Clear specific cache entry
