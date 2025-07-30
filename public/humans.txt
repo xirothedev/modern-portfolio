@@ -1,0 +1,45 @@
+/* TEAM */
+    Developer: Lê Thành Trung (Xiro The Dev)
+    Contact: lethanhtrung.trungle@gmail.com
+    From: Vietnam 🇻🇳
+
+/* SITE */
+    Last update: 2024/01/15
+    Language: English, Vietnamese
+    Doctype: HTML5
+    IDE: Visual Studio Code
+    Standards: HTML5, CSS3, JavaScript ES6+
+    Components: React 19, Next.js 15, TypeScript
+    Software: Node.js, pnpm, Git
+
+/* SKILLS */
+    Frontend: React, Next.js, TypeScript, Tailwind CSS
+    Backend: Node.js, Express, NestJS
+    Database: PostgreSQL, MongoDB
+    DevOps: Docker, Vercel, Cloudflare
+    Tools: Git, VS Code, Figma
+    Specialties: Discord Bot Development, Web Development
+
+/* PROJECTS */
+    Discord.js Template v14: https://github.com/xirothedev/discord.js-template-v14
+    Discord Bot Dashboard: https://github.com/xirothedev/discord-bot-dashboard
+    Xiro Discord Music Bot: https://github.com/xirothedev/xiro-discord-bot-music
+    Next.js 15 Template: https://github.com/xirothedev/next-15-template
+
+/* SOCIAL */
+    GitHub: https://github.com/xirothedev
+    LinkedIn: https://linkedin.com/in/xirothedev
+    Facebook: https://facebook.com/xirothedev
+    Discord: @xirothedev
+
+/* THANKS */
+    Name: Next.js Team
+    Name: React Team
+    Name: Vercel Team
+    Name: Tailwind CSS Team
+    Name: Open Source Community
+
+/* INSPIRATION */
+    "The best way to predict the future is to invent it." - Alan Kay
+    "Code is poetry." - WordPress
+    "Make it work, make it right, make it fast." - Kent Beck 

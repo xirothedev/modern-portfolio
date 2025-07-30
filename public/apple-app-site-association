@@ -1,0 +1,28 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAM_ID.com.xirothedev.portfolio",
+        "paths": [
+          "/",
+          "/about",
+          "/projects",
+          "/contact",
+          "/skills",
+          "/experience"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "TEAM_ID.com.xirothedev.portfolio"
+    ]
+  },
+  "appclips": {
+    "apps": [
+      "TEAM_ID.com.xirothedev.portfolio.Clip"
+    ]
+  }
+}

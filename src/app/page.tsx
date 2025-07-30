@@ -23,6 +23,11 @@ const AnimatedName = dynamic(
 	() => import("@/components/animated-name").then((mod) => ({ default: mod.AnimatedName })),
 	{
 		ssr: false,
+		loading: () => (
+			<div className="flex h-12 items-center justify-center">
+				<div className="h-8 w-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent"></div>
+			</div>
+		),
 	},
 );
 
@@ -194,6 +199,8 @@ export default function Portfolio() {
 									width={0}
 									priority
 									className="h-full w-full object-cover"
+									placeholder="blur"
+									blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
 								/>
 								<div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent"></div>
 								<div className="absolute bottom-0 left-0 w-full p-6">

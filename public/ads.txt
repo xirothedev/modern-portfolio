@@ -1,0 +1,17 @@
+# ads.txt file for Xiro The Dev Portfolio
+# This file is used to declare authorized digital sellers for advertising inventory
+
+# Currently no advertising partners
+# If you plan to monetize with ads, add your ad network domains here
+
+# Example format:
+# domain.com, publisher_id, DIRECT, certification_authority_id
+
+# Example for Google AdSense:
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+
+# Example for other ad networks:
+# adnetwork.com, 12345, DIRECT, abc123
+
+# Note: This file is currently empty as the portfolio doesn't use advertising
+# Remove this comment and add ad network entries when implementing ads 

@@ -1,0 +1,27 @@
+# Security Policy for Xiro The Dev Portfolio
+# This file provides security contact information for security researchers
+# RFC 9116 compliant
+
+# Primary security contact
+Contact: mailto:lethanhtrung.trungle@gmail.com
+
+# Security policy URL
+Policy: https://github.com/xirothedev/modern-portfolio/security/policy
+
+# Preferred languages for security reports
+Preferred-Languages: en, vi
+
+# Can security researchers publish their findings?
+Canonical: https://portfolio.xirothedev.workers.dev/.well-known/security.txt
+
+# Expiration date (1 year from now)
+Expires: 2025-01-15T00:00:00.000Z
+
+# Acknowledgments
+Acknowledgments: https://github.com/xirothedev/modern-portfolio/security/advisories
+
+# Hiring security researchers?
+Hiring: https://github.com/xirothedev/modern-portfolio/blob/main/SECURITY.md
+
+# Encryption key (if applicable)
+# Key: https://portfolio.xirothedev.workers.dev/.well-known/pgp-key.txt 
