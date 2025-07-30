@@ -33,6 +33,15 @@ interface ProjectData {
 
 const PROJECTS = [
 	{
+		title: "Modern Portfolio",
+		repoName: "xirothedev/modern-portfolio",
+		description:
+			"A visually stunning, modern portfolio website built with Next.js 15, Tailwind CSS, and TypeScript. Features animated UI, project showcases, and seamless integration with GitHub for dynamic project data.",
+		fallbackTags: ["Next.js", "TypeScript", "Tailwind CSS", "Portfolio", "GitHub API"],
+		image: "/repositories/modern-portfolio.png",
+		demoUrl: "https://xiro-portfolio.vercel.app",
+	},
+	{
 		title: "Discord.js Template v14",
 		repoName: "xirothedev/discord.js-template-v14",
 		description:

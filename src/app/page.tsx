@@ -23,11 +23,6 @@ const AnimatedName = dynamic(
 	() => import("@/components/animated-name").then((mod) => ({ default: mod.AnimatedName })),
 	{
 		ssr: false,
-		loading: () => (
-			<div className="flex h-12 items-center justify-center">
-				<div className="h-8 w-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent"></div>
-			</div>
-		),
 	},
 );
 
