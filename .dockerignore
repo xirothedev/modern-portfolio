@@ -9,11 +9,13 @@ node_modules
 scripts
 npm-debug.log
 
+.env.vars
 .dockerignore
 .editorconfig
 .gitignore
 .prettierignore
 .prettierrc.json
+.vercelignore
 compose.yaml
 Dockerfile
 LICENSE.md
