@@ -48,7 +48,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
-			<GoogleAnalytics gaId="0OtymWYNjcT0a_R2_ULRMuZrJa1-ZJmd-o8QWTDV64k" />
+			<GoogleAnalytics gaId="G-MGK3BM8C3J" />
 			<GoogleTagManager gtmId="GTM-MMWR3898" />
 
 			<head>
