@@ -22,7 +22,6 @@
 	"vars": {
 		"NEXTJS_ENV": "production",
 		"NODE_ENV": "production",
-		"GITHUB_TOKEN": "gh_token", // Use `"gh_token" | npx wrangler secret put GITHUB_TOKEN` for secure
 	},
 	/**
 	 * Note: Use secrets to store sensitive data.
