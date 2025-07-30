@@ -18,7 +18,7 @@
 		"url": "https://github.com/sponsors/xirothedev"
 	},
 	"scripts": {
-		"build": "opennextjs-cloudflare build",
+		"build": "next build",
 		"dev": "next dev --turbo",
 		"lint": "next lint",
 		"format": "prettier format --write .",
