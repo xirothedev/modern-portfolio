@@ -94,23 +94,83 @@ class GitHubAPI {
 		return results;
 	}
 
-	async addCollaborator(repoName: string, username: string, permission: "pull" | "push" | "admin" = "pull") {
-		const [owner, repo] = repoName.split("/");
+	// async addCollaborator(repoName: string, username: string, permission: "pull" | "push" | "admin" = "pull") {
+	// 	const [owner, repo] = repoName.split("/");
+	// 	try {
+	// 		await this.octokit.rest.repos.addCollaborator({
+	// 			owner,
+	// 			repo,
+	// 			username,
+	// 			permission,
+	// 		});
+	//     return true;
+	// 	} catch (error: any) {
+	// 		// 422: already a collaborator
+	// 		if (error.status === 422) return true;
+	// 		console.error(`GitHub API error (addCollaborator):`, error);
+	// 		throw error;
+	// 	}
+	// }
+
+	async getReadonlyRepository(repoName: string, username: string) {
+		const [sourceOwner, sourceRepo] = repoName.split("/");
+		const targetOrg = "xirothedev-minor";
+
 		try {
+			let forkedRepo;
+			try {
+				const repoRes = await this.octokit.rest.repos.get({
+					owner: targetOrg,
+					repo: sourceRepo,
+				});
+				forkedRepo = repoRes.data;
+			} catch (err: any) {
+				if (err.status === 404) {
+					const forkResponse = await this.octokit.rest.repos.createFork({
+						owner: sourceOwner,
+						repo: sourceRepo,
+						organization: targetOrg,
+					});
+					await new Promise((resolve) => setTimeout(resolve, 8000));
+					forkedRepo = forkResponse.data;
+				} else {
+					throw err;
+				}
+			}
+
+			if (forkedRepo && forkedRepo.owner.login === targetOrg) {
+				try {
+					await this.octokit.rest.repos.mergeUpstream({
+						owner: targetOrg,
+						repo: sourceRepo,
+						branch: forkedRepo.default_branch,
+					});
+				} catch (syncErr: any) {
+					console.warn("Sync upstream failed or not enabled:", syncErr?.message || syncErr);
+				}
+			}
+
 			await this.octokit.rest.repos.addCollaborator({
-				owner,
-				repo,
+				owner: targetOrg,
+				repo: sourceRepo,
 				username,
-				permission,
+				permission: "pull",
 			});
-			return true;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+			return forkedRepo;
 		} catch (error: any) {
-			// 422: already a collaborator
-			if (error.status === 422) return true;
-			console.error(`GitHub API error (addCollaborator):`, error);
+			console.error(`GitHub API error (getReadonlyRepository):`, error);
 			throw error;
 		}
+	}
+
+	async removeCollaborator(repoName: string, username: string) {
+		const [owner, repo] = repoName.split("/");
+		await this.octokit.rest.repos.removeCollaborator({
+			owner,
+			repo,
+			username,
+		});
 	}
 
 	getCacheStats() {

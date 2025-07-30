@@ -5,8 +5,12 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../generated/prisma"
+  previewFeatures = ["postgresqlExtensions", "relationJoins"]
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
+  engineType      = "library"
+  relationMode    = "prisma"
 }
 
 datasource db {
@@ -24,10 +28,14 @@ model Project {
 }
 
 model Token {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
   expireAt  DateTime
+  isRevoked Boolean   @default(false)
+  isUsed    Boolean   @default(false)
+  usedAt    DateTime?
+  usedBy    String?
 
   projectId String
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id])
 }

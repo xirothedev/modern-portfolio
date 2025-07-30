@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams } from "next/navigation";
-import { useState, useTransition } from "react";
-import { grantAccess } from "./actions";
+import { useState, useTransition, useEffect } from "react";
+import { grantAccess, checkToken } from "./actions";
 import { Github, Lock, Users, Calendar, CheckCircle, AlertCircle, Home, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,13 +21,58 @@ export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormP
 	const [pending, startTransition] = useTransition();
 	const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
 	const [errorMessage, setErrorMessage] = useState("");
+	const [tokenValid, setTokenValid] = useState<boolean | null>(null);
+	const [loading, setLoading] = useState<boolean>(true);
 	const searchParams = useSearchParams();
 	const token = searchParams.get("token");
 	const { toast } = useToast();
 
-	if (!token) {
-		return <ErrorToken />;
+	useEffect(() => {
+		if (!token) {
+			setTokenValid(false);
+			setLoading(false);
+			return;
+		}
+
+		const validateToken = async () => {
+			try {
+				const result = await checkToken(token, slug);
+				setTokenValid(result.valid);
+				if (!result.valid) {
+					setErrorMessage(result.message ?? "Server error");
+				}
+			} catch (error) {
+				setTokenValid(false);
+				setErrorMessage("Error validating token");
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		validateToken();
+	}, [token, slug]);
+
+	if (loading) {
+		return (
+			<div className="min-h-screen bg-zinc-900 px-4 py-8">
+				<div className="mx-auto max-w-4xl">
+					<div className="py-12 text-center">
+						<div className="mb-6">
+							<div className="mx-auto mb-4 h-20 w-20 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+							<h3 className="mb-2 text-2xl font-bold text-white">Validating Access Token</h3>
+							<p className="text-lg text-zinc-300">Please wait while we verify your credentials...</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
 	}
+
+	if (!tokenValid || !token) {
+		return <ErrorToken message={errorMessage} />;
+	}
+
+	const orgRepo = `xirothedev-minor/${repoName.split("/")[1]}`;
 
 	const onSubmit = () => {
 		startTransition(async () => {
@@ -54,7 +99,7 @@ export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormP
 							<CheckCircle className="mx-auto mb-4 h-20 w-20 text-green-500" />
 							<h3 className="mb-2 text-2xl font-bold text-white">Access Granted Successfully!</h3>
 							<p className="mb-4 text-lg text-zinc-300">
-								Access to <span className="font-semibold text-blue-400">{repoName}</span> has been
+								Access to <span className="font-semibold text-blue-400">{orgRepo}</span> has been
 								granted.
 							</p>
 						</div>
@@ -78,7 +123,7 @@ export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormP
 								asChild
 								className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500"
 							>
-								<Link href={`https://github.com/${repoName}`} target="_blank" rel="noopener noreferrer">
+								<Link href={`https://github.com/${orgRepo}`} target="_blank" rel="noopener noreferrer">
 									<Github className="mr-2 h-4 w-4" />
 									View Repository
 									<ExternalLink className="ml-2 h-4 w-4" />
@@ -131,7 +176,7 @@ export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormP
 						<div className="rounded-lg bg-zinc-900/50 p-4">
 							<div className="mb-2 flex items-center gap-2">
 								<Github className="h-4 w-4 text-zinc-400" />
-								<span className="font-mono text-lg font-semibold text-blue-400">{repoName}</span>
+								<span className="font-mono text-lg font-semibold text-blue-400">{orgRepo}</span>
 							</div>
 							<div className="mt-4 grid grid-cols-1 gap-4 text-sm text-zinc-400 md:grid-cols-3">
 								<div className="flex items-center gap-2">
@@ -219,7 +264,7 @@ export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormP
 										<div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
 											<div>
 												<p className="text-blue-300">
-													<strong>Target Repository:</strong> {repoName}
+													<strong>Target Repository:</strong> {orgRepo}
 												</p>
 												<p className="text-blue-300">
 													<strong>GitHub User:</strong> {username || "Not specified"}
@@ -252,7 +297,7 @@ export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormP
 						</CardHeader>
 						<CardContent className="space-y-2 text-sm text-zinc-300">
 							<p>• Submit your GitHub username and details</p>
-							<p>• HR team reviews your request within 24 hours</p>
+							<p>• Auto check and grant you access to a minor repository</p>
 							<p>• You&apos;ll receive email notification upon approval</p>
 							<p>• Access is granted with appropriate permissions</p>
 						</CardContent>
@@ -267,8 +312,8 @@ export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormP
 						</CardHeader>
 						<CardContent className="space-y-2 text-sm text-zinc-300">
 							<p>• All requests are logged for security audit</p>
-							<p>• Access is granted based on role requirements</p>
-							<p>• Repository permissions are regularly reviewed</p>
+							<p>• Access is granted based on intended use</p>
+							<p>• Permissions will be removed 3 days after being granted</p>
 							<p>• Contact IT support for access issues</p>
 						</CardContent>
 					</Card>
@@ -290,25 +335,25 @@ export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormP
 	);
 }
 
-function ErrorToken() {
+function ErrorToken({ message }: { message?: string }) {
 	return (
 		<div className="min-h-screen bg-zinc-900 px-4 py-8">
 			<div className="mx-auto max-w-4xl">
 				<div className="py-12 text-center">
 					<div className="mb-6">
 						<AlertCircle className="mx-auto mb-4 h-20 w-20 text-red-500" />
-						<h3 className="mb-2 text-2xl font-bold text-white">Access Token Required</h3>
+						<h3 className="mb-2 text-2xl font-bold text-white">Access Token Invalid</h3>
 						<p className="mb-4 text-lg text-zinc-300">
-							A valid access token is required to grant repository access.
+							{message || "The provided access token is invalid or has expired."}
 						</p>
 					</div>
 
 					<div className="mb-6 rounded-lg border border-red-200/20 bg-red-900/20 p-6">
 						<h4 className="mb-2 font-semibold text-red-300">What went wrong?</h4>
 						<div className="space-y-1 text-sm text-red-200">
-							<p>• Missing or invalid access token</p>
 							<p>• Token may have expired</p>
-							<p>• Insufficient permissions to grant access</p>
+							<p>• Token has already been used</p>
+							<p>• Invalid or missing token</p>
 							<p>• Please contact your administrator</p>
 						</div>
 					</div>

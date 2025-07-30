@@ -4,16 +4,10 @@
  */
 
 interface CachedData {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data: any;
 	timestamp: number;
 	expiresAt: number;
 }
-
-// interface CacheConfig {
-//   ttl: number; // Time to live in milliseconds (12 hours = 12 * 60 * 60 * 1000)
-//   key: string;
-// }
 
 class GitHubCache {
 	private static instance: GitHubCache;
@@ -32,9 +26,6 @@ class GitHubCache {
 		return GitHubCache.instance;
 	}
 
-	/**
-	 * Get cached data if it exists and is not expired
-	 */
 	get(key: string) {
 		const cached = this.cache.get(key);
 
@@ -57,9 +48,6 @@ class GitHubCache {
 		return cached.data;
 	}
 
-	/**
-	 * Set data in cache with TTL
-	 */
 	set(key: string, data: unknown, ttl: number = this.defaultTTL): void {
 		const now = Date.now();
 		const expiresAt = now + ttl;
@@ -73,25 +61,16 @@ class GitHubCache {
 		console.log(`💾 Cached data for key: ${key} (expires in ${Math.round(ttl / 1000 / 60)} minutes)`);
 	}
 
-	/**
-	 * Clear specific cache entry
-	 */
 	delete(key: string): void {
 		this.cache.delete(key);
 		console.log(`🗑️ Cleared cache for key: ${key}`);
 	}
 
-	/**
-	 * Clear all cache
-	 */
 	clear(): void {
 		this.cache.clear();
 		console.log("🗑️ Cleared all cache");
 	}
 
-	/**
-	 * Get cache statistics
-	 */
 	getStats(): { size: number; keys: string[] } {
 		return {
 			size: this.cache.size,
@@ -99,9 +78,6 @@ class GitHubCache {
 		};
 	}
 
-	/**
-	 * Check if cache has valid data for a key
-	 */
 	has(key: string): boolean {
 		const cached = this.cache.get(key);
 		if (!cached) return false;
@@ -116,9 +92,6 @@ class GitHubCache {
 	}
 }
 
-/**
- * Generate cache key for GitHub API calls
- */
 export function generateCacheKey(endpoint: string, params?: Record<string, unknown>): string {
 	const baseKey = `github:${endpoint}`;
 
@@ -132,9 +105,6 @@ export function generateCacheKey(endpoint: string, params?: Record<string, unkno
 	return paramString ? `${baseKey}?${paramString}` : baseKey;
 }
 
-/**
- * Cache configuration for different GitHub endpoints
- */
 export const CACHE_CONFIGS = {
 	REPO_INFO: {
 		ttl: 12 * 60 * 60 * 1000, // 12 hours
