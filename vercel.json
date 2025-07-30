@@ -1,6 +1,10 @@
 {
-	"buildCommand": "pnpm run build:vercel",
-	"devCommand": "pnpm run dev",
+	"git": {
+		"deploymentEnabled": {
+			"main": true
+		}
+	},
+	"buildCommand": "pnpm build",
 	"installCommand": "pnpm install",
 	"framework": "nextjs"
 }
