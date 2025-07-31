@@ -29,6 +29,8 @@ import type { Project } from "generated/prisma";
 import { useEffect, useState } from "react";
 import { addProject, deleteProject, getProjects, updateProject } from "../actions";
 import { RepositoryManagerSkeleton } from "@/components/loading-skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pencil, Trash2 } from "lucide-react";
 
 export function RepositoryManager() {
 	const [data, setData] = useState<{ project: Project; repository: Repository | null }[]>([]);
@@ -120,7 +122,7 @@ export function RepositoryManager() {
 
 	const filteredData = data.filter(
 		({ repository, project }) =>
-			repository?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			repository?.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			project.slug.toLowerCase().includes(searchTerm.toLowerCase()),
 	);
 
@@ -159,21 +161,27 @@ export function RepositoryManager() {
 						</DialogHeader>
 						<div className="grid gap-4 py-4">
 							<div className="space-y-2">
-								<Label htmlFor="repoName">Repository Name *</Label>
+								<Label htmlFor="repoName" className="text-zinc-300">
+									Repository Name *
+								</Label>
 								<Input
 									id="repoName"
 									value={formData.repoName}
 									onChange={(e) => setFormData({ ...formData, repoName: e.target.value })}
 									placeholder="my-awesome-repo"
+									className="border-zinc-700/50 bg-zinc-800/50 text-white placeholder:text-zinc-500 focus:border-zinc-600/50 focus:bg-zinc-800/70"
 								/>
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor="slug">Slug *</Label>
+								<Label htmlFor="slug" className="text-zinc-300">
+									Slug *
+								</Label>
 								<Input
 									id="slug"
 									value={formData.slug}
 									onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
 									placeholder="my-awesome-repo"
+									className="border-zinc-700/50 bg-zinc-800/50 text-white placeholder:text-zinc-500 focus:border-zinc-600/50 focus:bg-zinc-800/70"
 								/>
 							</div>
 						</div>
@@ -197,7 +205,7 @@ export function RepositoryManager() {
 									resetForm();
 								}}
 								disabled={submitStatus === "loading"}
-								className="border-zinc-600/50 bg-zinc-700/50 text-zinc-300 hover:border-zinc-500/50 hover:bg-zinc-700/70"
+								className="border-zinc-600/50 bg-zinc-700/50 text-zinc-300 hover:border-zinc-500/50 hover:bg-zinc-700/70 hover:text-zinc-300/80"
 							>
 								Cancel
 							</Button>
@@ -214,7 +222,7 @@ export function RepositoryManager() {
 			</div>
 			<div className="space-y-4">
 				{filteredData.length === 0 ? (
-					<div className="relative rounded-2xl border border-zinc-700/50 bg-zinc-800/50 p-12 text-center backdrop-blur-sm">
+					<div className="relative rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-12 text-center backdrop-blur-sm">
 						<h3 className="mb-2 text-lg font-semibold text-white">No projects found</h3>
 						<p className="mb-4 text-zinc-400">
 							{searchTerm
@@ -229,75 +237,79 @@ export function RepositoryManager() {
 								Add Project
 							</Button>
 						)}
-						<div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent via-transparent to-black/5"></div>
+						<div className="pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-br from-transparent via-transparent to-black/5"></div>
 					</div>
 				) : (
-					filteredData.map(({ project, repository }) => (
-						<div
-							key={project.id}
-							className="relative rounded-2xl border border-zinc-700/50 bg-zinc-800/50 p-6 backdrop-blur-sm transition-all hover:border-zinc-600/50 hover:bg-zinc-800/70"
-						>
-							<div className="flex items-start justify-between">
-								<div className="flex-1">
-									<div className="mb-2 flex items-center gap-3">
-										<h3 className="text-lg font-semibold text-white">
-											{repository?.name ?? project.slug}
-										</h3>
-										<span className="ml-2 text-xs text-zinc-400">Slug: {project.slug}</span>
-									</div>
-									<div className="mb-3 flex items-center gap-4 text-sm text-zinc-400">
-										<span className="flex items-center gap-1">
-											Created: {new Date(project.createdAt).toLocaleDateString()}
-										</span>
-									</div>
-								</div>
-								<div className="ml-4 flex items-center gap-2">
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => handleEdit(project)}
-										className="border-zinc-600/50 bg-zinc-700/50 text-zinc-300 hover:border-zinc-500/50 hover:bg-zinc-700/70"
-									>
-										Edit
-									</Button>
-									<AlertDialog>
-										<AlertDialogTrigger asChild>
-											<Button
-												variant="outline"
-												size="sm"
-												className="border-zinc-600/50 bg-zinc-700/50 text-zinc-300 hover:border-zinc-500/50 hover:bg-zinc-700/70"
-											>
-												Delete
-											</Button>
-										</AlertDialogTrigger>
-										<AlertDialogContent className="border-zinc-700/50 bg-zinc-800/50 backdrop-blur-sm">
-											<AlertDialogHeader>
-												<AlertDialogTitle className="text-white">
-													Delete Project
-												</AlertDialogTitle>
-												<AlertDialogDescription className="text-zinc-400">
-													Are you sure you want to delete &quot;{project.repoName}&quot;? This
-													action cannot be undone.
-												</AlertDialogDescription>
-											</AlertDialogHeader>
-											<AlertDialogFooter>
-												<AlertDialogCancel className="border-zinc-600/50 bg-zinc-700/50 text-zinc-300 hover:border-zinc-500/50 hover:bg-zinc-700/70">
-													Cancel
-												</AlertDialogCancel>
-												<AlertDialogAction
-													onClick={() => handleDelete(project.id)}
-													className="bg-red-600 hover:bg-red-700"
+					<div className="relative rounded-lg border border-zinc-700/50 bg-zinc-800/50 p-6 backdrop-blur-sm">
+						<Table>
+							<TableHeader>
+								<TableRow>
+									<TableHead className="text-white">Name</TableHead>
+									<TableHead className="text-white">Slug</TableHead>
+									<TableHead className="text-white">Created At</TableHead>
+									<TableHead className="text-right text-white">Actions</TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
+								{filteredData.map(({ project, repository }) => (
+									<TableRow key={project.id}>
+										<TableCell className="font-medium text-white">
+											{repository?.full_name ?? project.repoName}
+										</TableCell>
+										<TableCell className="text-zinc-400">{project.slug}</TableCell>
+										<TableCell className="text-zinc-400">
+											{new Date(project.createdAt).toLocaleDateString()}
+										</TableCell>
+										<TableCell className="text-right">
+											<div className="flex items-center justify-end gap-2">
+												<Button
+													variant="ghost"
+													size="icon"
+													onClick={() => handleEdit(project)}
+													className="h-8 w-8 text-zinc-300 hover:text-black"
 												>
-													Delete
-												</AlertDialogAction>
-											</AlertDialogFooter>
-										</AlertDialogContent>
-									</AlertDialog>
-								</div>
-							</div>
-							<div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent via-transparent to-black/5"></div>
-						</div>
-					))
+													<Pencil className="h-4 w-4" />
+												</Button>
+												<AlertDialog>
+													<AlertDialogTrigger asChild>
+														<Button
+															variant="ghost"
+															size="icon"
+															className="h-8 w-8 text-zinc-300 hover:text-red-500"
+														>
+															<Trash2 className="h-4 w-4" />
+														</Button>
+													</AlertDialogTrigger>
+													<AlertDialogContent className="border-zinc-700/50 bg-zinc-800/50 backdrop-blur-sm">
+														<AlertDialogHeader>
+															<AlertDialogTitle className="text-white">
+																Delete Project
+															</AlertDialogTitle>
+															<AlertDialogDescription className="text-zinc-400">
+																Are you sure you want to delete &quot;{project.repoName}
+																&quot;? This action cannot be undone.
+															</AlertDialogDescription>
+														</AlertDialogHeader>
+														<AlertDialogFooter>
+															<AlertDialogCancel className="border-zinc-600/50 bg-zinc-700/50 text-zinc-300 hover:border-zinc-500/50 hover:bg-zinc-700/70 hover:text-zinc-300/80">
+																Cancel
+															</AlertDialogCancel>
+															<AlertDialogAction
+																onClick={() => handleDelete(project.id)}
+																className="bg-red-600 hover:bg-red-700"
+															>
+																Delete
+															</AlertDialogAction>
+														</AlertDialogFooter>
+													</AlertDialogContent>
+												</AlertDialog>
+											</div>
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</div>
 				)}
 			</div>
 		</div>

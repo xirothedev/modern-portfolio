@@ -11,12 +11,12 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 
-interface ProjectAccessFormProps {
+interface RepositoryAccessPortalProps {
 	slug: string;
 	repoName: string;
 }
 
-export default function ProjectAccessForm({ slug, repoName }: ProjectAccessFormProps) {
+export default function RepositoryAccessPortal({ slug, repoName }: RepositoryAccessPortalProps) {
 	const [username, setUsername] = useState("");
 	const [pending, startTransition] = useTransition();
 	const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");

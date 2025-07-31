@@ -12,10 +12,11 @@ export const metadata: Metadata = {
 		process.env.NEXT_PUBLIC_BASE_URL ??
 			(process.env.NODE_ENV === "production" ? "https://xiro-portfolio.vercel.app" : "http://localhost:3000"),
 	),
-	title: "Xiro The Dev - Web Developer",
+	applicationName: "Xiro The Dev - Portfolio",
+	title: { default: "Xiro The Dev - Web Developer", template: "Xiro | %s" },
 	description: "Xiro's Portfolio - Full Stack & Discord Bot Developer",
 	keywords: ["Web Developer", "Full Stack", "Discord Bot", "React", "Next.js", "TypeScript"],
-	authors: [{ name: "Xiro The Dev" }],
+	authors: [{ name: "Xiro The Dev", url: "https://github.com/xirothedev/" }],
 	creator: "Xiro The Dev",
 	publisher: "Xiro The Dev",
 	robots: "index, follow",
@@ -30,11 +31,12 @@ export const metadata: Metadata = {
 		title: "Xiro The Dev - Web Developer",
 		description: "Xiro's Portfolio - Full Stack & Discord Bot Developer",
 	},
-	icons: {
-		icon: "/favicon.ico",
-		apple: "/apple-touch-icon.png",
+	formatDetection: {
+		email: true,
+		address: false,
+		telephone: false,
 	},
-	manifest: "/manifest.json",
+	referrer: "origin-when-cross-origin",
 };
 
 export const viewport: Viewport = {

@@ -1,7 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 
-const origin = "http://localhost:3000" || "https://mcp-on-vercel.vercel.app";
+const origin = "http://localhost:3000" || "https://xiro-portfolio.vercel.app/";
 
 async function main() {
 	const transport = new SSEClientTransport(new URL(`${origin}/sse`));
