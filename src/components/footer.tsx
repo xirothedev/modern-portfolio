@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 export default function Footer() {
 	return (
 		<footer className="relative overflow-hidden border-t border-zinc-800 py-12">
-			<div className="animate-border-flow absolute top-0 left-0 h-1.5 w-full rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-[length:300%_300%] opacity-90" />
+			<div className="animate-border-flow absolute top-0 left-0 h-0.5 w-full rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-[length:300%_300%] opacity-90" />
 			<div className="relative z-10 container flex flex-col items-center justify-between gap-8 md:flex-row">
 				<div>
 					<Link href="/" className="text-xl font-bold">

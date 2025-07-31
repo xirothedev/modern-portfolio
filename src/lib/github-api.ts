@@ -1,5 +1,6 @@
+import { MultipleRepositoriesResponse } from "@/typings/github";
 import { githubCache, generateCacheKey, CACHE_CONFIGS } from "./github-cache";
-import { Octokit } from "octokit";
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 
 interface FetchOptions {
 	cache?: boolean;
@@ -19,7 +20,10 @@ class GitHubAPI {
 		this.octokit = new Octokit({ auth: this.token });
 	}
 
-	async getRepository(repoName: string, options: FetchOptions = {}) {
+	async getRepository(
+		repoName: string,
+		options: FetchOptions = {},
+	): Promise<RestEndpointMethodTypes["repos"]["get"]["response"]["data"]> {
 		const cacheKey = generateCacheKey("repos", { repo: repoName });
 		if (options.cache !== false) {
 			const cached = githubCache.get(cacheKey);
@@ -64,7 +68,7 @@ class GitHubAPI {
 		}
 	}
 
-	async getRateLimit() {
+	async getRateLimit(): Promise<RestEndpointMethodTypes["rateLimit"]["get"]["response"]["data"] | null> {
 		const cacheKey = generateCacheKey("rate_limit");
 		const cached = githubCache.get(cacheKey);
 		if (cached) {
@@ -80,8 +84,11 @@ class GitHubAPI {
 		}
 	}
 
-	async getMultipleRepositories(repoNames: string[], options: FetchOptions = {}): Promise<Map<string, unknown>> {
-		const results = new Map<string, unknown>();
+	async getMultipleRepositories(
+		repoNames: string[],
+		options: FetchOptions = {},
+	): Promise<MultipleRepositoriesResponse> {
+		const results: MultipleRepositoriesResponse = new Map();
 		for (const repoName of repoNames) {
 			try {
 				const repoData = await this.getRepository(repoName, options);
@@ -94,37 +101,45 @@ class GitHubAPI {
 		return results;
 	}
 
-	// async addCollaborator(repoName: string, username: string, permission: "pull" | "push" | "admin" = "pull") {
-	// 	const [owner, repo] = repoName.split("/");
-	// 	try {
-	// 		await this.octokit.rest.repos.addCollaborator({
-	// 			owner,
-	// 			repo,
-	// 			username,
-	// 			permission,
-	// 		});
-	//     return true;
-	// 	} catch (error: any) {
-	// 		// 422: already a collaborator
-	// 		if (error.status === 422) return true;
-	// 		console.error(`GitHub API error (addCollaborator):`, error);
-	// 		throw error;
-	// 	}
-	// }
+	async addCollaborator(
+		repoName: string,
+		username: string,
+		permission: "pull" | "push" | "admin" = "pull",
+	): Promise<boolean> {
+		const [owner, repo] = repoName.split("/");
+		try {
+			await this.octokit.rest.repos.addCollaborator({
+				owner,
+				repo,
+				username,
+				permission,
+			});
+			return true;
+		} catch (error: any) {
+			// 422: already a collaborator
+			if (error.status === 422) return true;
+			console.error(`GitHub API error (addCollaborator):`, error);
+			throw error;
+		}
+	}
 
-	async getReadonlyRepository(repoName: string, username: string) {
+	async getReadonlyRepository(
+		repoName: string,
+		username: string,
+	): Promise<RestEndpointMethodTypes["repos"]["get"]["response"]["data"]> {
 		const [sourceOwner, sourceRepo] = repoName.split("/");
 		const targetOrg = "xirothedev-minor";
 
 		try {
 			let forkedRepo;
 			try {
-				const repoRes = await this.octokit.rest.repos.get({
+				const { data } = await this.octokit.rest.repos.get({
 					owner: targetOrg,
 					repo: sourceRepo,
 				});
-				forkedRepo = repoRes.data;
+				forkedRepo = data;
 			} catch (err: any) {
+				// 404: NOT FOUND
 				if (err.status === 404) {
 					const forkResponse = await this.octokit.rest.repos.createFork({
 						owner: sourceOwner,
@@ -164,7 +179,7 @@ class GitHubAPI {
 		}
 	}
 
-	async removeCollaborator(repoName: string, username: string) {
+	async removeCollaborator(repoName: string, username: string): Promise<void> {
 		const [owner, repo] = repoName.split("/");
 		await this.octokit.rest.repos.removeCollaborator({
 			owner,
@@ -177,23 +192,25 @@ class GitHubAPI {
 		return githubCache.getStats();
 	}
 
-	clearCache() {
+	clearCache(): void {
 		githubCache.clear();
 	}
 
-	clearCacheEntry(key: string) {
+	clearCacheEntry(key: string): void {
 		githubCache.delete(key);
 	}
 }
 
+// Type for the factory function
 export function createGitHubAPI(): GitHubAPI {
 	return new GitHubAPI();
 }
 
-export async function fetchRepositoryWithFallback(
+// Type for the fallback function
+export async function fetchRepositoryWithFallback<T extends NonNullable<unknown>>(
 	api: GitHubAPI,
 	repoName: string,
-	fallbackData: NonNullable<unknown>,
+	fallbackData: T,
 ) {
 	try {
 		const repoData = await api.getRepository(repoName);

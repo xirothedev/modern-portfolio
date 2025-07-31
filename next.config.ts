@@ -4,6 +4,14 @@ import withSerwistInit from "@serwist/next";
 
 const nextConfig: NextConfig = {
 	output: "standalone",
+	turbopack: {
+		rules: {
+			"*.svg": {
+				loaders: ["@svgr/webpack"],
+				as: "*.js",
+			},
+		},
+	},
 	experimental: {
 		optimizePackageImports: ["lucide-react", "react-icons", "@radix-ui/react-icons", "animejs", "date-fns"],
 		optimizeCss: true,

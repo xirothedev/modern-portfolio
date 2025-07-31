@@ -31,6 +31,7 @@ model Token {
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now())
   expireAt  DateTime
+  scope     RepoScope @default(PULL)
   isRevoked Boolean   @default(false)
   isUsed    Boolean   @default(false)
   usedAt    DateTime?
@@ -38,4 +39,10 @@ model Token {
 
   projectId String
   project   Project @relation(fields: [projectId], references: [id])
+}
+
+enum RepoScope {
+  PULL
+  PUSH
+  ADMIN
 }

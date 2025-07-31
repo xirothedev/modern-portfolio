@@ -64,3 +64,32 @@ export const HeroSkeleton = memo(function HeroSkeleton() {
 		</div>
 	);
 });
+
+export const RepositoryManagerSkeleton = memo(function RepositoryManagerSkeleton() {
+	return (
+		<div className="space-y-6">
+			<div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+				<div className="h-10 w-full max-w-md animate-pulse rounded-md bg-zinc-700/50" />
+				<div className="h-10 w-32 animate-pulse rounded-md bg-zinc-700/50" />
+			</div>
+			<div className="space-y-4">
+				{Array.from({ length: 3 }).map((_, index) => (
+					<div key={index} className="relative rounded-2xl border border-zinc-700/50 bg-zinc-800/50 p-6">
+						<div className="space-y-4">
+							<div className="flex items-center justify-between">
+								<div className="flex-1 space-y-2">
+									<div className="h-6 w-48 animate-pulse rounded bg-zinc-700/50" />
+									<div className="h-4 w-32 animate-pulse rounded bg-zinc-700/50" />
+								</div>
+								<div className="flex gap-2">
+									<div className="h-8 w-16 animate-pulse rounded bg-zinc-700/50" />
+									<div className="h-8 w-16 animate-pulse rounded bg-zinc-700/50" />
+								</div>
+							</div>
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+});
