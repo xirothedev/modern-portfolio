@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { AuthButton } from "@/components/auth-button";
 
 const navItems = [
 	{ name: "About", href: "#about" },
@@ -60,14 +61,17 @@ export function FloatingNav() {
 								</span>
 								<span className="text-white">The Dev</span>
 							</Link>
-							<Button
-								variant="ghost"
-								size="icon"
-								className="text-zinc-400 hover:bg-zinc-700/50 hover:text-white"
-								onClick={() => setIsOpen(!isOpen)}
-							>
-								{isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-							</Button>
+							<div className="flex items-center gap-4">
+								<AuthButton />
+								<Button
+									variant="ghost"
+									size="icon"
+									className="text-zinc-400 hover:bg-zinc-700/50 hover:text-white"
+									onClick={() => setIsOpen(!isOpen)}
+								>
+									{isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+								</Button>
+							</div>
 						</div>
 					) : (
 						<div className="relative flex items-center gap-1">
@@ -87,14 +91,21 @@ export function FloatingNav() {
 									{item.name}
 								</Link>
 							))}
-							<Link href="/lethanhtrung-webdeveloper-cv.pdf" target="_blank" rel="noopener noreferrer">
-								<Button
-									size="sm"
-									className="ml-2 rounded-full border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
+							<div className="ml-2 flex items-center gap-2">
+								<Link
+									href="/lethanhtrung-webdeveloper-cv.pdf"
+									target="_blank"
+									rel="noopener noreferrer"
 								>
-									Resume
-								</Button>
-							</Link>
+									<Button
+										size="sm"
+										className="rounded-full border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
+									>
+										Resume
+									</Button>
+								</Link>
+								<AuthButton />
+							</div>
 						</div>
 					)}
 				</div>
@@ -119,11 +130,13 @@ export function FloatingNav() {
 								{item.name}
 							</Link>
 						))}
-						<Link href="/lethanhtrung-webdeveloper-cv.pdf" target="_blank" rel="noopener noreferrer">
-							<Button className="mt-6 border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500">
-								Resume
-							</Button>
-						</Link>
+						<div className="mt-6 flex flex-col items-center gap-4">
+							<Link href="/lethanhtrung-webdeveloper-cv.pdf" target="_blank" rel="noopener noreferrer">
+								<Button className="border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500">
+									Resume
+								</Button>
+							</Link>
+						</div>
 					</div>
 				</motion.div>
 			)}

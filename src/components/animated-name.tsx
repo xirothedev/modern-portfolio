@@ -14,6 +14,15 @@ const gradients = [
 
 export function AnimatedName() {
 	const [index, setIndex] = useState(0);
+	const [sparkles, setSparkles] = useState<Array<{ x: number; y: number }>>([]);
+
+	useEffect(() => {
+		const generated = Array.from({ length: 6 }).map(() => ({
+			x: Math.random() * 150 - 75,
+			y: Math.random() * 80 - 40,
+		}));
+		setSparkles(generated);
+	}, []);
 
 	const progress = useMotionValue(0);
 	const smoothProgress = useSpring(progress, { stiffness: 40, damping: 20 });
@@ -110,7 +119,7 @@ export function AnimatedName() {
 			/>
 
 			{/* Floating sparkles with smoother movement */}
-			{Array.from({ length: 6 }).map((_, i) => (
+			{sparkles.map((_, i) => (
 				<motion.div
 					key={i}
 					className="absolute h-1.5 w-1.5 rounded-full bg-yellow-300"

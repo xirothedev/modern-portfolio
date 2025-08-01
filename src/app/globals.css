@@ -231,3 +231,70 @@
 	scrollbar-width: thin;
 	scrollbar-color: #a855f7 #18181b;
 }
+
+[data-support-yes],
+[data-support-no] {
+	display: none;
+}
+
+@supports (view-transition-name: test) {
+	[data-support] [data-support-yes] {
+		display: inline;
+	}
+	[data-support] [data-support-no] {
+		display: none;
+	}
+}
+
+@supports not (view-transition-name: test) {
+	[data-support] [data-support-yes] {
+		display: none;
+	}
+	[data-support] [data-support-no] {
+		display: inline;
+	}
+}
+
+/* Safari */
+@supports (-webkit-hyphens: none) and (not (-moz-appearance: none)) {
+	[data-support] [data-support-yes] {
+		display: none;
+	}
+	[data-support] [data-support-no] {
+		display: inline;
+	}
+}
+
+::view-transition-old(auth-form),
+::view-transition-new(auth-form) {
+	animation-duration: 400ms;
+	animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(auth-form) {
+	animation-name: slide-out-to-left;
+	z-index: 1;
+}
+
+::view-transition-new(auth-form) {
+	animation-name: slide-in-from-right;
+	z-index: 2;
+}
+
+@keyframes slide-out-to-left {
+	to {
+		opacity: 0;
+		transform: translateX(-3.125rem); /* ~50px = 3.125rem */
+	}
+}
+
+@keyframes slide-in-from-right {
+	from {
+		opacity: 0;
+		transform: translateX(3.125rem); /* ~50px */
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}

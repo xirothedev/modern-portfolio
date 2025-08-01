@@ -1,7 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
 import { createGitHubAPI } from "@/lib/github-api";
-import { Repository } from "@/typings/github";
 import { Project, Token } from "generated/prisma";
 
 export interface CMSStats {

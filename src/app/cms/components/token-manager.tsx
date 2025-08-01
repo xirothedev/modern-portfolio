@@ -1,5 +1,6 @@
 "use client";
 
+import { TokenManagerSkeleton } from "@/components/loading-skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
 	AlertDialog,
@@ -14,7 +15,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
 	Dialog,
 	DialogContent,
@@ -26,8 +26,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { RepoScope, Token } from "generated/prisma";
-import { Activity, AlertCircle, Calendar, CheckCircle, Edit, Eye, EyeOff, Key, Plus, Trash2 } from "lucide-react";
+import { Activity, AlertCircle, Calendar, CheckCircle, Edit, Key, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { deleteToken, getTokens } from "../actions";
@@ -46,7 +47,6 @@ export function TokenManager() {
 	const [editingToken, setEditingToken] = useState<Token | null>(null);
 	const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 	const [errorMessage, setErrorMessage] = useState("");
-	const [showTokenValue, setShowTokenValue] = useState<Record<string, boolean>>({});
 	const {
 		register,
 		handleSubmit,
@@ -81,16 +81,6 @@ export function TokenManager() {
 		setErrorMessage("");
 	}
 
-	function maskToken(token: string) {
-		if (!token) return "";
-		const visible = token.slice(-4);
-		return `****${visible}`;
-	}
-
-	function toggleTokenVisibility(id: string) {
-		setShowTokenValue((prev) => ({ ...prev, [id]: !prev[id] }));
-	}
-
 	async function handleDelete(id: string) {
 		try {
 			const result = await deleteToken(id);
@@ -103,7 +93,7 @@ export function TokenManager() {
 	}
 
 	if (loading) {
-		return <div className="py-8 text-center">Loading tokens...</div>;
+		return <TokenManagerSkeleton />;
 	}
 
 	return (
@@ -120,10 +110,12 @@ export function TokenManager() {
 							Add Token
 						</Button>
 					</DialogTrigger>
-					<DialogContent className="bg-zinc-900/80 sm:max-w-[500px]">
+					<DialogContent className="border-zinc-700/50 bg-zinc-800/50 backdrop-blur-sm sm:max-w-[500px]">
 						<DialogHeader>
-							<DialogTitle>{editingToken ? "Edit Token" : "Add New Token"}</DialogTitle>
-							<DialogDescription>
+							<DialogTitle className="text-white">
+								{editingToken ? "Edit Token" : "Add New Token"}
+							</DialogTitle>
+							<DialogDescription className="text-zinc-400">
 								{editingToken
 									? "Update token settings and configuration."
 									: "Add a new token for API authentication."}
@@ -133,28 +125,32 @@ export function TokenManager() {
 						<form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
 							{!editingToken && (
 								<div className="space-y-2">
-									<Label htmlFor="tokenId">Token Value *</Label>
+									<Label htmlFor="tokenId" className="text-zinc-200">
+										Token Value *
+									</Label>
 									<Input
 										id="tokenId"
 										type="password"
 										{...register("id", { required: true })}
-										className="border-zinc-700 bg-zinc-800 text-zinc-100 placeholder-zinc-400"
+										className="border-zinc-700/50 bg-zinc-800/50 text-zinc-100 placeholder-zinc-500 focus:border-purple-500/50 focus:ring-purple-500/20"
 									/>
-									<p className="text-xs text-gray-500">
+									<p className="text-xs text-zinc-500">
 										Enter your token value. It will be stored securely.
 									</p>
 								</div>
 							)}
 
 							<div className="space-y-2">
-								<Label htmlFor="tokenScope">Scope</Label>
+								<Label htmlFor="tokenScope" className="text-zinc-200">
+									Scope
+								</Label>
 								<Input
 									id="tokenScope"
 									{...register("scope", { required: true })}
 									placeholder="pull, push, admin"
-									className="border-zinc-700 bg-zinc-800 text-zinc-100 placeholder-zinc-400"
+									className="border-zinc-700/50 bg-zinc-800/50 text-zinc-100 placeholder-zinc-500 focus:border-purple-500/50 focus:ring-purple-500/20"
 								/>
-								<p className="text-xs text-gray-500">The scope this token has access to</p>
+								<p className="text-xs text-zinc-500">The scope this token has access to</p>
 							</div>
 						</form>
 
@@ -182,12 +178,14 @@ export function TokenManager() {
 									resetForm();
 								}}
 								disabled={submitStatus === "loading"}
+								className="border-zinc-600/50 bg-zinc-700/50 text-zinc-300 hover:border-zinc-500/50 hover:bg-zinc-700/70"
 							>
 								Cancel
 							</Button>
 							<Button
 								type="submit"
 								disabled={submitStatus === "loading" || (!editingToken && !getFieldState("id"))}
+								className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
 							>
 								{submitStatus === "loading" ? "Saving..." : editingToken ? "Update" : "Add Token"}
 							</Button>
@@ -319,7 +317,7 @@ export function TokenManager() {
 															</AlertDialogCancel>
 															<AlertDialogAction
 																onClick={() => handleDelete(token.id)}
-																className="bg-red-600 hover:bg-red-700"
+																className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
 															>
 																Delete
 															</AlertDialogAction>

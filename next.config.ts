@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
 	experimental: {
 		optimizePackageImports: ["lucide-react", "react-icons", "@radix-ui/react-icons", "animejs", "date-fns"],
 		optimizeCss: true,
+		viewTransition: true,
 	},
 	// Nginx will do gzip compression. We disable
 	// compression here so we can prevent buffering

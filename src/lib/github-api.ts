@@ -1,4 +1,4 @@
-import { MultipleRepositoriesResponse } from "@/typings/github";
+import { MultipleRepositoriesResponse } from "@/types/github";
 import { githubCache, generateCacheKey, CACHE_CONFIGS } from "./github-cache";
 import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 
