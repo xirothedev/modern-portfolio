@@ -1,7 +1,5 @@
 "use client";
 
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -14,82 +12,25 @@ import {
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-import { Roles } from "@/types/globals";
-import { User, UserJSON } from "@clerk/nextjs/server";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { MoreHorizontal, Shield, ShieldCheck, ShieldX, UserCog } from "lucide-react";
-import { removeRole, setRole } from "../actions";
 import { useRouter } from "next/navigation";
 
-interface UserData extends Partial<User> {
-	id: string;
-	publicMetadata: UserPublicMetadata;
-	avatar: string;
-	emailAddress: string;
-	username: string;
-	createdAt: number;
-	raw: UserJSON | null;
+interface RepositoryManagerData {
+	name: string;
+	slug: string;
+	createdAt: Date;
 }
 
-const getRoleColor = (role: Roles) => {
-	switch (role) {
-		case "admin":
-			return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
-		case "moderator":
-			return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-		// case "user":
-		// return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-		default:
-			return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
-	}
-};
-
-export const columns: ColumnDef<UserData>[] = [
+export const columns: ColumnDef<RepositoryManagerData>[] = [
 	{
-		accessorKey: "user",
-		header: "User",
-		cell: ({ row }) => {
-			const user = row.original;
-
-			return (
-				<div className="flex items-center space-x-3">
-					<Avatar className="h-8 w-8">
-						<AvatarImage src={user.avatar || "/placeholder.svg"} alt={row.getValue("username")} />
-					</Avatar>
-					<div>
-						<div className="font-medium">{row.getValue("username")}</div>
-						<div className="text-muted-foreground text-sm">{user.emailAddress}</div>
-					</div>
-				</div>
-			);
-		},
+		accessorKey: "name",
+		header: "Name",
 	},
 	{
-		accessorKey: "id",
-		header: "Id",
-	},
-	{
-		accessorKey: "emailAddress",
-		header: () => null,
-		cell: () => null,
-		enableSorting: false,
-		enableHiding: true,
-	},
-	{
-		accessorKey: "role",
-		header: "Role",
-		cell: ({ row }) => {
-			const user = row.original;
-			const role = user.publicMetadata.role as Roles;
-
-			return <Badge className={cn(getRoleColor(role), "capitalize")}>{role ?? "User"}</Badge>;
-		},
-	},
-	{
-		accessorKey: "username",
-		header: "Username",
+		accessorKey: "slug",
+		header: "Slug",
 	},
 	{
 		accessorKey: "createdAt",
@@ -103,8 +44,8 @@ export const columns: ColumnDef<UserData>[] = [
 	{
 		id: "actions",
 		header: () => <div className="text-right">Actions</div>,
-		cell: ({ row }) => {
-			const user = row.original;
+		cell: () => {
+			// const user = row.original;
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const router = useRouter();
 
@@ -129,7 +70,7 @@ export const columns: ColumnDef<UserData>[] = [
 									<DropdownMenuItem
 										className="cursor-pointer"
 										onClick={async () => {
-											await setRole({ userId: user.id, role: "admin" });
+											// await setRole({ userId: user.id, role: "admin" });
 											router.refresh();
 										}}
 									>
@@ -139,7 +80,7 @@ export const columns: ColumnDef<UserData>[] = [
 									<DropdownMenuItem
 										className="cursor-pointer"
 										onClick={async () => {
-											await setRole({ userId: user.id, role: "moderator" });
+											// await setRole({ userId: user.id, role: "moderator" });
 											router.refresh();
 										}}
 									>
@@ -150,7 +91,7 @@ export const columns: ColumnDef<UserData>[] = [
 									<DropdownMenuItem
 										className="cursor-pointer"
 										onClick={async () => {
-											await removeRole({ userId: user.id });
+											// await removeRole({ userId: user.id });
 											router.refresh();
 										}}
 									>
@@ -162,12 +103,12 @@ export const columns: ColumnDef<UserData>[] = [
 							<DropdownMenuSeparator />
 							<DropdownMenuItem
 								className="cursor-pointer"
-								onClick={() => navigator.clipboard.writeText(user.id)}
+								// onClick={() => navigator.clipboard.writeText(user.id)}
 							>
 								Copy user ID
 							</DropdownMenuItem>
 							<DropdownMenuItem
-								onClick={() => navigator.clipboard.writeText(JSON.stringify(user.raw, null, 2))}
+								// onClick={() => navigator.clipboard.writeText(JSON.stringify(user.raw, null, 2))}
 								className="cursor-pointer"
 							>
 								Copy user json

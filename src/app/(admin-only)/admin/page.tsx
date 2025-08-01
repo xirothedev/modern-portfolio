@@ -2,26 +2,35 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { columns } from "./components/columns";
 import { UserDataTable } from "./components/user-table";
 import { UserStats } from "./components/user-stats";
+import { Settings } from "lucide-react";
 
 export default async function AdminDashboard() {
 	const client = await clerkClient();
 	const rawUsers = await client.users.getUserList();
-	console.log(rawUsers.data[0].imageUrl);
 	const users = rawUsers.data.map((user) => ({
 		id: user.id,
 		publicMetadata: user.publicMetadata,
 		avatar: user.imageUrl,
 		emailAddress: user.primaryEmailAddress?.emailAddress ?? "No email provided",
 		username: user.username ?? "-",
-		createAt: user.createdAt,
+		createdAt: user.createdAt,
 		raw: user.raw,
 	}));
 
 	return (
-		<div className="container mx-auto px-4 py-8">
+		<div className="container mx-auto max-w-7xl px-4 py-8">
+			{/* Header */}
 			<div className="mb-8">
-				<h1 className="mb-2 text-3xl font-bold text-white">Admin Dashboard</h1>
-				<p className="text-zinc-400">Manage users</p>
+				<div className="mb-4 flex items-center gap-3">
+					<div className="relative rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-3 shadow-lg">
+						<span className="pointer-events-none absolute inset-0 animate-pulse rounded-lg bg-gradient-to-br from-purple-500/10 to-pink-500/10" />
+						<Settings className="relative z-10 h-7 w-7 animate-spin text-purple-300 drop-shadow-lg transition-all" />
+					</div>
+					<div>
+						<h1 className="text-3xl font-bold text-white">Content manager system</h1>
+						<p className="mt-1 text-gray-400">Manage users data</p>
+					</div>
+				</div>
 			</div>
 
 			<UserStats />

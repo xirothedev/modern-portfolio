@@ -1,60 +1,34 @@
-"use client";
-
 import { Database, Key, TrendingUp, Users } from "lucide-react";
-import { useEffect, useState } from "react";
-import { getCMSStats, type CMSStats } from "../actions";
+import { getCMSStats } from "../actions";
 
-export function CMSStatsComponent() {
-	const [stats, setStats] = useState<CMSStats | null>(null);
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		loadStats();
-	}, []);
-
-	async function loadStats() {
-		try {
-			setLoading(true);
-			const result = await getCMSStats();
-			if (result.success && result.stats) {
-				setStats(result.stats);
-			}
-		} catch (error) {
-			console.error("Failed to load stats:", error);
-		} finally {
-			setLoading(false);
-		}
-	}
-
-	if (loading || !stats) {
-		return null;
-	}
+export async function CMSStatsComponent() {
+	const { stats } = await getCMSStats();
 
 	const statCards = [
 		{
 			title: "Total Repositories",
-			value: stats.totalRepositories,
+			value: stats?.totalRepositories,
 			icon: Database,
 			color: "text-purple-400",
 			bgColor: "bg-purple-500/20",
 		},
 		{
 			title: "Active Tokens",
-			value: stats.activeTokens,
+			value: stats?.activeTokens,
 			icon: Key,
 			color: "text-pink-400",
 			bgColor: "bg-pink-500/20",
 		},
 		{
 			title: "Pending Requests",
-			value: stats.pendingRequests,
+			value: stats?.pendingRequests,
 			icon: Users,
 			color: "text-blue-400",
 			bgColor: "bg-blue-500/20",
 		},
 		{
 			title: "This Month",
-			value: stats.requestsThisMonth,
+			value: stats?.requestsThisMonth,
 			icon: TrendingUp,
 			color: "text-green-400",
 			bgColor: "bg-green-500/20",
