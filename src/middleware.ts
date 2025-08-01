@@ -2,6 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 const isOnboardingRoute = createRouteMatcher(["/onboarding"]);
+const isAdminRoute = createRouteMatcher(["/admin(.*)", "/cms(.*)"]);
 const isPublicRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)", "/", "/api(.*)", "/repository(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -15,9 +16,21 @@ export default clerkMiddleware(async (auth, req) => {
 	// If the user isn't signed in and the route is private, redirect to sign-in
 	if (!userId && !isPublicRoute(req)) return redirectToSignIn({ returnBackUrl: req.url });
 
+	// Protect admin routes - only users with admin role can access
+	if (isAdminRoute(req)) {
+		if (!userId) {
+			return redirectToSignIn({ returnBackUrl: req.url });
+		}
+
+		if (sessionClaims?.metadata?.role !== "admin") {
+			const homeUrl = new URL("/", req.url);
+			return NextResponse.redirect(homeUrl);
+		}
+	}
+
 	// Catch users who do not have `onboardingComplete: true` in their publicMetadata
 	// Redirect them to the /onboarding route to complete onboarding
-	if (userId && !sessionClaims?.metadata?.onboardingComplete) {
+	if (userId && !sessionClaims?.metadata?.onboardingComplete && !isAdminRoute(req)) {
 		const onboardingUrl = new URL("/onboarding", req.url);
 		return NextResponse.redirect(onboardingUrl);
 	}
