@@ -5,14 +5,7 @@ import { RepositoryManagerTable } from "./repository-manager-table";
 export async function RepositoryManager() {
 	const results = await getProjects();
 
-	const data =
-		results.data?.map(({ project }) => ({
-			id: project.id,
-			name: project.repoName,
-			slug: project.slug,
-			createdAt: project.createdAt,
-			updateAt: project.updateAt,
-		})) ?? [];
+	const data = results.data?.map(({ project }) => project) ?? [];
 
 	return (
 		<div className="space-y-4">

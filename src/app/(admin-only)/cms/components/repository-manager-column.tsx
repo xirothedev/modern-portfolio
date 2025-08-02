@@ -14,19 +14,12 @@ import { format } from "date-fns";
 import { MoreHorizontal } from "lucide-react";
 import { useContext } from "react";
 import { RepositoryManagerDialogContext } from "./repository-manager-table";
+import { Project } from "generated/prisma";
 
-interface RepositoryManagerData {
-	id: string;
-	name: string;
-	slug: string;
-	createdAt: Date;
-	updateAt: Date;
-}
-
-export const columns: ColumnDef<RepositoryManagerData>[] = [
+export const columns: ColumnDef<Project>[] = [
 	{
-		accessorKey: "name",
-		header: "Name",
+		accessorKey: "repoName",
+		header: "Repository name",
 	},
 	{
 		accessorKey: "slug",
@@ -73,7 +66,7 @@ export const columns: ColumnDef<RepositoryManagerData>[] = [
 								className="cursor-pointer"
 								onClick={() => {
 									setValue("id", project.id);
-									setValue("name", project.name);
+									setValue("repoName", project.repoName);
 									setValue("slug", project.slug);
 									setIsEdit(true);
 									setIsDialogOpen(true);

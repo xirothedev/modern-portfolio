@@ -5,7 +5,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
-const Root = ({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) => {
+const Root = ({ className, ref, rootRef, ...props }: React.ComponentPropsWithRef<"div"> & { rootRef?: any }) => {
 	return <div data-slot="calendar" ref={ref} className={cn(className)} {...props} />;
 };
 
@@ -84,10 +84,13 @@ function Calendar({
 					defaultClassNames.dropdowns,
 				),
 				dropdown_root: cn(
-					"relative has-focus:border-ring border border-input shadow-xs has-focus:ring-ring/50 has-focus:ring-[3px] rounded-md",
+					"relative has-focus:border-ring border border-input shadow-xs has-focus:ring-ring/50 has-focus:ring-[3px] rounded-md [&_select]:text-foreground [&_select]:bg-background",
 					defaultClassNames.dropdown_root,
 				),
-				dropdown: cn("absolute inset-0 opacity-0", defaultClassNames.dropdown),
+				dropdown: cn(
+					"absolute inset-0 opacity-0 bg-background border border-border rounded-md shadow-lg z-50 [&_option]:text-foreground [&_option]:bg-background [&_option]:hover:bg-accent [&_option]:hover:text-accent-foreground",
+					defaultClassNames.dropdown,
+				),
 				caption_label: cn(
 					"select-none font-medium",
 					captionLayout === "label"

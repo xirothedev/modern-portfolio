@@ -1,18 +1,14 @@
 "use server";
 
 import { Roles } from "@/types/globals";
-import { checkRole } from "@/utils/roles";
+import { requireAdmin } from "@/utils/admin-protection";
 import { clerkClient } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 export async function setRole(data: { userId: string; role: Roles }) {
-	const client = await clerkClient();
+	await requireAdmin();
 
-	// Check that the user trying to set the role is an admin
-	const isAdmin = await checkRole("admin");
-	if (!isAdmin) {
-		return { success: false, message: "Not Authorized" };
-	}
+	const client = await clerkClient();
 
 	try {
 		const res = await client.users.updateUserMetadata(data.userId, {
@@ -28,13 +24,9 @@ export async function setRole(data: { userId: string; role: Roles }) {
 }
 
 export async function removeRole(data: { userId: string }) {
-	const client = await clerkClient();
+	await requireAdmin();
 
-	// Check that the user trying to remove the role is an admin
-	const isAdmin = await checkRole("admin");
-	if (!isAdmin) {
-		return { success: false, message: "Not Authorized" };
-	}
+	const client = await clerkClient();
 
 	try {
 		const res = await client.users.updateUserMetadata(data.userId, {
@@ -50,13 +42,9 @@ export async function removeRole(data: { userId: string }) {
 }
 
 export async function deleteUser(formData: FormData) {
-	const client = await clerkClient();
+	await requireAdmin();
 
-	// Check that the user trying to delete is an admin
-	const isAdmin = await checkRole("admin");
-	if (!isAdmin) {
-		return { success: false, message: "Not Authorized" };
-	}
+	const client = await clerkClient();
 
 	try {
 		const userId = formData.get("id") as string;
@@ -76,13 +64,9 @@ export async function deleteUser(formData: FormData) {
 }
 
 export async function userStats() {
-	const client = await clerkClient();
+	await requireAdmin();
 
-	// Check that the user trying to delete is an admin
-	const isAdmin = await checkRole("admin");
-	if (!isAdmin) {
-		return { success: false, message: "Not Authorized" };
-	}
+	const client = await clerkClient();
 
 	try {
 		const users = await client.users.getUserList();

@@ -1,7 +1,9 @@
 "use server";
 import { prisma } from "@/lib/db";
 import { createGitHubAPI, GitHubRepositoryError } from "@/lib/github-api";
-import { Project, Token } from "generated/prisma";
+import { Project, Token, RepoScope } from "generated/prisma";
+import { requireAdmin } from "@/utils/admin-protection";
+import { DEFAULT_EXPIRE_TIME } from "./components/token-manager-table";
 
 export interface CMSStats {
 	totalRepositories: number;
@@ -11,6 +13,8 @@ export interface CMSStats {
 }
 
 export async function getProjects() {
+	await requireAdmin();
+
 	const projects = await prisma.project.findMany({ orderBy: { updateAt: "desc" } });
 	const githubAPI = createGitHubAPI();
 
@@ -41,6 +45,8 @@ export async function getProjects() {
 export async function addProject(
 	data: Omit<Project, "id" | "createdAt" | "updateAt">,
 ): Promise<{ success: boolean; project?: Project; message?: string }> {
+	await requireAdmin();
+
 	try {
 		// Input validation
 		if (!data.repoName || !data.slug) {
@@ -193,6 +199,8 @@ export async function updateProject(
 	id: string,
 	data: Partial<Omit<Project, "id" | "createdAt">>,
 ): Promise<{ success: boolean; project?: Project; message?: string }> {
+	await requireAdmin();
+
 	try {
 		// Input validation
 		if (!id) {
@@ -372,6 +380,8 @@ export async function updateProject(
 }
 
 export async function deleteProject(id: string): Promise<{ success: boolean; message?: string }> {
+	await requireAdmin();
+
 	const project = await prisma.project.findUnique({ where: { id } });
 	if (!project) {
 		return { success: false, message: "Project not found" };
@@ -381,50 +391,202 @@ export async function deleteProject(id: string): Promise<{ success: boolean; mes
 }
 
 export async function getTokens(): Promise<{ success: boolean; tokens?: Token[] }> {
+	await requireAdmin();
+
 	const tokens = await prisma.token.findMany();
 	return { success: true, tokens };
 }
 
-export async function addToken(
-	data: Omit<Token, "id" | "createdAt">,
-): Promise<{ success: boolean; token?: Token; message?: string }> {
-	if (!data.projectId || !data.expireAt) {
-		return { success: false, message: "projectId and expireAt are required" };
+export async function getProjectsForSelect(): Promise<{
+	success: boolean;
+	projects?: { id: string; slug: string; repoName: string }[];
+}> {
+	await requireAdmin();
+
+	try {
+		const projects = await prisma.project.findMany({
+			select: {
+				id: true,
+				slug: true,
+				repoName: true,
+			},
+			orderBy: { slug: "asc" },
+		});
+		return { success: true, projects };
+	} catch (error) {
+		console.error("❌ Error fetching projects for select:", error);
+		return { success: false, projects: [] };
 	}
-	const token = await prisma.token.create({
-		data: {
-			...data,
-			createdAt: new Date(),
-		},
-	});
-	return { success: true, token };
+}
+
+export async function addToken(data: {
+	scope: RepoScope;
+	expireAt: Date;
+	projectId: string;
+}): Promise<{ success: boolean; token?: Token; message?: string }> {
+	await requireAdmin();
+
+	try {
+		// Input validation
+		if (!data.scope) {
+			return { success: false, message: "Scope is required" };
+		}
+
+		if (!data.projectId) {
+			return { success: false, message: "Project ID is required" };
+		}
+
+		const token = await prisma.token.create({
+			data: {
+				scope: data.scope,
+				expireAt: data.expireAt || new Date(Date.now() + DEFAULT_EXPIRE_TIME),
+				projectId: data.projectId,
+			},
+		});
+
+		console.log(`✅ Successfully created token with scope: ${data.scope}`);
+
+		return {
+			success: true,
+			token,
+			message: `Token created successfully!`,
+		};
+	} catch (error: any) {
+		// Handle database errors
+		if (error.code === "P2002") {
+			// Prisma unique constraint violation
+			return {
+				success: false,
+				message: "A token with this ID already exists",
+			};
+		}
+
+		// Log unexpected errors
+		console.error("❌ Unexpected error in addToken:", {
+			error,
+			data,
+			timestamp: new Date().toISOString(),
+		});
+
+		return {
+			success: false,
+			message: "An unexpected error occurred. Please try again.",
+		};
+	}
 }
 
 export async function updateToken(
 	id: string,
-	data: Partial<Token>,
+	data: Partial<{
+		scope: RepoScope;
+		expireAt: Date | null;
+	}>,
 ): Promise<{ success: boolean; token?: Token; message?: string }> {
-	const token = await prisma.token.findUnique({ where: { id } });
-	if (!token) {
-		return { success: false, message: "Token not found" };
+	await requireAdmin();
+
+	try {
+		// Input validation
+		if (!id) {
+			return { success: false, message: "Token ID is required" };
+		}
+
+		// Check if token exists
+		const existingToken = await prisma.token.findUnique({ where: { id } });
+		if (!existingToken) {
+			return { success: false, message: "Token not found" };
+		}
+
+		// Filter out undefined values and fields that shouldn't be updated
+		const filteredData = Object.fromEntries(
+			Object.entries(data).filter(
+				([key, value]) =>
+					value !== undefined &&
+					!["id", "createdAt", "isRevoked", "isUsed", "usedAt", "usedBy"].includes(key),
+			),
+		);
+
+		// Update token
+		const updatedToken = await prisma.token.update({
+			where: { id },
+			data: filteredData,
+		});
+
+		console.log(`✅ Successfully updated token: ${id}`);
+
+		return {
+			success: true,
+			token: updatedToken,
+			message: `Token updated successfully!`,
+		};
+	} catch (error: any) {
+		if (error.code === "P2025") {
+			// Prisma record not found
+			return {
+				success: false,
+				message: "Token not found",
+			};
+		}
+
+		// Log unexpected errors
+		console.error("❌ Unexpected error in updateToken:", {
+			error,
+			tokenId: id,
+			updateData: data,
+			timestamp: new Date().toISOString(),
+		});
+
+		return {
+			success: false,
+			message: "An unexpected error occurred while updating the token. Please try again.",
+		};
 	}
-	const updated = await prisma.token.update({
-		where: { id },
-		data,
-	});
-	return { success: true, token: updated };
 }
 
 export async function deleteToken(id: string): Promise<{ success: boolean; message?: string }> {
-	const token = await prisma.token.findUnique({ where: { id } });
-	if (!token) {
-		return { success: false, message: "Token not found" };
+	await requireAdmin();
+
+	try {
+		// Check if token exists
+		const token = await prisma.token.findUnique({ where: { id } });
+		if (!token) {
+			return { success: false, message: "Token not found" };
+		}
+
+		// Delete token
+		await prisma.token.delete({ where: { id } });
+
+		console.log(`✅ Successfully deleted token: ${id}`);
+
+		return {
+			success: true,
+			message: "Token deleted successfully",
+		};
+	} catch (error: any) {
+		if (error.code === "P2025") {
+			// Prisma record not found
+			return {
+				success: false,
+				message: "Token not found",
+			};
+		}
+
+		// Log unexpected errors
+		console.error("❌ Unexpected error in deleteToken:", {
+			error,
+			tokenId: id,
+			timestamp: new Date().toISOString(),
+		});
+
+		return {
+			success: false,
+			message: "An unexpected error occurred while deleting the token. Please try again.",
+		};
 	}
-	await prisma.token.delete({ where: { id } });
-	return { success: true };
 }
 
 export async function getCMSStats(): Promise<{ success: boolean; stats?: CMSStats }> {
+	await requireAdmin();
+
 	const totalRepositories = await prisma.project.count();
 	const activeTokens = await prisma.token.count({ where: { isRevoked: false } });
 	const stats: CMSStats = {

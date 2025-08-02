@@ -48,7 +48,7 @@ interface DataTableProps<TData, TValue> {
 
 const projectSchema = z.object({
 	id: z.string().optional(),
-	name: zodRepoName,
+	repoName: zodRepoName,
 	slug: zodSlug,
 });
 
@@ -83,7 +83,7 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 	} = useForm<ProjectForm>({
 		resolver: zodResolver(projectSchema),
 		defaultValues: {
-			name: "",
+			repoName: "",
 			slug: "",
 		},
 	});
@@ -111,9 +111,9 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 				if (!data.id) {
 					throw new Error("Project id is not provided");
 				}
-				await updateProject(data.id, { repoName: data.name, slug: data.slug });
+				await updateProject(data.id, { repoName: data.repoName, slug: data.slug });
 			} else {
-				await addProject({ repoName: data.name, slug: data.slug });
+				await addProject({ repoName: data.repoName, slug: data.slug });
 			}
 			setIsDialogOpen(false);
 			router.refresh();
@@ -129,8 +129,8 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 				<div className="flex items-center py-4">
 					<Input
 						placeholder="Filter name..."
-						value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-						onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
+						value={(table.getColumn("repoName")?.getFilterValue() as string) ?? ""}
+						onChange={(event) => table.getColumn("repoName")?.setFilterValue(event.target.value)}
 						className="max-w-sm"
 					/>
 					<div className="ml-auto">
@@ -156,17 +156,17 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 									</DialogHeader>
 									<div className="grid gap-4">
 										<div className="grid gap-3">
-											<Label htmlFor="project-name">Name</Label>
+											<Label htmlFor="project-name">Repository name (owner/repoName)</Label>
 											<Input
-												id="project-name"
+												id="project-repoName"
 												placeholder="xirothedev/modern-portfolio"
-												{...register("name")}
-												aria-invalid={!!errors.name}
-												aria-describedby={errors.name ? "name-error" : undefined}
+												{...register("repoName")}
+												aria-invalid={!!errors.repoName}
+												aria-describedby={errors.repoName ? "repoName-error" : undefined}
 											/>
-											{errors.name && (
-												<p id="name-error" className="text-sm text-red-500">
-													{errors.name.message}
+											{errors.repoName && (
+												<p id="repoName-error" className="text-sm text-red-500">
+													{errors.repoName.message}
 												</p>
 											)}
 										</div>
