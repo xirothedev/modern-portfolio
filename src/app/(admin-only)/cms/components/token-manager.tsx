@@ -102,20 +102,15 @@ export function TokenManager() {
 			<div className="flex items-center justify-end">
 				<Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
 					<DialogTrigger asChild>
-						<Button
-							onClick={resetForm}
-							className="flex items-center gap-2 border-0 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
-						>
+						<Button onClick={resetForm} variant="primary" className="flex items-center gap-2">
 							<Plus className="h-4 w-4" />
 							Add Token
 						</Button>
 					</DialogTrigger>
-					<DialogContent className="border-zinc-700/50 bg-zinc-800/50 backdrop-blur-sm sm:max-w-[500px]">
+					<DialogContent>
 						<DialogHeader>
-							<DialogTitle className="text-white">
-								{editingToken ? "Edit Token" : "Add New Token"}
-							</DialogTitle>
-							<DialogDescription className="text-zinc-400">
+							<DialogTitle>{editingToken ? "Edit Token" : "Add New Token"}</DialogTitle>
+							<DialogDescription>
 								{editingToken
 									? "Update token settings and configuration."
 									: "Add a new token for API authentication."}
@@ -125,9 +120,7 @@ export function TokenManager() {
 						<form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
 							{!editingToken && (
 								<div className="space-y-2">
-									<Label htmlFor="tokenId" className="text-zinc-200">
-										Token Value *
-									</Label>
+									<Label htmlFor="tokenId">Token Value *</Label>
 									<Input
 										id="tokenId"
 										type="password"

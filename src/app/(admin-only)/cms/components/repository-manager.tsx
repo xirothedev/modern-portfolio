@@ -6,6 +6,7 @@ export async function RepositoryManager() {
 	const results = await getProjects();
 
 	const data = results.data.map(({ project }) => ({
+		id: project.id,
 		name: project.repoName,
 		slug: project.slug,
 		createdAt: project.createdAt,

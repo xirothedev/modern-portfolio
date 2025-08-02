@@ -79,7 +79,7 @@ export default function Portfolio() {
 							I craft exceptional digital experiences with code, creativity, and a passion for innovation.
 						</p>
 						<div className="flex flex-wrap gap-4 pt-4">
-							<Button className="group relative overflow-hidden border-0 bg-linear-to-r from-purple-500 to-pink-500">
+							<Button variant="primary" className="group relative overflow-hidden">
 								<span className="relative z-10 flex items-center">
 									View Projects{" "}
 									<ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />

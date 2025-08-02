@@ -62,10 +62,7 @@ export function UserDataTable<TData, TValue>({ columns, data }: DataTableProps<T
 				/>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button
-							className="ml-auto border-zinc-700 bg-zinc-800/50 text-zinc-100 transition-colors hover:bg-zinc-700/50 hover:text-white"
-							variant="outline"
-						>
+						<Button className="ml-auto" variant="outline">
 							Columns <ChevronDown />
 						</Button>
 					</DropdownMenuTrigger>
@@ -149,17 +146,10 @@ export function UserDataTable<TData, TValue>({ columns, data }: DataTableProps<T
 					size="sm"
 					onClick={() => table.previousPage()}
 					disabled={!table.getCanPreviousPage()}
-					className="border-zinc-700 bg-zinc-800/50 text-zinc-100 transition-colors hover:bg-zinc-700/50 hover:text-white"
 				>
 					Previous
 				</Button>
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.nextPage()}
-					disabled={!table.getCanNextPage()}
-					className="border-zinc-700 bg-zinc-800/50 text-zinc-100 transition-colors hover:bg-zinc-700/50 hover:text-white"
-				>
+				<Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
 					Next
 				</Button>
 			</div>

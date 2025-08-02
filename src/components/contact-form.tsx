@@ -72,11 +72,7 @@ export function ContactForm() {
 								className="border-zinc-700 bg-zinc-900/50 focus:border-purple-500 focus:ring-purple-500/20"
 							/>
 						</div>
-						<Button
-							type="submit"
-							className="w-full border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
-							disabled={isSubmitting}
-						>
+						<Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
 							{isSubmitting ? (
 								<>Sending...</>
 							) : (

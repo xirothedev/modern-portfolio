@@ -7,17 +7,16 @@ import {
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { MoreHorizontal, Shield, ShieldCheck, ShieldX, UserCog } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { MoreHorizontal } from "lucide-react";
+import { useContext } from "react";
+import { RepositoryManagerDialogContext } from "./repository-manager-table";
 
 interface RepositoryManagerData {
+	id: string;
 	name: string;
 	slug: string;
 	createdAt: Date;
@@ -44,10 +43,10 @@ export const columns: ColumnDef<RepositoryManagerData>[] = [
 	{
 		id: "actions",
 		header: () => <div className="text-right">Actions</div>,
-		cell: () => {
-			// const user = row.original;
+		cell: ({ row }) => {
+			const project = row.original;
 			// eslint-disable-next-line react-hooks/rules-of-hooks
-			const router = useRouter();
+			const { setIsDialogOpen, setIsEdit, setValue } = useContext(RepositoryManagerDialogContext);
 
 			return (
 				<div className="flex justify-end">
@@ -60,58 +59,28 @@ export const columns: ColumnDef<RepositoryManagerData>[] = [
 						</DropdownMenuTrigger>
 						<DropdownMenuContent className="border-zinc-700 bg-zinc-900/95 text-white" align="end">
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuSub>
-								<DropdownMenuSubTrigger>
-									<UserCog className="mr-2 h-4 w-4" />
-									Manage Role
-								</DropdownMenuSubTrigger>
-								<DropdownMenuSubContent className="border-zinc-700 bg-zinc-900/95 text-white backdrop-blur-sm">
-									<DropdownMenuLabel>Change role</DropdownMenuLabel>
-									<DropdownMenuItem
-										className="cursor-pointer"
-										onClick={async () => {
-											// await setRole({ userId: user.id, role: "admin" });
-											router.refresh();
-										}}
-									>
-										<ShieldCheck className="mr-2 h-4 w-4 text-red-400" />
-										Set as Admin
-									</DropdownMenuItem>
-									<DropdownMenuItem
-										className="cursor-pointer"
-										onClick={async () => {
-											// await setRole({ userId: user.id, role: "moderator" });
-											router.refresh();
-										}}
-									>
-										<Shield className="mr-2 h-4 w-4 text-blue-400" />
-										Set as Moderator
-									</DropdownMenuItem>
-									<DropdownMenuSeparator className="bg-zinc-700" />
-									<DropdownMenuItem
-										className="cursor-pointer"
-										onClick={async () => {
-											// await removeRole({ userId: user.id });
-											router.refresh();
-										}}
-									>
-										<ShieldX className="mr-2 h-4 w-4 text-gray-400" />
-										Remove Role
-									</DropdownMenuItem>
-								</DropdownMenuSubContent>
-							</DropdownMenuSub>
+							<DropdownMenuItem
+								className="cursor-pointer"
+								onClick={() => {
+									setValue("id", project.id);
+									setValue("name", project.name);
+									setValue("slug", project.slug);
+									setIsEdit(true);
+									setIsDialogOpen(true);
+								}}
+							>
+								Update
+							</DropdownMenuItem>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem
 								className="cursor-pointer"
-								// onClick={() => navigator.clipboard.writeText(user.id)}
+								onClick={() =>
+									navigator.clipboard.writeText(
+										`${process.env.NEXT_PUBLIC_BASE_URL}/repository/${project.slug}`,
+									)
+								}
 							>
-								Copy user ID
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								// onClick={() => navigator.clipboard.writeText(JSON.stringify(user.raw, null, 2))}
-								className="cursor-pointer"
-							>
-								Copy user json
+								Copy link without token
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>

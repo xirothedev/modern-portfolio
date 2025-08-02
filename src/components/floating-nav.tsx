@@ -97,10 +97,7 @@ export function FloatingNav() {
 									target="_blank"
 									rel="noopener noreferrer"
 								>
-									<Button
-										size="sm"
-										className="rounded-full border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
-									>
+									<Button size="sm" variant="primary" className="rounded-full">
 										Resume
 									</Button>
 								</Link>
@@ -132,9 +129,7 @@ export function FloatingNav() {
 						))}
 						<div className="mt-6 flex flex-col items-center gap-4">
 							<Link href="/lethanhtrung-webdeveloper-cv.pdf" target="_blank" rel="noopener noreferrer">
-								<Button className="border-0 bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500">
-									Resume
-								</Button>
+								<Button variant="primary">Resume</Button>
 							</Link>
 						</div>
 					</div>
