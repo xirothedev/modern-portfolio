@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	ColumnDef,
@@ -37,11 +38,10 @@ import {
 } from "@tanstack/react-table";
 import { ChevronDown, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { createContext, Dispatch, SetStateAction, useState, useEffect } from "react";
+import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm, UseFormSetValue } from "react-hook-form";
 import { z } from "zod";
-import { addToken, deleteToken, updateToken, getProjectsForSelect } from "../actions";
-import type { RepoScope } from "generated/prisma";
+import { addToken, deleteToken, getProjectsForSelect, updateToken } from "../actions";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -78,9 +78,11 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 	const [isEdit, setIsEdit] = useState<boolean>(false);
+	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [projects, setProjects] = useState<{ id: string; slug: string; repoName: string }[]>([]);
 
 	const router = useRouter();
+	const { toast } = useToast();
 
 	// Fetch projects for select
 	useEffect(() => {
@@ -89,13 +91,24 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 				const result = await getProjectsForSelect();
 				if (result.success && result.projects) {
 					setProjects(result.projects);
+				} else {
+					toast({
+						title: "Error",
+						description: "Failed to load projects for token creation.",
+						variant: "destructive",
+					});
 				}
 			} catch (error) {
 				console.error("Failed to fetch projects:", error);
+				toast({
+					title: "Error",
+					description: "Failed to load projects. Please try again.",
+					variant: "destructive",
+				});
 			}
 		}
 		fetchProjects();
-	}, []);
+	}, [toast]);
 
 	const {
 		register,
@@ -130,13 +143,21 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 	});
 
 	const onSubmit = async (data: TokenForm) => {
+		setIsSubmitting(true);
+
 		try {
+			let result;
+
 			if (isEdit) {
 				if (!data.id) {
 					throw new Error("Token id is not provided");
 				}
 
-				await updateToken(data.id, { expireAt: data.expireAt, scope: data.scope });
+				result = await updateToken(data.id, {
+					expireAt: data.expireAt,
+					scope: data.scope,
+					projectId: data.projectId,
+				});
 			} else {
 				if (!data.projectId) {
 					throw new Error("Project is required for new tokens");
@@ -146,26 +167,64 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 					throw new Error("Expire time is required for new tokens");
 				}
 
-				await addToken({
+				result = await addToken({
 					projectId: data.projectId,
 					expireAt: data.expireAt,
 					scope: data.scope,
 				});
 			}
-			setIsDialogOpen(false);
-			router.refresh();
-			void reset();
+
+			if (result.success) {
+				toast({
+					title: isEdit ? "Token Updated" : "Token Created",
+					description: result.message || `${isEdit ? "Updated" : "Created"} token successfully!`,
+				});
+				setIsDialogOpen(false);
+				router.refresh();
+				void reset();
+			} else {
+				toast({
+					title: "Error",
+					description: result.message || "An error occurred while processing your request.",
+					variant: "destructive",
+				});
+			}
 		} catch (error) {
 			console.error("Error submitting form:", error);
+			toast({
+				title: "Unexpected Error",
+				description: "An unexpected error occurred. Please try again.",
+				variant: "destructive",
+			});
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
 	const handleDelete = async (id: string) => {
 		try {
-			await deleteToken(id);
-			router.refresh();
+			const result = await deleteToken(id);
+
+			if (result.success) {
+				toast({
+					title: "Token Deleted",
+					description: result.message || "Token deleted successfully.",
+				});
+				router.refresh();
+			} else {
+				toast({
+					title: "Error",
+					description: result.message || "Failed to delete token.",
+					variant: "destructive",
+				});
+			}
 		} catch (error) {
 			console.error("Error deleting token:", error);
+			toast({
+				title: "Unexpected Error",
+				description: "An unexpected error occurred while deleting the token.",
+				variant: "destructive",
+			});
 		}
 	};
 
@@ -213,6 +272,7 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 													{...register("id", { required: !isEdit })}
 													aria-invalid={!!errors.id}
 													aria-describedby={errors.id ? "id-error" : undefined}
+													disabled={isSubmitting}
 												/>
 												{errors.id && (
 													<p id="id-error" className="text-sm text-red-500">
@@ -231,6 +291,7 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 													onValueChange={(value) =>
 														setValue("scope", value as "PULL" | "PUSH" | "ADMIN")
 													}
+													disabled={isSubmitting}
 												>
 													<SelectTrigger
 														id="token-scope"
@@ -259,6 +320,7 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 												<Select
 													value={watch("projectId")}
 													onValueChange={(value) => setValue("projectId", value)}
+													disabled={isSubmitting}
 												>
 													<SelectTrigger
 														id="token-project"
@@ -273,7 +335,9 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 													<SelectContent className="border-zinc-700 bg-zinc-900/95 text-zinc-100">
 														{projects.map((project) => (
 															<SelectItem key={project.id} value={project.id}>
-																{project.slug} ({project.repoName})
+																<span className="block max-w-56 truncate">
+																	{project.slug} ({project.repoName})
+																</span>
 															</SelectItem>
 														))}
 													</SelectContent>
@@ -293,7 +357,7 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 												onSelect={(date) => setValue("expireAt", date || undefined)}
 												className="w-full rounded-md border border-zinc-700/50 bg-zinc-800/50 text-zinc-200 shadow-sm"
 												captionLayout="dropdown"
-												disabled={(date) => date < new Date()}
+												disabled={(date) => date < new Date() || isSubmitting}
 											/>
 											{errors.expireAt && (
 												<p id="expire-error" className="text-sm text-red-500">
@@ -304,12 +368,12 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 									</div>
 									<DialogFooter className="mt-2">
 										<DialogClose asChild>
-											<Button type="button" variant="outline">
+											<Button type="button" variant="outline" disabled={isSubmitting}>
 												Cancel
 											</Button>
 										</DialogClose>
-										<Button type="submit" variant="primary">
-											{isEdit ? "Update" : "Add"} Token
+										<Button type="submit" variant="primary" disabled={isSubmitting}>
+											{isSubmitting ? "Processing..." : isEdit ? "Update" : "Add"} Token
 										</Button>
 									</DialogFooter>
 								</form>

@@ -1,8 +1,25 @@
 import { Database, Key, TrendingUp, Users } from "lucide-react";
 import { getCMSStats } from "../actions";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export async function CMSStatsComponent() {
-	const { stats } = await getCMSStats();
+	const results = await getCMSStats();
+
+	if (!results.success) {
+		return (
+			<div className="mb-8">
+				<Alert className="border-red-700 bg-red-900/80">
+					<AlertCircle className="h-4 w-4 text-white" />
+					<AlertDescription className="text-white">
+						<strong>Error:</strong> {results.message || "Failed to load statistics"}
+					</AlertDescription>
+				</Alert>
+			</div>
+		);
+	}
+
+	const { stats } = results;
 
 	const statCards = [
 		{

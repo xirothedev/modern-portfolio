@@ -1,6 +1,7 @@
 import Footer from "@/components/footer";
 import { MouseFollower } from "@/components/mouse-follower";
 import { ScrollProgress } from "@/components/scroll-progress";
+import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
@@ -106,6 +107,7 @@ export default function RootLayout({
 						{children}
 						<Footer />
 						<Analytics />
+						<Toaster />
 					</div>
 				</body>
 			</html>

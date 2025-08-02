@@ -5,6 +5,38 @@ import { Project, Token, RepoScope } from "generated/prisma";
 import { requireAdmin } from "@/utils/admin-protection";
 import { DEFAULT_EXPIRE_TIME } from "./components/token-manager-table";
 
+/*
+ * Error Handling Documentation:
+ *
+ * This file handles the following error cases:
+ *
+ * PROJECT OPERATIONS:
+ * - Repository not found on GitHub (404)
+ * - Repository access denied (403) - private repo or rate limit
+ * - GitHub authentication failed (401)
+ * - Repository is archived/disabled
+ * - Duplicate slug or repository name
+ * - Invalid repository name format
+ * - Project not found when updating/deleting
+ * - Cannot delete project with active tokens
+ *
+ * TOKEN OPERATIONS:
+ * - Project not found when creating token
+ * - Invalid expiration date (past date)
+ * - Token not found when updating/deleting
+ * - Duplicate token ID
+ * - Foreign key constraint violations
+ *
+ * DATABASE OPERATIONS:
+ * - Unique constraint violations (P2002)
+ * - Foreign key constraint violations (P2003)
+ * - Record not found (P2025)
+ * - Network/connection errors
+ * - Unexpected database errors
+ *
+ * All functions return { success: boolean, message?: string } for consistent error handling
+ */
+
 export interface CMSStats {
 	totalRepositories: number;
 	activeTokens: number;
@@ -15,29 +47,46 @@ export interface CMSStats {
 export async function getProjects() {
 	await requireAdmin();
 
-	const projects = await prisma.project.findMany({ orderBy: { updateAt: "desc" } });
-	const githubAPI = createGitHubAPI();
-
 	try {
-		const PROJECTS = await githubAPI.getMultipleRepositories(projects.map((project) => project.repoName));
+		const projects = await prisma.project.findMany({ orderBy: { updateAt: "desc" } });
+		const githubAPI = createGitHubAPI();
 
-		const data = projects.map((project) => {
-			const repository = PROJECTS.results.get(project.repoName) ?? null;
+		try {
+			const PROJECTS = await githubAPI.getMultipleRepositories(projects.map((project) => project.repoName));
+
+			const data = projects.map((project) => {
+				const repository = PROJECTS.results.get(project.repoName) ?? null;
+
+				return {
+					project,
+					repository,
+				};
+			});
 
 			return {
-				project,
-				repository,
+				success: true,
+				data,
 			};
-		});
+		} catch (error) {
+			console.error("❌ Error fetching GitHub repositories:", error);
 
-		return {
-			success: true,
-			data,
-		};
-	} catch {
+			// Return projects without GitHub data if GitHub API fails
+			const data = projects.map((project) => ({
+				project,
+				repository: null,
+			}));
+
+			return {
+				success: true,
+				data,
+				message: "Projects loaded but GitHub data unavailable. Some repository information may be missing.",
+			};
+		}
+	} catch (error) {
+		console.error("❌ Error fetching projects from database:", error);
 		return {
 			success: false,
-			message: "Repositories not found",
+			message: "Failed to load projects from database. Please try again.",
 		};
 	}
 }
@@ -253,8 +302,8 @@ export async function updateProject(
 			}
 		}
 
-		// Verify repository exists on GitHub if repoName is being updated
-		if (data.repoName && data.repoName !== existingProject.repoName) {
+		// Verify repository exists on GitHub if repoName is provided (always validate)
+		if (data.repoName) {
 			let repositoryData;
 			const githubAPI = createGitHubAPI();
 
@@ -382,19 +431,66 @@ export async function updateProject(
 export async function deleteProject(id: string): Promise<{ success: boolean; message?: string }> {
 	await requireAdmin();
 
-	const project = await prisma.project.findUnique({ where: { id } });
-	if (!project) {
-		return { success: false, message: "Project not found" };
+	try {
+		// Check if project exists
+		const project = await prisma.project.findUnique({
+			where: { id },
+			include: { allowTokens: true },
+		});
+
+		if (!project) {
+			return { success: false, message: "Project not found" };
+		}
+
+		// Check if project has active tokens
+		if (project.allowTokens && project.allowTokens.length > 0) {
+			const activeTokens = project.allowTokens.filter((token) => !token.isRevoked);
+			if (activeTokens.length > 0) {
+				return {
+					success: false,
+					message: `Cannot delete project "${project.slug}". It has ${activeTokens.length} active token(s). Please revoke all tokens first.`,
+				};
+			}
+		}
+
+		// Delete project (this will cascade delete related tokens)
+		await prisma.project.delete({ where: { id } });
+
+		console.log(`✅ Successfully deleted project: ${project.slug}`);
+
+		return {
+			success: true,
+			message: `Project "${project.slug}" deleted successfully!`,
+		};
+	} catch (error: any) {
+		console.error("❌ Error deleting project:", error);
+
+		if (error.code === "P2025") {
+			return { success: false, message: "Project not found" };
+		}
+
+		return {
+			success: false,
+			message: "An unexpected error occurred while deleting the project. Please try again.",
+		};
 	}
-	await prisma.project.delete({ where: { id } });
-	return { success: true };
 }
 
-export async function getTokens(): Promise<{ success: boolean; tokens?: Token[] }> {
+export async function getTokens(): Promise<{ success: boolean; tokens?: Token[]; message?: string }> {
 	await requireAdmin();
 
-	const tokens = await prisma.token.findMany();
-	return { success: true, tokens };
+	try {
+		const tokens = await prisma.token.findMany({
+			orderBy: { createdAt: "desc" },
+		});
+		return { success: true, tokens };
+	} catch (error) {
+		console.error("❌ Error fetching tokens:", error);
+		return {
+			success: false,
+			message: "Failed to load tokens from database. Please try again.",
+		};
+	}
 }
 
 export async function getProjectsForSelect(): Promise<{
@@ -436,6 +532,19 @@ export async function addToken(data: {
 			return { success: false, message: "Project ID is required" };
 		}
 
+		// Check if project exists
+		const project = await prisma.project.findUnique({
+			where: { id: data.projectId },
+		});
+		if (!project) {
+			return { success: false, message: "Project not found" };
+		}
+
+		// Validate expire date
+		if (data.expireAt && data.expireAt <= new Date()) {
+			return { success: false, message: "Expiration date must be in the future" };
+		}
+
 		const token = await prisma.token.create({
 			data: {
 				scope: data.scope,
@@ -461,6 +570,14 @@ export async function addToken(data: {
 			};
 		}
 
+		if (error.code === "P2003") {
+			// Foreign key constraint violation
+			return {
+				success: false,
+				message: "Invalid project ID provided",
+			};
+		}
+
 		// Log unexpected errors
 		console.error("❌ Unexpected error in addToken:", {
 			error,
@@ -478,6 +595,7 @@ export async function addToken(data: {
 export async function updateToken(
 	id: string,
 	data: Partial<{
+		projectId: string;
 		scope: RepoScope;
 		expireAt: Date | null;
 	}>,
@@ -490,10 +608,19 @@ export async function updateToken(
 			return { success: false, message: "Token ID is required" };
 		}
 
+		if (!data || Object.keys(data).length === 0) {
+			return { success: false, message: "No data provided for update" };
+		}
+
 		// Check if token exists
 		const existingToken = await prisma.token.findUnique({ where: { id } });
 		if (!existingToken) {
 			return { success: false, message: "Token not found" };
+		}
+
+		// Validate expire date if provided
+		if (data.expireAt && data.expireAt <= new Date()) {
+			return { success: false, message: "Expiration date must be in the future" };
 		}
 
 		// Filter out undefined values and fields that shouldn't be updated
@@ -519,6 +646,7 @@ export async function updateToken(
 			message: `Token updated successfully!`,
 		};
 	} catch (error: any) {
+		// Handle database errors
 		if (error.code === "P2025") {
 			// Prisma record not found
 			return {
@@ -537,7 +665,7 @@ export async function updateToken(
 
 		return {
 			success: false,
-			message: "An unexpected error occurred while updating the token. Please try again.",
+			message: "An unexpected error occurred. Please try again.",
 		};
 	}
 }
@@ -584,16 +712,28 @@ export async function deleteToken(id: string): Promise<{ success: boolean; messa
 	}
 }
 
-export async function getCMSStats(): Promise<{ success: boolean; stats?: CMSStats }> {
+export async function getCMSStats(): Promise<{ success: boolean; stats?: CMSStats; message?: string }> {
 	await requireAdmin();
 
-	const totalRepositories = await prisma.project.count();
-	const activeTokens = await prisma.token.count({ where: { isRevoked: false } });
-	const stats: CMSStats = {
-		totalRepositories,
-		activeTokens,
-		pendingRequests: 0,
-		requestsThisMonth: 0,
-	};
-	return { success: true, stats };
+	try {
+		const [totalRepositories, activeTokens] = await Promise.all([
+			prisma.project.count(),
+			prisma.token.count({ where: { isRevoked: false } }),
+		]);
+
+		const stats: CMSStats = {
+			totalRepositories,
+			activeTokens,
+			pendingRequests: 0,
+			requestsThisMonth: 0,
+		};
+
+		return { success: true, stats };
+	} catch (error) {
+		console.error("❌ Error fetching CMS stats:", error);
+		return {
+			success: false,
+			message: "Failed to load CMS statistics. Please try again.",
+		};
+	}
 }

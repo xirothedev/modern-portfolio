@@ -7,6 +7,19 @@ import { AlertCircle } from "lucide-react";
 export async function TokenManager() {
 	const results = await getTokens();
 
+	if (!results.success) {
+		return (
+			<div className="space-y-4">
+				<Alert className="border-red-700 bg-red-900/80">
+					<AlertCircle className="h-4 w-4 text-white" />
+					<AlertDescription className="text-white">
+						<strong>Error:</strong> {results.message || "Failed to load tokens"}
+					</AlertDescription>
+				</Alert>
+			</div>
+		);
+	}
+
 	const data =
 		results.success && results.tokens
 			? results.tokens.map((token) => ({

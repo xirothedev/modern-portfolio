@@ -11,10 +11,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { MoreHorizontal } from "lucide-react";
-import { useContext } from "react";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { useContext, useState } from "react";
 import { RepositoryManagerDialogContext } from "./repository-manager-table";
 import { Project } from "generated/prisma";
+import { deleteProject } from "../actions";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export const columns: ColumnDef<Project>[] = [
 	{
@@ -50,6 +53,48 @@ export const columns: ColumnDef<Project>[] = [
 			const project = row.original;
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const { setIsDialogOpen, setIsEdit, setValue } = useContext(RepositoryManagerDialogContext);
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const { toast } = useToast();
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const router = useRouter();
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const [isDeleting, setIsDeleting] = useState(false);
+
+			const handleDelete = async () => {
+				if (
+					!confirm(`Are you sure you want to delete project "${project.slug}"? This action cannot be undone.`)
+				) {
+					return;
+				}
+
+				setIsDeleting(true);
+				try {
+					const result = await deleteProject(project.id);
+
+					if (result.success) {
+						toast({
+							title: "Project Deleted",
+							description: `Project "${project.slug}" has been deleted successfully.`,
+						});
+						router.refresh();
+					} else {
+						toast({
+							title: "Error",
+							description: result.message || "Failed to delete project.",
+							variant: "destructive",
+						});
+					}
+				} catch (error) {
+					console.error("Error deleting project:", error);
+					toast({
+						title: "Unexpected Error",
+						description: "An unexpected error occurred while deleting the project.",
+						variant: "destructive",
+					});
+				} finally {
+					setIsDeleting(false);
+				}
+			};
 
 			return (
 				<div className="flex justify-end">
@@ -64,6 +109,17 @@ export const columns: ColumnDef<Project>[] = [
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
 							<DropdownMenuItem
 								className="cursor-pointer"
+								onClick={() =>
+									navigator.clipboard.writeText(
+										`${process.env.NEXT_PUBLIC_BASE_URL}/repository/${project.slug}`,
+									)
+								}
+							>
+								Copy link without token
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem
+								className="cursor-pointer"
 								onClick={() => {
 									setValue("id", project.id);
 									setValue("repoName", project.repoName);
@@ -72,18 +128,16 @@ export const columns: ColumnDef<Project>[] = [
 									setIsDialogOpen(true);
 								}}
 							>
-								Update
+								<Edit className="mr-2 h-4 w-4" />
+								Edit
 							</DropdownMenuItem>
-							<DropdownMenuSeparator />
 							<DropdownMenuItem
-								className="cursor-pointer"
-								onClick={() =>
-									navigator.clipboard.writeText(
-										`${process.env.NEXT_PUBLIC_BASE_URL}/repository/${project.slug}`,
-									)
-								}
+								className="cursor-pointer text-red-400 hover:text-red-300"
+								onClick={handleDelete}
+								disabled={isDeleting}
 							>
-								Copy link without token
+								<Trash2 className="mr-2 h-4 w-4" />
+								{isDeleting ? "Deleting..." : "Delete"}
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>

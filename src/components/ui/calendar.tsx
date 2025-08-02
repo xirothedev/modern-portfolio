@@ -5,7 +5,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
-const Root = ({ className, ref, rootRef, ...props }: React.ComponentPropsWithRef<"div"> & { rootRef?: any }) => {
+const Root = ({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) => {
 	return <div data-slot="calendar" ref={ref} className={cn(className)} {...props} />;
 };
 

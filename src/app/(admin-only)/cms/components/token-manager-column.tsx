@@ -7,15 +7,14 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
+import { Token } from "generated/prisma";
 import { Activity, Edit, MoreHorizontal, Trash2 } from "lucide-react";
 import { useContext } from "react";
 import { TokenManagerDialogContext } from "./token-manager-table";
-import { Token } from "generated/prisma";
 
 export const columns: ColumnDef<Token>[] = [
 	{
@@ -137,7 +136,6 @@ export const columns: ColumnDef<Token>[] = [
 								<Edit className="mr-2 h-4 w-4" />
 								Edit
 							</DropdownMenuItem>
-							<DropdownMenuSeparator />
 							<DropdownMenuItem
 								className="cursor-pointer text-red-500"
 								onClick={() => handleDelete(token.id)}

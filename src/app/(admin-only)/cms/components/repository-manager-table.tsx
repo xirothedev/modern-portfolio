@@ -40,6 +40,7 @@ import { useForm, UseFormSetValue } from "react-hook-form";
 import { z } from "zod";
 import { addProject, updateProject } from "../actions";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -71,8 +72,10 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 	const [isEdit, setIsEdit] = useState<boolean>(false);
+	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
 	const router = useRouter();
+	const { toast } = useToast();
 
 	const {
 		register,
@@ -106,20 +109,44 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 	});
 
 	const onSubmit = async (data: ProjectForm) => {
+		setIsSubmitting(true);
+
 		try {
+			let result;
+
 			if (isEdit) {
 				if (!data.id) {
 					throw new Error("Project id is not provided");
 				}
-				await updateProject(data.id, { repoName: data.repoName, slug: data.slug });
+				result = await updateProject(data.id, { repoName: data.repoName, slug: data.slug });
 			} else {
-				await addProject({ repoName: data.repoName, slug: data.slug });
+				result = await addProject({ repoName: data.repoName, slug: data.slug });
 			}
-			setIsDialogOpen(false);
-			router.refresh();
-			void reset();
+
+			if (result.success) {
+				toast({
+					title: isEdit ? "Project Updated" : "Project Created",
+					description: result.message || `${isEdit ? "Updated" : "Created"} project successfully!`,
+				});
+				setIsDialogOpen(false);
+				router.refresh();
+				void reset();
+			} else {
+				toast({
+					title: "Error",
+					description: result.message || "An error occurred while processing your request.",
+					variant: "destructive",
+				});
+			}
 		} catch (error) {
 			console.error("Error submitting form:", error);
+			toast({
+				title: "Unexpected Error",
+				description: "An unexpected error occurred. Please try again.",
+				variant: "destructive",
+			});
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
@@ -163,6 +190,7 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 												{...register("repoName")}
 												aria-invalid={!!errors.repoName}
 												aria-describedby={errors.repoName ? "repoName-error" : undefined}
+												disabled={isSubmitting}
 											/>
 											{errors.repoName && (
 												<p id="repoName-error" className="text-sm text-red-500">
@@ -178,6 +206,7 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 												{...register("slug")}
 												aria-invalid={!!errors.slug}
 												aria-describedby={errors.slug ? "slug-error" : undefined}
+												disabled={isSubmitting}
 											/>
 											{errors.slug && (
 												<p id="slug-error" className="text-sm text-red-500">
@@ -188,12 +217,12 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 									</div>
 									<DialogFooter className="mt-2">
 										<DialogClose asChild>
-											<Button type="button" variant="outline">
+											<Button type="button" variant="outline" disabled={isSubmitting}>
 												Cancel
 											</Button>
 										</DialogClose>
-										<Button type="submit" variant="primary">
-											{isEdit ? "Update" : "Create"}
+										<Button type="submit" variant="primary" disabled={isSubmitting}>
+											{isSubmitting ? "Processing..." : isEdit ? "Update" : "Create"}
 										</Button>
 									</DialogFooter>
 								</form>
