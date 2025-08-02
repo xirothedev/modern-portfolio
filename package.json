@@ -19,7 +19,7 @@
 	},
 	"scripts": {
 		"build": "next build",
-		"build:vercel": "NEXTJS_ENV=production next build",
+		"build:vercel": "prisma generate && NEXTJS_ENV=production next build",
 		"dev": "next dev --turbo",
 		"lint": "next lint",
 		"format": "prettier --write .",
