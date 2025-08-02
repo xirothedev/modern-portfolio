@@ -82,14 +82,14 @@ export async function GET() {
 		const projectPromises = PROJECTS.map(async (project) => {
 			try {
 				// Fetch repository data and languages in parallel
-				const [repoData, languages] = await Promise.all([
+				const [{ data }, languages] = await Promise.all([
 					githubAPI.getRepository(project.repoName),
 					githubAPI.getRepositoryLanguages(project.repoName),
 				]);
 
 				let tags: string[];
-				if (repoData.topics && repoData.topics.length > 0) {
-					const formattedTopics = formatGitHubTopics(repoData.topics);
+				if (data.topics && data.topics.length > 0) {
+					const formattedTopics = formatGitHubTopics(data.topics);
 					tags = sortTopicsByPriority(formattedTopics);
 				} else {
 					tags = project.fallbackTags;
@@ -98,14 +98,14 @@ export async function GET() {
 				return {
 					...project,
 					tags,
-					repoUrl: repoData.html_url,
-					stars: repoData.stargazers_count,
-					forks: repoData.forks_count,
-					language: repoData.language,
+					repoUrl: data.html_url,
+					stars: data.stargazers_count,
+					forks: data.forks_count,
+					language: data.language,
 					languages,
-					lastUpdated: repoData.updated_at,
-					demoUrl: project.demoUrl || repoData.homepage || undefined,
-					isFromGitHub: repoData.topics && repoData.topics.length > 0,
+					lastUpdated: data.updated_at,
+					demoUrl: project.demoUrl || data.homepage || undefined,
+					isFromGitHub: data.topics && data.topics.length > 0,
 				};
 			} catch (error) {
 				console.error(

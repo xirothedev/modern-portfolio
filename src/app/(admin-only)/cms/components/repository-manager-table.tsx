@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { zodSlug } from "@/lib/zod";
+import { zodRepoName, zodSlug } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	ColumnDef,
@@ -39,6 +39,7 @@ import { createContext, Dispatch, SetStateAction, useState } from "react";
 import { useForm, UseFormSetValue } from "react-hook-form";
 import { z } from "zod";
 import { addProject, updateProject } from "../actions";
+import { useRouter } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -47,7 +48,7 @@ interface DataTableProps<TData, TValue> {
 
 const projectSchema = z.object({
 	id: z.string().optional(),
-	name: zodSlug,
+	name: zodRepoName,
 	slug: zodSlug,
 });
 
@@ -70,6 +71,8 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 	const [isEdit, setIsEdit] = useState<boolean>(false);
+
+	const router = useRouter();
 
 	const {
 		register,
@@ -103,13 +106,20 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 	});
 
 	const onSubmit = async (data: ProjectForm) => {
-		if (isEdit) {
-			if (!data.id) {
-				throw new Error("Project id is not provided");
+		try {
+			if (isEdit) {
+				if (!data.id) {
+					throw new Error("Project id is not provided");
+				}
+				await updateProject(data.id, { repoName: data.name, slug: data.slug });
+			} else {
+				await addProject({ repoName: data.name, slug: data.slug });
 			}
-			updateProject(data.id, { repoName: data.name, slug: data.slug });
-		} else {
-			addProject({ repoName: data.name, slug: data.slug });
+			setIsDialogOpen(false);
+			router.refresh();
+			void reset();
+		} catch (error) {
+			console.error("Error submitting form:", error);
 		}
 	};
 
@@ -123,8 +133,8 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 						onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}
 						className="max-w-sm"
 					/>
-					<form className="ml-auto" onSubmit={handleSubmit(onSubmit)}>
-						<Dialog open={isDialogOpen} onOpenChange={() => setIsDialogOpen(!isDialogOpen)}>
+					<div className="ml-auto">
+						<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 							<DialogTrigger asChild>
 								<Button
 									onClick={() => {
@@ -137,53 +147,59 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 								</Button>
 							</DialogTrigger>
 							<DialogContent showCloseButton={false} className="sm:max-w-[425px]">
-								<DialogHeader>
-									<DialogTitle>{isEdit ? "Edit" : "Create"} project</DialogTitle>
-									<DialogDescription>{isEdit ? "Edit" : "Create"} a project record</DialogDescription>
-								</DialogHeader>
-								<div className="grid gap-4">
-									<div className="grid gap-3">
-										<Label htmlFor="project-name">Name</Label>
-										<Input
-											id="project-name"
-											placeholder="xirothedev/modern-portfolio"
-											{...register("name")}
-											aria-invalid={!!errors.name}
-											aria-describedby={errors.name ? "name-error" : undefined}
-										/>
-										{errors.name && (
-											<p id="name-error" className="text-sm text-red-500">
-												{errors.name.message}
-											</p>
-										)}
+								<form onSubmit={handleSubmit(onSubmit)}>
+									<DialogHeader>
+										<DialogTitle>{isEdit ? "Edit" : "Create"} project</DialogTitle>
+										<DialogDescription>
+											{isEdit ? "Edit" : "Create"} a project record
+										</DialogDescription>
+									</DialogHeader>
+									<div className="grid gap-4">
+										<div className="grid gap-3">
+											<Label htmlFor="project-name">Name</Label>
+											<Input
+												id="project-name"
+												placeholder="xirothedev/modern-portfolio"
+												{...register("name")}
+												aria-invalid={!!errors.name}
+												aria-describedby={errors.name ? "name-error" : undefined}
+											/>
+											{errors.name && (
+												<p id="name-error" className="text-sm text-red-500">
+													{errors.name.message}
+												</p>
+											)}
+										</div>
+										<div className="grid gap-3">
+											<Label htmlFor="project-slug">Slug</Label>
+											<Input
+												id="project-slug"
+												placeholder="abc-xyz"
+												{...register("slug")}
+												aria-invalid={!!errors.slug}
+												aria-describedby={errors.slug ? "slug-error" : undefined}
+											/>
+											{errors.slug && (
+												<p id="slug-error" className="text-sm text-red-500">
+													{errors.slug.message}
+												</p>
+											)}
+										</div>
 									</div>
-									<div className="grid gap-3">
-										<Label htmlFor="project-slug">Slug</Label>
-										<Input
-											id="project-slug"
-											placeholder="abc-xyz"
-											{...register("slug")}
-											aria-invalid={!!errors.slug}
-											aria-describedby={errors.slug ? "slug-error" : undefined}
-										/>
-										{errors.slug && (
-											<p id="slug-error" className="text-sm text-red-500">
-												{errors.slug.message}
-											</p>
-										)}
-									</div>
-								</div>
-								<DialogFooter>
-									<DialogClose asChild>
-										<Button variant="outline">Cancel</Button>
-									</DialogClose>
-									<Button type="submit" variant="primary">
-										{isEdit ? "Update" : "Create"}
-									</Button>
-								</DialogFooter>
+									<DialogFooter className="mt-2">
+										<DialogClose asChild>
+											<Button type="button" variant="outline">
+												Cancel
+											</Button>
+										</DialogClose>
+										<Button type="submit" variant="primary">
+											{isEdit ? "Update" : "Create"}
+										</Button>
+									</DialogFooter>
+								</form>
 							</DialogContent>
 						</Dialog>
-					</form>
+					</div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button className="ml-2" variant="outline">

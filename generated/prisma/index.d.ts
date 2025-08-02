@@ -1036,6 +1036,7 @@ export namespace Prisma {
     slug: string | null
     repoName: string | null
     createdAt: Date | null
+    updateAt: Date | null
   }
 
   export type ProjectMaxAggregateOutputType = {
@@ -1043,6 +1044,7 @@ export namespace Prisma {
     slug: string | null
     repoName: string | null
     createdAt: Date | null
+    updateAt: Date | null
   }
 
   export type ProjectCountAggregateOutputType = {
@@ -1050,6 +1052,7 @@ export namespace Prisma {
     slug: number
     repoName: number
     createdAt: number
+    updateAt: number
     _all: number
   }
 
@@ -1059,6 +1062,7 @@ export namespace Prisma {
     slug?: true
     repoName?: true
     createdAt?: true
+    updateAt?: true
   }
 
   export type ProjectMaxAggregateInputType = {
@@ -1066,6 +1070,7 @@ export namespace Prisma {
     slug?: true
     repoName?: true
     createdAt?: true
+    updateAt?: true
   }
 
   export type ProjectCountAggregateInputType = {
@@ -1073,6 +1078,7 @@ export namespace Prisma {
     slug?: true
     repoName?: true
     createdAt?: true
+    updateAt?: true
     _all?: true
   }
 
@@ -1153,6 +1159,7 @@ export namespace Prisma {
     slug: string
     repoName: string
     createdAt: Date
+    updateAt: Date
     _count: ProjectCountAggregateOutputType | null
     _min: ProjectMinAggregateOutputType | null
     _max: ProjectMaxAggregateOutputType | null
@@ -1177,6 +1184,7 @@ export namespace Prisma {
     slug?: boolean
     repoName?: boolean
     createdAt?: boolean
+    updateAt?: boolean
     allowTokens?: boolean | Project$allowTokensArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
@@ -1186,6 +1194,7 @@ export namespace Prisma {
     slug?: boolean
     repoName?: boolean
     createdAt?: boolean
+    updateAt?: boolean
   }, ExtArgs["result"]["project"]>
 
   export type ProjectSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1193,6 +1202,7 @@ export namespace Prisma {
     slug?: boolean
     repoName?: boolean
     createdAt?: boolean
+    updateAt?: boolean
   }, ExtArgs["result"]["project"]>
 
   export type ProjectSelectScalar = {
@@ -1200,9 +1210,10 @@ export namespace Prisma {
     slug?: boolean
     repoName?: boolean
     createdAt?: boolean
+    updateAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "slug" | "repoName" | "createdAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "slug" | "repoName" | "createdAt" | "updateAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     allowTokens?: boolean | Project$allowTokensArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
@@ -1220,6 +1231,7 @@ export namespace Prisma {
       slug: string
       repoName: string
       createdAt: Date
+      updateAt: Date
     }, ExtArgs["result"]["project"]>
     composites: {}
   }
@@ -1648,6 +1660,7 @@ export namespace Prisma {
     readonly slug: FieldRef<"Project", 'String'>
     readonly repoName: FieldRef<"Project", 'String'>
     readonly createdAt: FieldRef<"Project", 'DateTime'>
+    readonly updateAt: FieldRef<"Project", 'DateTime'>
   }
     
 
@@ -3224,7 +3237,8 @@ export namespace Prisma {
     id: 'id',
     slug: 'slug',
     repoName: 'repoName',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    updateAt: 'updateAt'
   };
 
   export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
@@ -3356,6 +3370,7 @@ export namespace Prisma {
     slug?: StringFilter<"Project"> | string
     repoName?: StringFilter<"Project"> | string
     createdAt?: DateTimeFilter<"Project"> | Date | string
+    updateAt?: DateTimeFilter<"Project"> | Date | string
     allowTokens?: TokenListRelationFilter
   }
 
@@ -3364,6 +3379,7 @@ export namespace Prisma {
     slug?: SortOrder
     repoName?: SortOrder
     createdAt?: SortOrder
+    updateAt?: SortOrder
     allowTokens?: TokenOrderByRelationAggregateInput
   }
 
@@ -3375,6 +3391,7 @@ export namespace Prisma {
     OR?: ProjectWhereInput[]
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     createdAt?: DateTimeFilter<"Project"> | Date | string
+    updateAt?: DateTimeFilter<"Project"> | Date | string
     allowTokens?: TokenListRelationFilter
   }, "id" | "slug" | "repoName">
 
@@ -3383,6 +3400,7 @@ export namespace Prisma {
     slug?: SortOrder
     repoName?: SortOrder
     createdAt?: SortOrder
+    updateAt?: SortOrder
     _count?: ProjectCountOrderByAggregateInput
     _max?: ProjectMaxOrderByAggregateInput
     _min?: ProjectMinOrderByAggregateInput
@@ -3396,6 +3414,7 @@ export namespace Prisma {
     slug?: StringWithAggregatesFilter<"Project"> | string
     repoName?: StringWithAggregatesFilter<"Project"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
+    updateAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
   }
 
   export type TokenWhereInput = {
@@ -3478,6 +3497,7 @@ export namespace Prisma {
     slug: string
     repoName: string
     createdAt?: Date | string
+    updateAt?: Date | string
     allowTokens?: TokenCreateNestedManyWithoutProjectInput
   }
 
@@ -3486,6 +3506,7 @@ export namespace Prisma {
     slug: string
     repoName: string
     createdAt?: Date | string
+    updateAt?: Date | string
     allowTokens?: TokenUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -3494,6 +3515,7 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     repoName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allowTokens?: TokenUpdateManyWithoutProjectNestedInput
   }
 
@@ -3502,6 +3524,7 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     repoName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allowTokens?: TokenUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -3510,6 +3533,7 @@ export namespace Prisma {
     slug: string
     repoName: string
     createdAt?: Date | string
+    updateAt?: Date | string
   }
 
   export type ProjectUpdateManyMutationInput = {
@@ -3517,6 +3541,7 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     repoName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProjectUncheckedUpdateManyInput = {
@@ -3524,6 +3549,7 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     repoName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TokenCreateInput = {
@@ -3650,6 +3676,7 @@ export namespace Prisma {
     slug?: SortOrder
     repoName?: SortOrder
     createdAt?: SortOrder
+    updateAt?: SortOrder
   }
 
   export type ProjectMaxOrderByAggregateInput = {
@@ -3657,6 +3684,7 @@ export namespace Prisma {
     slug?: SortOrder
     repoName?: SortOrder
     createdAt?: SortOrder
+    updateAt?: SortOrder
   }
 
   export type ProjectMinOrderByAggregateInput = {
@@ -3664,6 +3692,7 @@ export namespace Prisma {
     slug?: SortOrder
     repoName?: SortOrder
     createdAt?: SortOrder
+    updateAt?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -4144,6 +4173,7 @@ export namespace Prisma {
     slug: string
     repoName: string
     createdAt?: Date | string
+    updateAt?: Date | string
   }
 
   export type ProjectUncheckedCreateWithoutAllowTokensInput = {
@@ -4151,6 +4181,7 @@ export namespace Prisma {
     slug: string
     repoName: string
     createdAt?: Date | string
+    updateAt?: Date | string
   }
 
   export type ProjectCreateOrConnectWithoutAllowTokensInput = {
@@ -4174,6 +4205,7 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     repoName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProjectUncheckedUpdateWithoutAllowTokensInput = {
@@ -4181,6 +4213,7 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     repoName?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TokenCreateManyProjectInput = {

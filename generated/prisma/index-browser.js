@@ -124,7 +124,8 @@ exports.Prisma.ProjectScalarFieldEnum = {
   id: 'id',
   slug: 'slug',
   repoName: 'repoName',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updateAt: 'updateAt'
 };
 
 exports.Prisma.RelationLoadStrategy = {

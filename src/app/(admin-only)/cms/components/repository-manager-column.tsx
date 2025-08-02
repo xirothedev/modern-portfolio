@@ -20,6 +20,7 @@ interface RepositoryManagerData {
 	name: string;
 	slug: string;
 	createdAt: Date;
+	updateAt: Date;
 }
 
 export const columns: ColumnDef<RepositoryManagerData>[] = [
@@ -36,6 +37,15 @@ export const columns: ColumnDef<RepositoryManagerData>[] = [
 		header: () => <div>Create at</div>,
 		cell: ({ row }) => {
 			const formatted = format(row.getValue("createdAt"), "Pp");
+
+			return <div className="font-medium">{formatted}</div>;
+		},
+	},
+	{
+		accessorKey: "updateAt",
+		header: () => <div>Update at</div>,
+		cell: ({ row }) => {
+			const formatted = format(row.getValue("updateAt"), "Pp");
 
 			return <div className="font-medium">{formatted}</div>;
 		},

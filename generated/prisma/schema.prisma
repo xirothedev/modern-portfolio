@@ -23,6 +23,7 @@ model Project {
   slug      String   @unique
   repoName  String   @unique
   createdAt DateTime @default(now())
+  updateAt  DateTime @default(now()) @updatedAt
 
   allowTokens Token[]
 }
