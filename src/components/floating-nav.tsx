@@ -52,23 +52,23 @@ export function FloatingNav() {
 				animate={{ y: isVisible ? 0 : -100 }}
 				transition={{ duration: 0.3 }}
 			>
-				<div className="relative rounded-full border border-zinc-700/50 bg-zinc-800/80 px-4 py-3 shadow-lg backdrop-blur-md">
-					<div className="absolute -inset-0.5 rounded-full bg-linear-to-r from-purple-500/20 to-pink-500/20 opacity-50 blur-sm"></div>
+				<div className="relative mx-auto max-w-[calc(100vw-2rem)] rounded-full border border-zinc-700/50 bg-zinc-800/80 px-4 py-3 shadow-lg backdrop-blur-md">
+					<div className="absolute -inset-0.5 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-50 blur-sm"></div>
 
 					{isMobile ? (
-						<div className="relative flex items-center justify-between">
-							<Link href="#home" className="text-lg font-bold">
-								<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+						<div className="relative flex min-w-0 items-center justify-between">
+							<Link href="#home" className="flex-shrink-0 text-lg font-bold">
+								<span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
 									Xiro{" "}
 								</span>
 								<span className="text-white">The Dev</span>
 							</Link>
-							<div className="flex items-center gap-4">
+							<div className="ml-2 flex flex-shrink-0 items-center gap-2">
 								<AuthButton />
 								<Button
 									variant="ghost"
 									size="icon"
-									className="text-zinc-400 hover:bg-zinc-700/50 hover:text-white"
+									className="pr-4 text-zinc-400 hover:bg-transparent hover:text-zinc-400"
 									onClick={() => setIsOpen(!isOpen)}
 								>
 									{isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -78,7 +78,7 @@ export function FloatingNav() {
 					) : (
 						<div className="relative flex items-center gap-1">
 							<Link href="#home" className="mr-4 flex-shrink-0 text-lg font-bold whitespace-nowrap">
-								<span className="bg-linear-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+								<span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
 									Xiro{" "}
 								</span>
 								<span className="text-white">The Dev</span>

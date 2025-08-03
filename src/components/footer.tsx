@@ -69,6 +69,24 @@ export default function Footer() {
 					))}
 				</div>
 			</div>
+
+			{/* Navigation Links */}
+			<div className="relative z-10 container mt-8 border-t border-zinc-800 pt-8">
+				<div className="flex flex-col items-center gap-6 md:flex-row md:justify-center md:gap-12">
+					<div className="flex flex-wrap justify-center gap-6 text-sm">
+						{[
+							{ href: "/", label: "Home" },
+							{ href: "/projects", label: "Projects" },
+							// { href: "/blogs", label: "Blogs" },
+							// { href: "/contact", label: "Contact" },
+						].map(({ href, label }) => (
+							<Link key={label} href={href} className="text-zinc-400 transition-colors hover:text-white">
+								{label}
+							</Link>
+						))}
+					</div>
+				</div>
+			</div>
 		</footer>
 	);
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, Loader2, RefreshCw } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { useState } from "react";
@@ -8,259 +8,16 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
-// Skills data with associated projects
-const skillsData = [
-	{
-		name: "JavaScript",
-		type: "Programming Language",
-		color: "bg-yellow-500",
-		projects: [
-			{
-				name: "E-commerce Platform",
-				description: "Used JavaScript for dynamic cart functionality and payment processing",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "Task Management App",
-				description: "Implemented real-time updates and interactive UI components",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "Weather Dashboard",
-				description: "Built interactive charts and data visualization features",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-		],
-	},
-	{
-		name: "TypeScript",
-		type: "Programming Language",
-		color: "bg-blue-600",
-		projects: [
-			{
-				name: "E-commerce Platform",
-				description: "Ensured type safety across the entire application architecture",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "AI Content Generator",
-				description: "Implemented strongly-typed API interfaces and data models",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "Fitness Tracker",
-				description: "Created type-safe data structures for health metrics",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-		],
-	},
-	{
-		name: "React",
-		type: "Frontend Framework",
-		color: "bg-cyan-500",
-		projects: [
-			{
-				name: "Task Management App",
-				description: "Built with React hooks and context for state management",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "Weather Dashboard",
-				description: "Created reusable components and custom hooks",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "Portfolio Website",
-				description: "Developed responsive components with modern React patterns",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-		],
-	},
-	{
-		name: "Next.js",
-		type: "Frontend Framework",
-		color: "bg-black",
-		projects: [
-			{
-				name: "E-commerce Platform",
-				description: "Utilized SSR, API routes, and optimized performance features",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "AI Content Generator",
-				description: "Implemented server-side rendering and API integration",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "Portfolio Website",
-				description: "Built with App Router and modern Next.js features",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-		],
-	},
-	{
-		name: "Node.js",
-		type: "Javascript Runtime",
-		color: "bg-green-600",
-		projects: [
-			{
-				name: "E-commerce Platform",
-				description: "Developed backend APIs and server-side logic",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "AI Content Generator",
-				description: "Created server endpoints for AI model integration",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-		],
-	},
-	{
-		name: "Tailwind CSS",
-		type: "CSS Framework",
-		color: "bg-teal-500",
-		projects: [
-			{
-				name: "Portfolio Website",
-				description: "Designed responsive layouts and custom animations",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "Task Management App",
-				description: "Created modern UI components and responsive design",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "Weather Dashboard",
-				description: "Styled interactive components and data visualizations",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-		],
-	},
-	{
-		name: "GraphQL",
-		type: "Query Language",
-		color: "bg-pink-500",
-		projects: [
-			{
-				name: "E-commerce Platform",
-				description: "Implemented efficient data fetching and mutations",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "Task Management App",
-				description: "Built real-time subscriptions for collaborative features",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-		],
-	},
-	{
-		name: "PostgreSQL",
-		type: "Database",
-		color: "bg-blue-700",
-		projects: [
-			{
-				name: "E-commerce Platform",
-				description: "Designed database schema and optimized queries",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-			{
-				name: "AI Content Generator",
-				description: "Managed user data and content storage efficiently",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-		],
-	},
-	// {
-	//   name: "AWS",
-	//   color: "bg-orange-500",
-	//   projects: [
-	//     {
-	//       name: "E-commerce Platform",
-	//       description: "Deployed using EC2, S3, and RDS services",
-	//       demoUrl: "https://example.com",
-	//       repoUrl: "https://github.com",
-	//     },
-	//     {
-	//       name: "AI Content Generator",
-	//       description: "Utilized Lambda functions and API Gateway",
-	//       demoUrl: "https://example.com",
-	//       repoUrl: "https://github.com",
-	//     },
-	//   ],
-	// },
-	{
-		name: "Docker",
-		type: "Containerization",
-		color: "bg-blue-500",
-		projects: [
-			{
-				name: "E-commerce Platform",
-				description: "Containerized application for consistent deployments",
-				demoUrl: "https://example.com",
-				repoUrl: "https://github.com",
-			},
-		],
-	},
-	{
-		name: "Git",
-		type: "Distributed Version Control System",
-		color: "bg-red-500",
-		projects: [
-			{
-				name: "All Projects",
-				description: "Version control and collaborative development across all projects",
-				demoUrl: "https://github.com/xirothedev",
-				repoUrl: "https://github.com/xirothedev",
-			},
-		],
-	},
-	// {
-	//   name: "Firebase",
-	//   level: 75,
-	//   color: "bg-yellow-600",
-	//   projects: [
-	//     {
-	//       name: "Task Management App",
-	//       description: "Real-time database and authentication implementation",
-	//       demoUrl: "https://example.com",
-	//       repoUrl: "https://github.com",
-	//     },
-	//     {
-	//       name: "Fitness Tracker",
-	//       description: "Cloud storage and real-time data synchronization",
-	//       demoUrl: "https://example.com",
-	//       repoUrl: "https://github.com",
-	//     },
-	//   ],
-	// },
-];
+import { useSkills, useSkillsCache } from "@/hooks/use-skills";
+import Link from "next/link";
 
 export function SkillsWithProjects() {
 	const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
 	const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+
+	// Fetch skills data from GitHub API
+	const { skills: skillsData, loading, error, isValidating, metadata } = useSkills();
+	const { refreshSkills } = useSkillsCache();
 
 	const handleSkillClick = (skillName: string) => {
 		setSelectedSkill(selectedSkill === skillName ? null : skillName);
@@ -274,8 +31,66 @@ export function SkillsWithProjects() {
 		return skillsData.find((skill) => skill.name === skillName);
 	};
 
+	// Show loading state
+	if (loading) {
+		return (
+			<div className="flex items-center justify-center py-12">
+				<div className="flex items-center gap-3">
+					<Loader2 className="h-6 w-6 animate-spin text-purple-500" />
+					<p className="text-zinc-400">Loading skills from GitHub...</p>
+				</div>
+			</div>
+		);
+	}
+
+	// Show error state
+	if (error) {
+		return (
+			<div className="py-12 text-center">
+				<div className="space-y-4">
+					<p className="text-red-400">Failed to load skills: {error}</p>
+					<Button
+						onClick={() => refreshSkills()}
+						variant="outline"
+						className="border-purple-500 text-purple-400 hover:bg-purple-500/10"
+					>
+						<RefreshCw className="mr-2 h-4 w-4" />
+						Try Again
+					</Button>
+				</div>
+			</div>
+		);
+	}
+
+	// Show empty state
+	if (!skillsData || skillsData.length === 0) {
+		return (
+			<div className="py-12 text-center">
+				<p className="text-zinc-400">
+					No skills found. Make sure you have repositories with topics and languages.
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="space-y-8">
+			{/* Header with metadata */}
+			{metadata && (
+				<div className="space-y-2 text-center">
+					<p className="text-sm text-zinc-500">
+						Found {metadata.totalSkills} skills from {metadata.totalRepositories} original repositories
+						{metadata.excludesForks && <span className="text-xs text-zinc-600"> (forks excluded)</span>}
+					</p>
+					{isValidating && (
+						<div className="flex items-center justify-center gap-2">
+							<Loader2 className="h-4 w-4 animate-spin text-purple-500" />
+							<span className="text-xs text-zinc-400">Updating...</span>
+						</div>
+					)}
+				</div>
+			)}
+
 			{/* Skills Badges Grid */}
 			<div className="flex flex-wrap justify-center gap-3">
 				{skillsData.map((skill) => (
@@ -347,7 +162,7 @@ export function SkillsWithProjects() {
 								<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 									{getSkillProjects(selectedSkill).map((project, index) => (
 										<motion.div
-											key={`${selectedSkill}-${index}`}
+											key={`${selectedSkill}-${project.repoUrl}-${index}`}
 											initial={{ opacity: 0, y: 20 }}
 											animate={{ opacity: 1, y: 0 }}
 											transition={{ duration: 0.3, delay: index * 0.1 }}
@@ -355,43 +170,85 @@ export function SkillsWithProjects() {
 											<Card className="h-full border-zinc-700/50 bg-zinc-900/50 transition-all duration-300 hover:border-purple-500/50">
 												<CardHeader className="pb-3">
 													<CardTitle className="flex items-center justify-between text-lg text-white">
-														{project.name}
-														<div className="flex gap-2">
+														<div className="min-w-0 flex-1">
+															<div className="truncate">{project.name}</div>
+															<div className="mt-1 flex items-center gap-2">
+																{project.language && (
+																	<Badge
+																		variant="outline"
+																		className="border-zinc-600 text-xs text-zinc-400"
+																	>
+																		{project.language}
+																	</Badge>
+																)}
+																{project.private && (
+																	<Badge
+																		variant="outline"
+																		className="border-orange-600 text-xs text-orange-400"
+																	>
+																		Private
+																	</Badge>
+																)}
+																<div className="flex items-center gap-1 text-xs text-zinc-500">
+																	<span>⭐ {project.stars}</span>
+																	<span>🍴 {project.forks}</span>
+																</div>
+															</div>
+														</div>
+														<div className="ml-2 flex gap-2">
 															<Button
 																variant="ghost"
 																size="icon"
-																className="h-6 w-6 text-zinc-400"
-																asChild
+																className={`h-6 w-6 transition-colors ${
+																	project.private
+																		? "cursor-not-allowed text-zinc-600"
+																		: "text-zinc-400 hover:bg-purple-500/10 hover:text-purple-400"
+																}`}
+																disabled={project.private}
+																asChild={!project.private}
 															>
-																<a
-																	href={project.repoUrl}
-																	target="_blank"
-																	rel="noopener noreferrer"
-																>
-																	<Github className="h-3 w-3" />
-																</a>
+																{project.private ? (
+																	<div title="Private Repository">
+																		<Github className="h-3 w-3" />
+																	</div>
+																) : (
+																	<Link
+																		href={project.repoUrl}
+																		target="_blank"
+																		rel="noopener noreferrer"
+																		title="View Repository"
+																	>
+																		<Github className="h-3 w-3" />
+																	</Link>
+																)}
 															</Button>
-															<Button
-																variant="ghost"
-																size="icon"
-																className="h-6 w-6 text-zinc-400"
-																asChild
-															>
-																<a
-																	href={project.demoUrl}
-																	target="_blank"
-																	rel="noopener noreferrer"
+															{project.demoUrl && (
+																<Button
+																	variant="ghost"
+																	size="icon"
+																	className="h-6 w-6 text-zinc-400 transition-colors hover:bg-cyan-500/10 hover:text-white"
+																	asChild
 																>
-																	<ExternalLink className="h-3 w-3" />
-																</a>
-															</Button>
+																	<Link
+																		href={project.demoUrl}
+																		target="_blank"
+																		rel="noopener noreferrer"
+																		title="View Demo"
+																	>
+																		<ExternalLink className="h-3 w-3" />
+																	</Link>
+																</Button>
+															)}
 														</div>
 													</CardTitle>
 												</CardHeader>
 												<CardContent className="pt-0">
-													<p className="text-sm leading-relaxed text-zinc-400">
+													<p className="line-clamp-3 text-sm leading-relaxed text-zinc-400">
 														{project.description}
 													</p>
+													<div className="mt-2 text-xs text-zinc-500">
+														Updated: {new Date(project.lastUpdated).toLocaleDateString()}
+													</div>
 												</CardContent>
 											</Card>
 										</motion.div>
@@ -409,11 +266,34 @@ export function SkillsWithProjects() {
 				whileInView={{ opacity: 1 }}
 				transition={{ duration: 0.5, delay: 0.5 }}
 				viewport={{ once: true }}
-				className="text-center"
+				className="space-y-2 text-center"
 			>
 				<p className="text-sm text-zinc-500">
-					Click on any skill badge to see the projects where it was applied
+					Click on any skill badge to see the original GitHub repositories where it was used
 				</p>
+				{metadata && (
+					<div className="flex items-center justify-center gap-4 text-xs text-zinc-600">
+						<span className="group">
+							Data from{" "}
+							<Link
+								className="rounded-full px-1 py-0.5 group-hover:bg-white/20 group-hover:text-white"
+								href={`https://github.com/${metadata.username}`}
+							>
+								@{metadata.username}
+							</Link>
+						</span>
+						<Button
+							onClick={() => refreshSkills()}
+							variant="ghost"
+							size="sm"
+							className="h-6 px-2 text-xs hover:bg-white/20 hover:text-white"
+							disabled={isValidating}
+						>
+							<RefreshCw className={`mr-1 h-3 w-3 ${isValidating ? "animate-spin" : ""}`} />
+							Refresh
+						</Button>
+					</div>
+				)}
 			</motion.div>
 		</div>
 	);

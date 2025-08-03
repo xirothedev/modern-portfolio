@@ -388,9 +388,9 @@ export default function Portfolio() {
 										<div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800">
 											{item.icon}
 										</div>
-										<div>
+										<div className="min-w-0 flex-1">
 											<div className="text-sm text-zinc-500">{item.label}</div>
-											<div className="font-medium">{item.value}</div>
+											<div className="truncate font-medium">{item.value}</div>
 										</div>
 									</div>
 								))}

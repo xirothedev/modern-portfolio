@@ -294,6 +294,42 @@ class GitHubAPI {
 		});
 	}
 
+	async getAllUserRepositories(
+		username: string,
+		options: FetchOptions = {},
+	): Promise<RestEndpointMethodTypes["repos"]["listForUser"]["response"]["data"]> {
+		const cacheKey = generateCacheKey("user_repos", { username });
+		if (options.cache !== false) {
+			const cached = githubCache.get(cacheKey);
+			if (cached) {
+				return cached;
+			}
+		}
+
+		try {
+			// Fetch all repositories for the user with pagination
+			const allRepositories = await this.octokit.paginate(this.octokit.rest.repos.listForUser, {
+				username,
+				type: "all",
+				sort: "updated",
+				direction: "desc",
+				per_page: 100,
+			});
+
+			// Filter out forked repositories to only show original repositories
+			const repositories = allRepositories.filter((repo) => !repo.fork);
+
+			if (options.cache !== false) {
+				githubCache.set(cacheKey, repositories, options.ttl || CACHE_CONFIGS.REPO_INFO.ttl);
+			}
+
+			return repositories;
+		} catch (error) {
+			console.error(`❌ Error fetching repositories for ${username}:`, error);
+			throw new GitHubRepositoryError("Failed to fetch user repositories", 404, username);
+		}
+	}
+
 	getCacheStats() {
 		return githubCache.getStats();
 	}
