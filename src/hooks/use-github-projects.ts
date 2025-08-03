@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import useSWR from "swr";
+import { cacheKeys, swrConfig } from "@/lib/swr-config";
 
 interface ProjectData {
 	title: string;
@@ -16,57 +17,103 @@ interface ProjectData {
 	isFromGitHub: boolean;
 }
 
+interface GitHubAPIResponse {
+	projects: ProjectData[];
+	error?: string;
+}
+
 interface UseGitHubProjectsReturn {
 	projects: ProjectData[];
 	loading: boolean;
 	error: string | null;
+	isValidating: boolean;
+	mutate: () => Promise<GitHubAPIResponse | undefined>;
 }
 
 export function useGitHubProjects(): UseGitHubProjectsReturn {
-	const [projects, setProjects] = useState<ProjectData[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-	const [retryCount, setRetryCount] = useState<number>(0);
+	const { data, error, isLoading, isValidating, mutate } = useSWR<GitHubAPIResponse>(
+		cacheKeys.githubProjects,
+		swrConfig,
+	);
 
-	useEffect(() => {
-		const fetchProjects = async () => {
-			try {
-				setLoading(true);
-				setError(null);
+	// Transform the data and handle different states
+	const projects = data?.projects || [];
+	const errorMessage = error?.message || data?.error || null;
 
-				const response = await fetch("/api/github", {
-					signal: AbortSignal.timeout(10000),
-				});
+	// Enhanced logging for debugging
+	if (process.env.NODE_ENV === "development") {
+		console.log("GitHub Projects Hook State:", {
+			hasData: !!data,
+			projectsCount: projects.length,
+			isLoading,
+			isValidating,
+			error: errorMessage,
+			cacheKey: cacheKeys.githubProjects,
+		});
+	}
 
-				if (!response.ok) {
-					throw new Error("Failed to fetch projects");
-				}
+	return {
+		projects,
+		loading: isLoading,
+		error: errorMessage,
+		isValidating,
+		mutate,
+	};
+}
 
-				const data: unknown = await response.json();
-				if (typeof data === "object" && data !== null && "projects" in data && Array.isArray(data.projects)) {
-					setProjects((data as { projects: ProjectData[] }).projects);
-				} else {
-					setProjects([]);
-				}
-			} catch (err) {
-				console.error("Error fetching GitHub projects:", err);
-				setError(err instanceof Error ? err.message : "Failed to fetch projects");
+// Additional hook for individual project data (if needed in the future)
+export function useGitHubProject(repoName: string) {
+	const { data, error, isLoading, isValidating, mutate } = useSWR<ProjectData>(
+		repoName ? cacheKeys.githubProject(repoName) : null,
+		swrConfig,
+	);
 
-				if (retryCount < 3) {
-					setTimeout(
-						() => {
-							setRetryCount((prev) => prev + 1);
-						},
-						1000 * (retryCount + 1),
-					);
-				}
-			} finally {
-				setLoading(false);
-			}
-		};
+	return {
+		project: data,
+		loading: isLoading,
+		error: error?.message || null,
+		isValidating,
+		mutate,
+	};
+}
 
-		fetchProjects();
-	}, [retryCount]);
+// Hook for manual cache management
+export function useGitHubProjectsCache() {
+	const { mutate } = useSWR(cacheKeys.githubProjects);
 
-	return { projects, loading, error };
+	const refreshProjects = async () => {
+		console.log("🔄 Manually refreshing GitHub projects...");
+		return mutate();
+	};
+
+	const clearCache = async () => {
+		console.log("🗑️ Clearing GitHub projects cache...");
+		return mutate(undefined, { revalidate: false });
+	};
+
+	const updateProject = async (repoName: string, updatedData: Partial<ProjectData>) => {
+		console.log(`🔄 Updating project cache for ${repoName}...`);
+
+		return mutate(
+			(currentData: GitHubAPIResponse | undefined) => {
+				if (!currentData?.projects) return currentData;
+
+				const updatedProjects = currentData.projects.map((project: ProjectData) =>
+					project.repoName === repoName ? { ...project, ...updatedData } : project,
+				);
+
+				return {
+					...currentData,
+					projects: updatedProjects,
+				};
+			},
+			{ revalidate: false },
+		);
+	};
+
+	return {
+		refreshProjects,
+		clearCache,
+		updateProject,
+	};
 }

@@ -38,6 +38,7 @@
 		"test-api": "node scripts/test-api-route.js",
 		"test-mcp": "node scripts/test-mcp-route.mjs",
 		"analyze": "ANALYZE=true next build",
+		"bundle-analysis": "node scripts/bundle-analysis.js",
 		"lighthouse": "lighthouse http://localhost:3000 --output=html --output-path=./lighthouse-report.html"
 	},
 	"dependencies": {
@@ -84,6 +85,7 @@
 		"redis": "5.7.0",
 		"slugify": "1.6.6",
 		"sonner": "2.0.6",
+		"swr": "2.3.4",
 		"tailwind-merge": "^3.3.1",
 		"tailwindcss-animate": "^1.0.7",
 		"three": "0.178.0",
@@ -93,6 +95,7 @@
 	"devDependencies": {
 		"@chromatic-com/storybook": "^4.0.1",
 		"@eslint/eslintrc": "3.3.1",
+		"@next/bundle-analyzer": "15.4.5",
 		"@opennextjs/cloudflare": "1.6.2",
 		"@storybook/addon-a11y": "^9.0.18",
 		"@storybook/addon-docs": "^9.0.18",
@@ -100,7 +103,6 @@
 		"@storybook/addon-vitest": "^9.0.18",
 		"@storybook/nextjs-vite": "^9.0.18",
 		"@tailwindcss/postcss": "^4.1.11",
-		"@trivago/prettier-plugin-sort-imports": "5.2.2",
 		"@types/animejs": "3.1.13",
 		"@types/node": "^24.1.0",
 		"@types/react": "^19.1.9",

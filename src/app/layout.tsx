@@ -4,10 +4,12 @@ import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 
-import type React from "react";
-
+import { BundleMonitor } from "@/components/dev/bundle-monitor";
+import { CacheDebug } from "@/components/dev/cache-debug";
+import { PerformanceMonitor } from "@/components/dev/performance-monitor";
 import Footer from "@/components/footer";
 import { MouseFollower } from "@/components/mouse-follower";
+import { SWRProvider } from "@/components/providers/swr-provider";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -107,8 +109,13 @@ export default function RootLayout({
 						<div className="animate-blob animation-delay-4000 absolute bottom-20 left-1/3 h-72 w-72 rounded-full bg-pink-500 opacity-20 mix-blend-multiply blur-3xl filter"></div>
 					</div>
 					<div className="min-h-screen overflow-hidden bg-linear-to-b from-zinc-900 via-zinc-900 to-black text-white">
-						{children}
-						<Footer />
+						<SWRProvider>
+							{children}
+							<Footer />
+							<BundleMonitor />
+							<CacheDebug />
+							<PerformanceMonitor />
+						</SWRProvider>
 						<Analytics />
 						<Toaster />
 					</div>

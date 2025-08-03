@@ -5,7 +5,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { motion } from "motion/react";
 import * as THREE from "three";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import {
 	SiDocker,
 	SiExpress,
@@ -23,50 +23,76 @@ import {
 	SiTypescript,
 } from "react-icons/si";
 
-// Performance detection and particle configuration
-const PERFORMANCE_CONFIG = {
-	MIN_PARTICLES: 1000,
-	MAX_PARTICLES: 5000,
-	BATCH_SIZE: 50,
-	PARTICLE_SIZE: 0.05,
-	ICON_FLOAT_AMPLITUDE: 0.1,
-	ICON_FLOAT_SPEED: 0.5,
-	REPULSION_RADIUS: 1.5,
+import {
+	FrameRateLimiter,
+	ObjectPool,
+	cleanupManager,
+	getAnimationDuration,
+	getAnimationScale,
+	performanceMonitor,
+	prefersReducedMotion,
+} from "@/lib/animation-utils";
+
+// Optimized performance configuration
+const OPTIMIZED_CONFIG = {
+	MIN_PARTICLES: 500,
+	MAX_PARTICLES: 2000,
+	BATCH_SIZE: 25,
+	PARTICLE_SIZE: 0.04,
+	ICON_FLOAT_AMPLITUDE: 0.08,
+	ICON_FLOAT_SPEED: 0.3,
+	REPULSION_RADIUS: 1.2,
 	PARTICLE_COLORS: ["#9333ea", "#ec4899"],
-	FPS_THRESHOLD: 30, // Minimum FPS to maintain
-	PERFORMANCE_TEST_DURATION: 3000, // 3 seconds to test performance
+	FPS_THRESHOLD: 30,
+	PERFORMANCE_TEST_DURATION: 2000, // Reduced to 2 seconds
+	REDUCED_MOTION_PARTICLES: 200, // Minimal particles for reduced motion
 };
 
-// Performance detection utilities
-class PerformanceDetector {
+// Enhanced performance detector with memory management
+class OptimizedPerformanceDetector {
 	private fpsHistory: number[] = [];
 	private frameCount = 0;
 	private lastTime = performance.now();
 	private isTesting = false;
 	private testStartTime = 0;
+	private frameLimiter = new FrameRateLimiter(60);
 
-	// Detect hardware capabilities
+	// Detect hardware capabilities with more accurate detection
 	static detectHardwareCapabilities() {
 		const capabilities = {
 			cores: navigator.hardwareConcurrency || 4,
-			memory: (navigator as any).deviceMemory || 4, // GB
+			memory: (navigator as any).deviceMemory || 4,
 			connection: (navigator as any).connection?.effectiveType || "4g",
 			isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
 			isLowEnd: false,
+			supportsWebGL2: false,
+			maxTextureSize: 0,
 		};
 
-		// Determine if device is low-end
+		// Check WebGL2 support
+		try {
+			const canvas = document.createElement("canvas");
+			const gl = canvas.getContext("webgl2");
+			capabilities.supportsWebGL2 = !!gl;
+			if (gl) {
+				capabilities.maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+			}
+		} catch {
+			capabilities.supportsWebGL2 = false;
+		}
+
+		// Enhanced low-end detection
 		capabilities.isLowEnd =
 			capabilities.cores <= 2 ||
 			capabilities.memory <= 2 ||
 			capabilities.connection === "slow-2g" ||
 			capabilities.connection === "2g" ||
-			capabilities.isMobile;
+			(capabilities.isMobile && capabilities.cores <= 4) ||
+			!capabilities.supportsWebGL2;
 
 		return capabilities;
 	}
 
-	// Start FPS monitoring
 	startFPSMonitoring() {
 		this.isTesting = true;
 		this.testStartTime = performance.now();
@@ -75,126 +101,156 @@ class PerformanceDetector {
 		this.lastTime = performance.now();
 	}
 
-	// Update FPS calculation
-	updateFPS() {
+	updateFPS(currentTime: number) {
 		if (!this.isPerformanceTesting()) return;
 
+		// Use frame limiter to avoid excessive calculations
+		if (!this.frameLimiter.shouldRender(currentTime)) return;
+
 		this.frameCount++;
-		const currentTime = performance.now();
 		const deltaTime = currentTime - this.lastTime;
 
 		if (deltaTime >= 1000) {
-			// Calculate FPS every second
 			const fps = Math.round((this.frameCount * 1000) / deltaTime);
 			this.fpsHistory.push(fps);
 			this.frameCount = 0;
 			this.lastTime = currentTime;
+
+			// Limit history size to prevent memory leaks
+			if (this.fpsHistory.length > 10) {
+				this.fpsHistory.shift();
+			}
 		}
 
 		// Stop testing after duration
-		if (currentTime - this.testStartTime >= PERFORMANCE_CONFIG.PERFORMANCE_TEST_DURATION) {
+		if (currentTime - this.testStartTime >= OPTIMIZED_CONFIG.PERFORMANCE_TEST_DURATION) {
 			this.isTesting = false;
 		}
 	}
 
-	// Get average FPS
 	getAverageFPS(): number {
 		if (this.fpsHistory.length === 0) return 60;
 		return this.fpsHistory.reduce((sum, fps) => sum + fps, 0) / this.fpsHistory.length;
 	}
 
-	// Check if performance testing is active
 	isPerformanceTesting(): boolean {
 		return this.isTesting;
 	}
 
-	// Calculate optimal particle count based on performance
 	calculateOptimalParticleCount(): number {
-		const hardware = PerformanceDetector.detectHardwareCapabilities();
+		const hardware = OptimizedPerformanceDetector.detectHardwareCapabilities();
 		const avgFPS = this.getAverageFPS();
+		const reducedMotion = prefersReducedMotion();
 
-		let baseParticles = PERFORMANCE_CONFIG.MIN_PARTICLES;
+		// Use minimal particles for reduced motion
+		if (reducedMotion) {
+			return OPTIMIZED_CONFIG.REDUCED_MOTION_PARTICLES;
+		}
 
-		// Adjust based on FPS
+		let baseParticles = OPTIMIZED_CONFIG.MIN_PARTICLES;
+
+		// Adjust based on FPS with more conservative scaling
 		if (avgFPS >= 55) {
-			baseParticles = PERFORMANCE_CONFIG.MAX_PARTICLES;
+			baseParticles = OPTIMIZED_CONFIG.MAX_PARTICLES;
 		} else if (avgFPS >= 45) {
-			baseParticles = Math.round(PERFORMANCE_CONFIG.MAX_PARTICLES * 0.8);
+			baseParticles = Math.round(OPTIMIZED_CONFIG.MAX_PARTICLES * 0.7);
 		} else if (avgFPS >= 35) {
-			baseParticles = Math.round(PERFORMANCE_CONFIG.MAX_PARTICLES * 0.6);
+			baseParticles = Math.round(OPTIMIZED_CONFIG.MAX_PARTICLES * 0.5);
 		} else if (avgFPS >= 25) {
-			baseParticles = Math.round(PERFORMANCE_CONFIG.MAX_PARTICLES * 0.4);
+			baseParticles = Math.round(OPTIMIZED_CONFIG.MAX_PARTICLES * 0.3);
 		} else {
-			baseParticles = PERFORMANCE_CONFIG.MIN_PARTICLES;
+			baseParticles = OPTIMIZED_CONFIG.MIN_PARTICLES;
 		}
 
-		// Adjust based on hardware
+		// More aggressive reduction for low-end devices
 		if (hardware.isLowEnd) {
-			baseParticles = Math.round(baseParticles * 0.5);
-		} else if (hardware.cores >= 8 && hardware.memory >= 8) {
-			baseParticles = Math.min(baseParticles + 500, PERFORMANCE_CONFIG.MAX_PARTICLES);
+			baseParticles = Math.round(baseParticles * 0.3);
+		} else if (hardware.cores >= 8 && hardware.memory >= 8 && hardware.supportsWebGL2) {
+			baseParticles = Math.min(baseParticles + 300, OPTIMIZED_CONFIG.MAX_PARTICLES);
 		}
 
-		// Ensure within bounds
-		return Math.max(PERFORMANCE_CONFIG.MIN_PARTICLES, Math.min(baseParticles, PERFORMANCE_CONFIG.MAX_PARTICLES));
+		return Math.max(OPTIMIZED_CONFIG.MIN_PARTICLES, Math.min(baseParticles, OPTIMIZED_CONFIG.MAX_PARTICLES));
+	}
+
+	// Cleanup method
+	cleanup() {
+		this.fpsHistory = [];
+		this.isTesting = false;
 	}
 }
 
-// Type definitions for TypeScript
-interface Icon3DProps {
-	children: React.ReactNode;
-	position: [number, number, number]; // 3D position coordinates [x, y, z]
-	delay?: number; // Animation delay for staggered movement
+// Particle data interface for object pooling
+interface ParticleData {
+	position: THREE.Vector3;
+	basePosition: THREE.Vector3;
+	velocity: THREE.Vector3;
 }
 
-/**
- * 3D Icon Component - Renders technology icons in 3D space with floating animation
- * Each icon floats up and down with a sine wave motion for visual appeal
- */
-function Icon3D({ children, position, delay = 0 }: Icon3DProps) {
-	const groupRef = useRef<THREE.Group>(null);
-	const initialY = position[1]; // Store initial Y position for animation reference
+// Object pool for particles
+const particlePool = new ObjectPool<ParticleData>(
+	() => ({
+		position: new THREE.Vector3(),
+		basePosition: new THREE.Vector3(),
+		velocity: new THREE.Vector3(),
+	}),
+	(particle) => {
+		particle.position.set(0, 0, 0);
+		particle.basePosition.set(0, 0, 0);
+		particle.velocity.set(0, 0, 0);
+	},
+);
 
-	// Ensure position is set correctly when component mounts
+// Optimized Icon3D Component with memory management
+function OptimizedIcon3D({
+	children,
+	position,
+	delay = 0,
+}: {
+	children: React.ReactNode;
+	position: [number, number, number];
+	delay?: number;
+}) {
+	const groupRef = useRef<THREE.Group>(null);
+	const initialY = position[1];
+	const animationScale = getAnimationScale(OPTIMIZED_CONFIG.ICON_FLOAT_AMPLITUDE);
+	const reducedMotion = prefersReducedMotion();
+
+	// Set position only once
 	useEffect(() => {
 		if (groupRef.current) {
 			groupRef.current.position.set(position[0], position[1], position[2]);
 		}
 	}, [position]);
 
-	// Animation frame loop - creates floating motion for each icon
+	// Optimized animation with performance monitoring
 	useFrame((state) => {
-		if (groupRef.current) {
-			// Create smooth floating animation using sine wave
-			// Each icon has a different delay to create staggered movement
-			groupRef.current.position.y =
-				initialY + Math.sin(state.clock.elapsedTime + delay) * PERFORMANCE_CONFIG.ICON_FLOAT_AMPLITUDE;
-		}
+		if (!groupRef.current || reducedMotion) return;
+
+		// Skip animation if performance is critical
+		if (performanceMonitor.isCriticalPerformance()) return;
+
+		// Reduce animation frequency on low performance
+		if (performanceMonitor.isLowPerformance() && Math.random() > 0.5) return;
+
+		groupRef.current.position.y =
+			initialY + Math.sin(state.clock.elapsedTime * OPTIMIZED_CONFIG.ICON_FLOAT_SPEED + delay) * animationScale;
 	});
 
 	return (
 		<group ref={groupRef} position={position}>
 			<Html center className="pointer-events-none">
-				<div className="text-5xl">{children}</div>
+				<div className="text-4xl">{children}</div>
 			</Html>
 		</group>
 	);
 }
 
-/**
- * Technology Logos Component - Displays tech stack icons in a 3D arrangement
- * Icons are positioned in a cross pattern around the center
- */
-function TechLogos() {
-	// Define technology icons and their 3D positions
+// Optimized TechLogos with memoization
+const OptimizedTechLogos = memo(() => {
 	const techs = useMemo(
 		() => [
 			{ name: "react", position: [0, 1, 0] as [number, number, number], icon: <SiReact color="#61DAFB" /> },
-			{
-				name: "nextjs",
-				position: [1, 0, 0] as [number, number, number],
-				icon: <SiNextdotjs color="#FFFFFF" />,
-			},
+			{ name: "nextjs", position: [1, 0, 0] as [number, number, number], icon: <SiNextdotjs color="#FFFFFF" /> },
 			{
 				name: "threejs",
 				position: [-1, 0, 0] as [number, number, number],
@@ -205,11 +261,7 @@ function TechLogos() {
 				position: [0, -1, 0] as [number, number, number],
 				icon: <SiTailwindcss color="#38B2AC" />,
 			},
-			{
-				name: "nodejs",
-				position: [0, 0, 1] as [number, number, number],
-				icon: <SiNodedotjs color="#68A063" />,
-			},
+			{ name: "nodejs", position: [0, 0, 1] as [number, number, number], icon: <SiNodedotjs color="#68A063" /> },
 			{ name: "nestjs", position: [0, 0, -1] as [number, number, number], icon: <SiNestjs color="#EA2859" /> },
 			{
 				name: "expressjs",
@@ -246,159 +298,171 @@ function TechLogos() {
 				position: [0.5, -0.5, 0.5] as [number, number, number],
 				icon: <SiRedis color="#FF4438" />,
 			},
-			{
-				name: "git",
-				position: [-0.5, 0.5, 0.5] as [number, number, number],
-				icon: <SiGit color="#F05133" />,
-			},
+			{ name: "git", position: [-0.5, 0.5, 0.5] as [number, number, number], icon: <SiGit color="#F05133" /> },
 		],
 		[],
 	);
+
 	return (
 		<group>
 			{techs.map(({ icon, name, position }, index) => (
-				<Icon3D key={`${name}-${index}`} position={position} delay={index * 0.5}>
+				<OptimizedIcon3D key={`${name}-${index}`} position={position} delay={index * 0.3}>
 					{icon}
-				</Icon3D>
+				</OptimizedIcon3D>
 			))}
 		</group>
 	);
-}
+});
 
-/**
- * Particle Octagon System - Creates an interactive particle field with adaptive performance
- * Features:
- * - Progressive loading for smooth performance
- * - Mouse interaction that repels particles
- * - Octagon-shaped particle distribution
- * - Color variation between purple and pink
- * - Adaptive particle count based on device performance
- */
-function ParticleOctagon() {
+OptimizedTechLogos.displayName = "OptimizedTechLogos";
+
+// Highly optimized particle system
+function OptimizedParticleSystem() {
 	const pointsRef = useRef<THREE.Points>(null);
-	const mouse = new THREE.Vector3(0, 0, 0); // Track mouse position in 3D space
-	const performanceDetector = useRef(new PerformanceDetector());
-	const [totalParticles, setTotalParticles] = useState<number>(PERFORMANCE_CONFIG.MIN_PARTICLES);
+	const mouse = new THREE.Vector3(0, 0, 0);
+	const performanceDetector = useRef(new OptimizedPerformanceDetector());
+	const [totalParticles, setTotalParticles] = useState<number>(OPTIMIZED_CONFIG.MIN_PARTICLES);
 	const [isPerformanceTestComplete, setIsPerformanceTestComplete] = useState<boolean>(false);
 
-	// Store particle data for physics calculations
-	const particlesRef = useRef<
-		Array<{ position: THREE.Vector3; basePosition: THREE.Vector3; velocity: THREE.Vector3 }>
-	>([]);
-	const loadedCountRef = useRef(0); // Track how many particles have been created
+	// Use object pool for particles
+	const particlesRef = useRef<ParticleData[]>([]);
+	const loadedCountRef = useRef(0);
+	const frameLimiter = useRef(new FrameRateLimiter(60));
 
 	// Initialize performance testing
 	useEffect(() => {
-		// Start performance testing after a short delay
 		const timer = setTimeout(() => {
 			performanceDetector.current.startFPSMonitoring();
-		}, 1000);
+		}, 500); // Reduced delay
 
-		return () => clearTimeout(timer);
+		// Register cleanup
+		const cleanup = () => {
+			performanceDetector.current.cleanup();
+			particlePool.clear();
+		};
+		cleanupManager.addCleanupTask(cleanup);
+
+		return () => {
+			clearTimeout(timer);
+			cleanup();
+			cleanupManager.removeCleanupTask(cleanup);
+		};
 	}, []);
 
-	// Initialize particle buffers for efficient rendering
-	// These buffers store position and color data for all particles
+	// Optimized particle buffers with proper cleanup
 	const { positions, colors } = useMemo(() => {
-		const pos = new Float32Array(PERFORMANCE_CONFIG.MAX_PARTICLES * 3); // 3 coordinates per particle
-		const col = new Float32Array(PERFORMANCE_CONFIG.MAX_PARTICLES * 3); // RGB values per particle
+		const pos = new Float32Array(OPTIMIZED_CONFIG.MAX_PARTICLES * 3);
+		const col = new Float32Array(OPTIMIZED_CONFIG.MAX_PARTICLES * 3);
 		return { positions: pos, colors: col };
 	}, []);
 
-	// Main animation loop - runs every frame
-	useFrame((state) => {
-		// Update performance monitoring
-		performanceDetector.current.updateFPS();
+	// Cleanup on unmount
+	useEffect(() => {
+		return () => {
+			// Release all particles back to pool
+			particlesRef.current.forEach((particle) => {
+				particlePool.release(particle);
+			});
+			particlesRef.current = [];
+		};
+	}, []);
 
-		// Check if performance test is complete and update particle count
+	// Optimized animation loop with performance monitoring
+	useFrame((state) => {
+		const currentTime = performance.now();
+
+		// Update performance monitoring
+		performanceDetector.current.updateFPS(currentTime);
+
+		// Skip frame if performance is critical
+		if (performanceMonitor.isCriticalPerformance()) return;
+
+		// Use frame limiter for better performance
+		if (!frameLimiter.current.shouldRender(currentTime)) return;
+
+		// Check if performance test is complete
 		if (!isPerformanceTestComplete && !performanceDetector.current.isPerformanceTesting()) {
 			const optimalParticles = performanceDetector.current.calculateOptimalParticleCount();
 			setTotalParticles(optimalParticles);
 			setIsPerformanceTestComplete(true);
 
-			// Log performance info for debugging
-			const hardware = PerformanceDetector.detectHardwareCapabilities();
-			console.log("Performance Analysis:", {
+			console.log("Optimized Performance Analysis:", {
 				avgFPS: performanceDetector.current.getAverageFPS(),
-				hardware,
+				hardware: OptimizedPerformanceDetector.detectHardwareCapabilities(),
 				optimalParticles,
+				reducedMotion: prefersReducedMotion(),
 			});
 		}
 
-		// --- STAGE 1: PROGRESSIVE PARTICLE LOADING ---
-		// Load particles in batches to avoid frame drops
+		// Progressive particle loading with object pooling
 		if (loadedCountRef.current < totalParticles) {
 			const loadedCount = loadedCountRef.current;
-			const particles = particlesRef.current;
+			const batchSize = Math.min(OPTIMIZED_CONFIG.BATCH_SIZE, totalParticles - loadedCount);
 
-			// Create new batch of particles in this frame
-			for (let i = 0; i < PERFORMANCE_CONFIG.BATCH_SIZE && loadedCount + i < totalParticles; i++) {
+			for (let i = 0; i < batchSize; i++) {
 				const index = loadedCount + i;
-				const size = 2.5; // Size of the particle field
+				const size = 2.0; // Reduced size for better performance
 
-				// Generate random positions within the octagon area
 				const x = (Math.random() - 0.5) * size * 2;
 				const y = (Math.random() - 0.5) * size * 2;
 				const z = (Math.random() - 0.5) * size * 2;
 
-				// Store particle data for physics calculations
-				particles[index] = {
-					position: new THREE.Vector3(x, y, z), // Current position
-					basePosition: new THREE.Vector3(x, y, z), // Original position for return force
-					velocity: new THREE.Vector3(0, 0, 0), // Movement velocity
-				};
+				// Get particle from pool
+				const particle = particlePool.get();
+				particle.position.set(x, y, z);
+				particle.basePosition.set(x, y, z);
+				particle.velocity.set(0, 0, 0);
 
-				// Update position buffer for rendering
+				particlesRef.current[index] = particle;
+
+				// Update buffers
 				positions.set([x, y, z], index * 3);
 
-				// Randomly assign purple or pink color to each particle
 				const particleColor = new THREE.Color(
-					PERFORMANCE_CONFIG.PARTICLE_COLORS[
-						Math.floor(Math.random() * PERFORMANCE_CONFIG.PARTICLE_COLORS.length)
+					OPTIMIZED_CONFIG.PARTICLE_COLORS[
+						Math.floor(Math.random() * OPTIMIZED_CONFIG.PARTICLE_COLORS.length)
 					],
 				);
 				colors.set([particleColor.r, particleColor.g, particleColor.b], index * 3);
 			}
 
-			loadedCountRef.current += PERFORMANCE_CONFIG.BATCH_SIZE;
+			loadedCountRef.current += batchSize;
 
-			// Update geometry to reflect new particles
+			// Update geometry
 			if (pointsRef.current) {
 				const geometry = pointsRef.current.geometry;
 				const positionAttribute = geometry.getAttribute("position") as THREE.BufferAttribute;
 				const colorAttribute = geometry.getAttribute("color") as THREE.BufferAttribute;
 
-				// Notify Three.js that buffers have changed
 				positionAttribute.needsUpdate = true;
 				colorAttribute.needsUpdate = true;
-
-				// Key for loading animation: only render particles that have been created
 				geometry.setDrawRange(0, loadedCountRef.current);
 			}
 		}
-		// --- STAGE 2: INTERACTIVE ANIMATION AFTER LOADING ---
-		// Once all particles are loaded, enable mouse interaction
-		else if (pointsRef.current) {
+		// Interactive animation with performance throttling
+		else if (pointsRef.current && !prefersReducedMotion()) {
 			const geometry = pointsRef.current.geometry;
 			const positionAttribute = geometry.getAttribute("position") as THREE.BufferAttribute;
 			const particles = particlesRef.current;
 
-			// Convert mouse position to 3D space coordinates
+			// Convert mouse position
 			mouse.x = (state.pointer.x * state.viewport.width) / 2;
 			mouse.y = (state.pointer.y * state.viewport.height) / 2;
 
-			// Apply physics to each particle based on mouse position
-			for (let i = 0; i < totalParticles; i++) {
+			// Reduce particle updates on low performance
+			const updateStep = performanceMonitor.isLowPerformance() ? 2 : 1;
+
+			for (let i = 0; i < totalParticles; i += updateStep) {
 				const p = particles[i];
+				if (!p) continue;
 
-				// Calculate distance from mouse to particle
 				const distanceToMouse = p.position.distanceTo(mouse);
-				const interactionRadius = PERFORMANCE_CONFIG.REPULSION_RADIUS; // Radius of mouse influence
-				const repulsionStrength = 0.02; // Strength of repulsion force
-				const returnStrength = 0.01; // Strength of return force to base position
-				const damping = 0.95; // Velocity damping for smooth movement
+				const interactionRadius = OPTIMIZED_CONFIG.REPULSION_RADIUS;
+				const repulsionStrength = 0.015; // Reduced for better performance
+				const returnStrength = 0.008;
+				const damping = 0.96;
 
-				// Apply repulsion force when mouse is near
+				// Apply forces
 				if (distanceToMouse < interactionRadius) {
 					const repulsionDirection = p.position.clone().sub(mouse).normalize();
 					const repulsionForce = repulsionDirection.multiplyScalar(
@@ -407,31 +471,23 @@ function ParticleOctagon() {
 					p.velocity.add(repulsionForce);
 				}
 
-				// Apply return force to original position
 				const returnDirection = p.basePosition.clone().sub(p.position);
 				const returnForce = returnDirection.multiplyScalar(returnStrength);
 				p.velocity.add(returnForce);
-
-				// Apply velocity damping for smooth movement
 				p.velocity.multiplyScalar(damping);
-
-				// Update particle position based on velocity
 				p.position.add(p.velocity);
 
-				// Update geometry buffer with new positions
 				positionAttribute.setXYZ(i, p.position.x, p.position.y, p.position.z);
 			}
 
-			// Notify Three.js that position buffer has changed
 			positionAttribute.needsUpdate = true;
 
-			// Add subtle rotation to the entire particle system
-			pointsRef.current.rotation.y += 0.0005;
-			pointsRef.current.rotation.x += 0.0002;
+			// Reduced rotation for better performance
+			pointsRef.current.rotation.y += 0.0003;
+			pointsRef.current.rotation.x += 0.0001;
 		}
 	});
 
-	// Render the particle system
 	return (
 		<points ref={pointsRef}>
 			<bufferGeometry>
@@ -439,120 +495,136 @@ function ParticleOctagon() {
 				<bufferAttribute attach="attributes-color" args={[colors, 3]} />
 			</bufferGeometry>
 			<pointsMaterial
-				size={PERFORMANCE_CONFIG.PARTICLE_SIZE}
-				vertexColors // Use individual particle colors
-				blending={THREE.AdditiveBlending} // Creates glowing effect
+				size={OPTIMIZED_CONFIG.PARTICLE_SIZE}
+				vertexColors
+				blending={THREE.AdditiveBlending}
 				transparent
-				opacity={0.8}
-				depthWrite={false} // Prevents z-fighting issues
+				opacity={0.7} // Slightly reduced for better performance
+				depthWrite={false}
 			/>
 		</points>
 	);
 }
 
-/**
- * Main Creative Hero Component
- * Features:
- * - Octagon-shaped 3D scene with adaptive particle system
- * - Floating technology icons
- * - Responsive design with loading states
- * - Interactive mouse controls
- * - Performance-based particle count optimization
- */
+// Main optimized component
 export function CreativeHero() {
-	const [isReady, setIsReady] = useState<boolean>(false); // Track if component is ready to render
-	const [isLoading, setIsLoading] = useState<boolean>(true); // Track loading state
-	const [performanceInfo, setPerformanceInfo] = useState<string>(""); // Display performance info
+	const [isReady, setIsReady] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [performanceInfo, setPerformanceInfo] = useState<string>("");
 	const containerRef = useRef<HTMLDivElement>(null);
 
-	// Wait for container to be properly sized before rendering 3D scene
+	// Optimized ready detection
 	useEffect(() => {
 		const container = containerRef.current;
 		if (!container) return;
 
-		// Use ResizeObserver to detect when container has proper dimensions
 		const observer = new ResizeObserver((entries) => {
 			const entry = entries[0];
 			if (entry && entry.contentRect.width > 0) {
-				setIsReady(true); // Mark component as ready
-				setIsLoading(false); // Mark loading as complete
-				observer.disconnect(); // Stop observing once ready
+				setIsReady(true);
+				setIsLoading(false);
+				observer.disconnect();
 			}
 		});
 
 		observer.observe(container);
 
-		// Cleanup observer and listener on component unmount
 		return () => {
 			observer.disconnect();
 		};
 	}, []);
 
-	// Display performance information after testing
+	// Performance info with reduced delay
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			const hardware = PerformanceDetector.detectHardwareCapabilities();
-			setPerformanceInfo(`Optimized for your device (${hardware.cores} cores, ${hardware.memory}GB RAM)`);
-		}, 4000);
+			const hardware = OptimizedPerformanceDetector.detectHardwareCapabilities();
+			const motionText = prefersReducedMotion() ? " (Reduced Motion)" : "";
+			setPerformanceInfo(
+				`Optimized for your device (${hardware.cores} cores, ${hardware.memory}GB RAM)${motionText}`,
+			);
+		}, 2000); // Reduced from 4000ms
 
 		return () => clearTimeout(timer);
 	}, []);
 
+	// Performance monitoring setup
+	useEffect(() => {
+		performanceMonitor.startMonitoring();
+
+		return () => {
+			performanceMonitor.stopMonitoring();
+		};
+	}, []);
+
+	const animationDuration = getAnimationDuration(0.5);
+
 	return (
-		<motion.div className="relative flex aspect-square h-[400px] cursor-all-scroll items-center justify-center md:h-[500px]">
+		<motion.div
+			className="relative flex aspect-square h-[400px] cursor-all-scroll items-center justify-center md:h-[500px]"
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			transition={{ duration: animationDuration }}
+		>
 			{/* Background gradient blur effect */}
 			<div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-purple-500/10 blur-3xl"></div>
 
 			{/* Loading state */}
 			{isLoading && (
 				<div className="absolute inset-0 flex items-center justify-center">
-					<div className="h-16 w-16 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
+					<div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-500 border-t-transparent"></div>
 				</div>
 			)}
 
-			{/* Main container with fixed dimensions */}
+			{/* Main container */}
 			<div className="relative" style={{ width: "400px", height: "400px" }}>
-				{/* 3D Scene Container with Octagon Clip Path */}
+				{/* 3D Scene Container */}
 				<div
 					ref={containerRef}
 					className="absolute inset-0"
 					style={{
-						// Octagon shape using CSS clip-path
 						clipPath: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)",
 					}}
 				>
-					{/* Three.js Canvas - only render when ready */}
-					<Canvas camera={{ position: [0, 0, 4.5], fov: 50 }}>
+					{/* Optimized Three.js Canvas */}
+					<Canvas
+						camera={{ position: [0, 0, 4.5], fov: 50 }}
+						gl={{
+							antialias: false, // Disable for better performance
+							alpha: true,
+							powerPreference: "high-performance",
+						}}
+						dpr={Math.min(window.devicePixelRatio, 2)} // Limit DPR for performance
+					>
 						{isReady ? (
 							<>
-								{/* Lighting setup */}
-								<pointLight position={[0, 0, 2]} intensity={50} color="#eab308" />
-								<ambientLight intensity={0.5} />
+								{/* Optimized lighting */}
+								<pointLight position={[0, 0, 2]} intensity={30} color="#eab308" />
+								<ambientLight intensity={0.3} />
 
-								{/* 3D Components */}
-								<ParticleOctagon />
-								<TechLogos />
+								{/* Optimized components */}
+								<OptimizedParticleSystem />
+								<OptimizedTechLogos />
 
-								{/* Camera controls */}
+								{/* Optimized controls */}
 								<OrbitControls
 									enableZoom={false}
 									enablePan={false}
-									autoRotate
-									autoRotateSpeed={PERFORMANCE_CONFIG.ICON_FLOAT_SPEED}
+									autoRotate={!prefersReducedMotion()}
+									autoRotateSpeed={getAnimationScale(OPTIMIZED_CONFIG.ICON_FLOAT_SPEED)}
 								/>
 							</>
 						) : (
-							<div className="flex h-full w-full items-center justify-center">
+							<Html center>
 								<div className="text-center">
-									<div className="mb-4 text-4xl">🚀</div>
-									<div className="text-sm text-zinc-400">Interactive 3D Experience</div>
+									<div className="mb-4 text-3xl">🚀</div>
+									<div className="text-sm text-zinc-400">Loading 3D Experience</div>
 								</div>
-							</div>
+							</Html>
 						)}
 					</Canvas>
 				</div>
 
-				{/* Octagon border overlay */}
+				{/* Border and effects */}
 				<div
 					className="pointer-events-none absolute inset-0 border-2 border-purple-500/30"
 					style={{
@@ -560,7 +632,6 @@ export function CreativeHero() {
 					}}
 				/>
 
-				{/* Inner glow effect */}
 				<div
 					className="pointer-events-none absolute inset-2 bg-gradient-to-br from-purple-400/5 via-pink-400/5 to-purple-400/5 blur-sm"
 					style={{
@@ -569,15 +640,23 @@ export function CreativeHero() {
 				/>
 
 				{/* User interaction hint */}
-				<motion.div className="absolute -bottom-8 left-1/2 -translate-x-1/2 transform text-center text-xs text-zinc-500">
-					Move your cursor to interact
-				</motion.div>
+				{!prefersReducedMotion() && (
+					<motion.div
+						className="absolute -bottom-8 left-1/2 -translate-x-1/2 transform text-center text-xs text-zinc-500"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ delay: 1, duration: animationDuration }}
+					>
+						Move your cursor to interact
+					</motion.div>
+				)}
 
 				{/* Performance info */}
 				{performanceInfo && (
 					<motion.div
 						initial={{ opacity: 0, y: 10 }}
 						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: animationDuration }}
 						className="absolute -top-12 left-1/2 -translate-x-1/2 transform text-center text-xs text-zinc-400"
 					>
 						{performanceInfo}

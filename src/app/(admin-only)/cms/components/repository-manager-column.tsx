@@ -1,14 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { Project } from "generated/prisma";
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-
-import { useContext, useState } from "react";
-
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -19,11 +11,14 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { Project } from "generated/prisma";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useContext, useState } from "react";
 import { deleteProject } from "../actions";
 import { RepositoryManagerDialogContext } from "./repository-manager-table";
-
-/* eslint-disable react-hooks/rules-of-hooks */
 
 export const columns: ColumnDef<Project>[] = [
 	{

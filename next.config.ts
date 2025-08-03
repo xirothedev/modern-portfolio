@@ -1,3 +1,4 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
 import withDevToolsJSON from "next-plugin-devtools-json";
@@ -45,4 +46,8 @@ const withSerwist = withSerwistInit({
 	exclude: [/\.map$/, /^manifest.*\.js$/, ({ asset }) => asset.name.startsWith("server/")],
 });
 
-export default withDevToolsJSON(withSerwist(nextConfig));
+const withAnalyzer = withBundleAnalyzer({
+	enabled: process.env.ANALYZE === "true",
+});
+
+export default withDevToolsJSON(withSerwist(withAnalyzer(nextConfig)));
