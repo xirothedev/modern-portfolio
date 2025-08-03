@@ -1,22 +1,24 @@
 "use client";
 
-import { ContactForm } from "@/components/contact-form";
-import { ErrorBoundary } from "@/components/error-boundary";
-import { FloatingNav } from "@/components/floating-nav";
-import { GlowingEffect } from "@/components/glowing-effect";
-import { ProjectCard } from "@/components/project-card";
-import { SectionHeading } from "@/components/section-heading";
-import { SkillsWithProjects } from "@/components/skills-with-projects";
-import { Timeline } from "@/components/timeline";
-import { Button } from "@/components/ui/button";
-import { HeroSkeleton, ProjectCardSkeleton } from "@/components/loading-skeleton";
-import { useGitHubProjects } from "@/hooks/use-github-projects";
 import { createTimeline, stagger, text } from "animejs";
 import { ArrowRight, Download, Facebook, Github, Linkedin, Mail, MessageCircle } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
+
 import { useEffect } from "react";
+
+import { ContactForm } from "@/components/contact-form";
+import { ErrorBoundary } from "@/components/error-boundary";
+import { FloatingNav } from "@/components/floating-nav";
+import { GlowingEffect } from "@/components/glowing-effect";
+import { HeroSkeleton, ProjectCardSkeleton } from "@/components/loading-skeleton";
+import { ProjectCard } from "@/components/project-card";
+import { SectionHeading } from "@/components/section-heading";
+import { SkillsWithProjects } from "@/components/skills-with-projects";
+import { Timeline } from "@/components/timeline";
+import { Button } from "@/components/ui/button";
+import { useGitHubProjects } from "@/hooks/use-github-projects";
 
 const AnimatedName = dynamic(
 	() => import("@/components/animated-name").then((mod) => ({ default: mod.AnimatedName })),

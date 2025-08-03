@@ -1,5 +1,25 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+	ColumnDef,
+	ColumnFiltersState,
+	SortingState,
+	VisibilityState,
+	flexRender,
+	getCoreRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
+
+import { Dispatch, SetStateAction, createContext, useState } from "react";
+import { UseFormSetValue, useForm } from "react-hook-form";
+
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -20,27 +40,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { zodRepoName, zodSlug } from "@/lib/zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-	ColumnDef,
-	ColumnFiltersState,
-	flexRender,
-	getCoreRowModel,
-	getFilteredRowModel,
-	getPaginationRowModel,
-	getSortedRowModel,
-	SortingState,
-	useReactTable,
-	VisibilityState,
-} from "@tanstack/react-table";
-import { ChevronDown } from "lucide-react";
-import { createContext, Dispatch, SetStateAction, useState } from "react";
-import { useForm, UseFormSetValue } from "react-hook-form";
-import { z } from "zod";
-import { addProject, updateProject } from "../actions";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { zodRepoName, zodSlug } from "@/lib/zod";
+
+import { addProject, updateProject } from "../actions";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -71,8 +74,8 @@ export function RepositoryManagerTable<TData, TValue>({ columns, data }: DataTab
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-	const [isEdit, setIsEdit] = useState<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+	const [isEdit, setIsEdit] = useState<boolean>(false);
 
 	const router = useRouter();
 	const { toast } = useToast();

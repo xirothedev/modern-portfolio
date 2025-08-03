@@ -1,4 +1,13 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
+
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { Project } from "generated/prisma";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+import { useContext, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,15 +18,12 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
-import { useContext, useState } from "react";
-import { RepositoryManagerDialogContext } from "./repository-manager-table";
-import { Project } from "generated/prisma";
-import { deleteProject } from "../actions";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+
+import { deleteProject } from "../actions";
+import { RepositoryManagerDialogContext } from "./repository-manager-table";
+
+/* eslint-disable react-hooks/rules-of-hooks */
 
 export const columns: ColumnDef<Project>[] = [
 	{
@@ -51,14 +57,12 @@ export const columns: ColumnDef<Project>[] = [
 		header: () => <div className="text-right">Actions</div>,
 		cell: ({ row }) => {
 			const project = row.original;
-			// eslint-disable-next-line react-hooks/rules-of-hooks
+
 			const { setIsDialogOpen, setIsEdit, setValue } = useContext(RepositoryManagerDialogContext);
-			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
 			const { toast } = useToast();
-			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const router = useRouter();
-			// eslint-disable-next-line react-hooks/rules-of-hooks
-			const [isDeleting, setIsDeleting] = useState(false);
 
 			const handleDelete = async () => {
 				if (

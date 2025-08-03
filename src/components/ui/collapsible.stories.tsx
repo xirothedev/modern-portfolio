@@ -1,7 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "./collapsible";
+
 import { useState } from "react";
-import { Button } from "@/components/ui/button"; // hoặc thay thế bằng <button>
+
+import { Button } from "@/components/ui/button";
+
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsible";
+
+// hoặc thay thế bằng <button>
 
 const meta = {
 	title: "UI/Collapsible",
@@ -18,7 +23,7 @@ type Story = StoryObj<typeof Collapsible>;
 
 export const Default: Story = {
 	render: () => {
-		const [open, setOpen] = useState(true);
+		const [open, setOpen] = useState<boolean>(true);
 
 		return (
 			<Collapsible open={open} onOpenChange={setOpen}>

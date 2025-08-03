@@ -1,5 +1,12 @@
 "use client";
 
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { Token } from "generated/prisma";
+import { Activity, Edit, MoreHorizontal, Trash2 } from "lucide-react";
+
+import { useContext } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,11 +16,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { Token } from "generated/prisma";
-import { Activity, Edit, MoreHorizontal, Trash2 } from "lucide-react";
-import { useContext } from "react";
+
 import { TokenManagerDialogContext } from "./token-manager-table";
 
 export const columns: ColumnDef<Token>[] = [

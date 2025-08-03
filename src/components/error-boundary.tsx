@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
-import { Button } from "./ui/button";
 import { AlertTriangle, RefreshCw } from "lucide-react";
+
+import React from "react";
+
+import { Button } from "./ui/button";
 
 interface ErrorBoundaryState {
 	hasError: boolean;

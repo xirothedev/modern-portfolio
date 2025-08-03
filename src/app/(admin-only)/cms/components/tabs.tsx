@@ -1,9 +1,11 @@
+import { BarChart3, Database, Key } from "lucide-react";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Database, Key, BarChart3 } from "lucide-react";
+
+import ClientTabs from "./client-tabs";
 import { RepositoryManager } from "./repository-manager";
 import { TokenManager } from "./token-manager";
-import ClientTabs from "./client-tabs";
 
 export default function CMSTabs() {
 	return (

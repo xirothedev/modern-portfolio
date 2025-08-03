@@ -1,19 +1,23 @@
 "use client";
 
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, Database, Key } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+
 import { useState } from "react";
+
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const tabs = [
 	{ value: "repositories", icon: <Database className="h-4 w-4" />, label: "Repositories" },
 	{ value: "tokens", icon: <Key className="h-4 w-4" />, label: "Tokens" },
 	{ value: "analytics", icon: <BarChart3 className="h-4 w-4" />, label: "Analytics" },
-];
+] as const;
+
+type TabValue = (typeof tabs)[number]["value"];
 
 export default function ClientTabs() {
 	const [hovered, setHovered] = useState<string | null>(null);
-	const [active, setActive] = useState("repositories");
+	const [active, setActive] = useState<TabValue>("repositories");
 
 	return (
 		<div className="relative">

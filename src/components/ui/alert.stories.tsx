@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Alert, AlertTitle, AlertDescription } from "./alert";
 import { AlertCircle } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "./alert";
 
 const meta = {
 	title: "UI/Alert",

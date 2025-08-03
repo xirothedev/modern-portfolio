@@ -1,13 +1,16 @@
 "use client";
 
-import { motion } from "motion/react";
 import { useUser } from "@clerk/nextjs";
+import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { completeOnboarding } from "./actions";
+
 import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+import { completeOnboarding } from "./actions";
 
 const SOCIAL_PLATFORMS = [
 	{ id: "facebook", name: "Facebook" },
@@ -16,12 +19,14 @@ const SOCIAL_PLATFORMS = [
 	{ id: "instagram", name: "Instagram" },
 	{ id: "youtube", name: "YouTube" },
 	{ id: "other", name: "Other" },
-];
+] as const;
+
+type Platforms = (typeof SOCIAL_PLATFORMS)[number]["id"] | string;
 
 export default function OnboardingComponent() {
-	const [error, setError] = useState("");
-	const [selectedPlatform, setSelectedPlatform] = useState("");
-	const [otherPlatform, setOtherPlatform] = useState("");
+	const [error, setError] = useState<string>("");
+	const [selectedPlatform, setSelectedPlatform] = useState<Platforms>("");
+	const [otherPlatform, setOtherPlatform] = useState<string>("");
 	const { user } = useUser();
 	const router = useRouter();
 

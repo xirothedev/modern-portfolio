@@ -1,8 +1,11 @@
 "use server";
+
+import { Project, RepoScope, Token } from "generated/prisma";
+
 import { prisma } from "@/lib/db";
-import { createGitHubAPI, GitHubRepositoryError } from "@/lib/github-api";
-import { Project, Token, RepoScope } from "generated/prisma";
+import { GitHubRepositoryError, createGitHubAPI } from "@/lib/github-api";
 import { requireAdmin } from "@/utils/admin-protection";
+
 import { DEFAULT_EXPIRE_TIME } from "./components/token-manager-table";
 
 /*

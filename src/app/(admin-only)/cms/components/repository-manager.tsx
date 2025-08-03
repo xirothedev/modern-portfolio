@@ -1,8 +1,10 @@
+import { AlertCircle } from "lucide-react";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import { getProjects } from "../actions";
 import { columns } from "./repository-manager-column";
 import { RepositoryManagerTable } from "./repository-manager-table";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
 
 export async function RepositoryManager() {
 	const results = await getProjects();

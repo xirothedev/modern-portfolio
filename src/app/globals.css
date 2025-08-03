@@ -192,6 +192,7 @@
 }
 
 .animate-blob {
+	will-change: transform;
 	animation: blob 7s infinite;
 }
 

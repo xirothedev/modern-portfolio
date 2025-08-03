@@ -1,6 +1,7 @@
+import { NextRequest } from "next/server";
+
 import { prisma } from "@/lib/db";
 import { createGitHubAPI } from "@/lib/github-api";
-import { NextRequest } from "next/server";
 
 const githubApi = createGitHubAPI();
 

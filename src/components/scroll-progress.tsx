@@ -1,6 +1,7 @@
 "use client";
 
-import { useScroll, useSpring, motion } from "motion/react";
+import { motion, useScroll, useSpring } from "motion/react";
+
 import { useEffect, useState } from "react";
 
 export function ScrollProgress() {
@@ -11,7 +12,7 @@ export function ScrollProgress() {
 		mass: 0.5,
 	});
 
-	const [isVisible, setIsVisible] = useState(false);
+	const [isVisible, setIsVisible] = useState<boolean>(false);
 
 	useEffect(() => {
 		const handleScroll = () => {

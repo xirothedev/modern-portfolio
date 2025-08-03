@@ -1,8 +1,9 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { columns } from "./components/columns";
-import { UserDataTable } from "./components/user-table";
-import { UserStats } from "./components/user-stats";
 import { Settings } from "lucide-react";
+
+import { columns } from "./components/columns";
+import { UserStats } from "./components/user-stats";
+import { UserDataTable } from "./components/user-table";
 
 export default async function AdminDashboard() {
 	const client = await clerkClient();

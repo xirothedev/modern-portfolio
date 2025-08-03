@@ -1,7 +1,8 @@
 "use client";
 
+import { animate, stagger, svg } from "animejs";
+
 import { useEffect } from "react";
-import { stagger, animate, svg } from "animejs";
 
 export default function StaggerText() {
 	useEffect(() => {

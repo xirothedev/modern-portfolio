@@ -1,13 +1,16 @@
-import Footer from "@/components/footer";
-import { MouseFollower } from "@/components/mouse-follower";
-import { ScrollProgress } from "@/components/scroll-progress";
-import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
+
 import type React from "react";
+
+import Footer from "@/components/footer";
+import { MouseFollower } from "@/components/mouse-follower";
+import { ScrollProgress } from "@/components/scroll-progress";
+import { Toaster } from "@/components/ui/toaster";
+
 import "./globals.css";
 
 export const metadata: Metadata = {

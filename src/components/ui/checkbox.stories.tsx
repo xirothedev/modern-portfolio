@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
 import { Checkbox } from "./checkbox";
 import { Label } from "./label";
 

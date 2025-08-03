@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "motion/react";
+
+import { useEffect, useState } from "react";
+
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export const SCROLL_BAR_SIZE = 16;
 
 export function MouseFollower() {
 	const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+	const [isHoveringClickable, setIsHoveringClickable] = useState<boolean>(false);
 	const [isVisible, setIsVisible] = useState<boolean>(false);
-	const [isHoveringClickable, setIsHoveringClickable] = useState(false);
 	const isMobile = useIsMobile();
 
 	useEffect(() => {

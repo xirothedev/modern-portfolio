@@ -1,5 +1,6 @@
-import { AnimatedName } from "@/components/animated-name";
 import { unstable_ViewTransition as ViewTransition } from "react";
+
+import { AnimatedName } from "@/components/animated-name";
 
 function Feature({ icon, title, description }: { icon: string; title: string; description: string }) {
 	return (

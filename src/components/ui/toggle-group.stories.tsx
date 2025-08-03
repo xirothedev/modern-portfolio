@@ -1,23 +1,24 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import {
-	Bold,
-	Italic,
-	Underline,
-	AlignLeft,
 	AlignCenter,
-	AlignRight,
 	AlignJustify,
-	List,
-	ListOrdered,
-	Quote,
+	AlignLeft,
+	AlignRight,
+	Bold,
 	Code,
 	Heading1,
 	Heading2,
 	Heading3,
-	Sun,
-	Moon,
+	Italic,
+	List,
+	ListOrdered,
 	Monitor,
+	Moon,
+	Quote,
+	Sun,
+	Underline,
 } from "lucide-react";
+
 import { ToggleGroup, ToggleGroupItem } from "./toggle-group";
 
 const meta = {

@@ -1,8 +1,11 @@
 "use client";
-import { getDefaultClassNames, DayPicker, type DayButton } from "react-day-picker";
+
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+
 import { useEffect, useRef } from "react";
+import { type DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
+
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const Root = ({ className, ref, ...props }: React.ComponentPropsWithRef<"div">) => {

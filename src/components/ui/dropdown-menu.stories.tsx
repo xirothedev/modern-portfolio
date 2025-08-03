@@ -1,21 +1,23 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
+import { useState } from "react";
+
+import { Button } from "./button";
 import {
 	DropdownMenu,
-	DropdownMenuTrigger,
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuCheckboxItem,
+	DropdownMenuLabel,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
-	DropdownMenuSub,
-	DropdownMenuSubTrigger,
-	DropdownMenuSubContent,
-	DropdownMenuLabel,
+	DropdownMenuSeparator,
 	DropdownMenuShortcut,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { Button } from "./button";
-import { useState } from "react";
 
 const meta = {
 	title: "UI/DropdownMenu",
@@ -31,8 +33,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	render: () => {
-		const [showLineNumber, setShowLineNumber] = useState(true);
-		const [theme, setTheme] = useState("light");
+		const [showLineNumber, setShowLineNumber] = useState<boolean>(true);
+		const [theme, setTheme] = useState<string>("light");
 
 		return (
 			<DropdownMenu>

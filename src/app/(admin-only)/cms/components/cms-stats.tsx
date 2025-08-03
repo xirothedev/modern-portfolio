@@ -1,7 +1,9 @@
 import { Database, Key, TrendingUp, Users } from "lucide-react";
-import { getCMSStats } from "../actions";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+import { getCMSStats } from "../actions";
 
 export async function CMSStatsComponent() {
 	const results = await getCMSStats();

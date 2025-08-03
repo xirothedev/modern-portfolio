@@ -1,8 +1,9 @@
 "use client";
 
-import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { User } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 export function AuthButton() {
 	return (

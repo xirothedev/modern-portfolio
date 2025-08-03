@@ -1,29 +1,35 @@
 "use client";
+
+import { AlertCircle, Calendar, CheckCircle, ExternalLink, Github, Home, Lock, Users } from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+
+import { useEffect, useState, useTransition } from "react";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useSearchParams } from "next/navigation";
-import { useState, useTransition, useEffect } from "react";
-import { grantAccess, checkToken } from "./actions";
-import { Github, Lock, Users, Calendar, CheckCircle, AlertCircle, Home, ExternalLink } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import Link from "next/link";
+
+import { checkToken, grantAccess } from "./actions";
 
 interface RepositoryAccessPortalProps {
 	slug: string;
 	repoName: string;
 }
 
+type SubmitStatus = "idle" | "success" | "error";
+
 export default function RepositoryAccessPortal({ slug, repoName }: RepositoryAccessPortalProps) {
-	const [username, setUsername] = useState("");
-	const [pending, startTransition] = useTransition();
-	const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
-	const [errorMessage, setErrorMessage] = useState("");
+	const [username, setUsername] = useState<string>("");
+	const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("idle");
+	const [errorMessage, setErrorMessage] = useState<string>("");
 	const [tokenValid, setTokenValid] = useState<boolean | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
 	const searchParams = useSearchParams();
+	const [pending, startTransition] = useTransition();
 	const token = searchParams.get("token");
 	const { toast } = useToast();
 

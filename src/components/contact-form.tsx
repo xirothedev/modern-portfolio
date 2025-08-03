@@ -1,16 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "motion/react";
 import { Send } from "lucide-react";
+import { motion } from "motion/react";
+
+import { useState } from "react";
+
+import { useToast } from "@/hooks/use-toast";
+
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { useToast } from "@/hooks/use-toast";
 
 export function ContactForm() {
 	const { toast } = useToast();
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

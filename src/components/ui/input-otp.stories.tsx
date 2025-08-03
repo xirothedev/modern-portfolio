@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
 import { InputOTPDemo, InputOTPSizesDemo } from "./input-otp-demo";
 
 const meta = {

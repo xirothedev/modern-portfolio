@@ -1,6 +1,7 @@
+import { NextResponse } from "next/server";
+
 import { createGitHubAPI } from "@/lib/github-api";
 import { formatGitHubTopics, sortTopicsByPriority } from "@/lib/github-topics";
-import { NextResponse } from "next/server";
 
 const PROJECTS = [
 	{

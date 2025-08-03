@@ -1,5 +1,7 @@
-import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
+
+import { prisma } from "@/lib/db";
+
 import RepositoryAccessPortal from "./form";
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {

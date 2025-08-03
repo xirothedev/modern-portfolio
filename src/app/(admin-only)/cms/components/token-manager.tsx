@@ -1,8 +1,10 @@
+import { AlertCircle } from "lucide-react";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
 import { getTokens } from "../actions";
 import { columns } from "./token-manager-column";
 import { TokenManagerTable } from "./token-manager-table";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
 
 export async function TokenManager() {
 	const results = await getTokens();

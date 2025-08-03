@@ -1,7 +1,9 @@
-import { MultipleRepositoriesReport, MultipleRepositoriesResponse } from "@/types/github";
-import { githubCache, generateCacheKey, CACHE_CONFIGS } from "./github-cache";
 import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
+
+import { MultipleRepositoriesReport, MultipleRepositoriesResponse } from "@/types/github";
+
 import { prisma } from "./db";
+import { CACHE_CONFIGS, generateCacheKey, githubCache } from "./github-cache";
 
 interface FetchOptions {
 	cache?: boolean;

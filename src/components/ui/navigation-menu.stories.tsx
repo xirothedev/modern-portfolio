@@ -1,12 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react";
 import Link from "next/link";
-import { CircleIcon, CircleCheckIcon, CircleHelpIcon } from "lucide-react";
+
 import {
 	NavigationMenu,
 	NavigationMenuContent,
+	NavigationMenuItem,
 	NavigationMenuLink,
 	NavigationMenuList,
-	NavigationMenuItem,
 	NavigationMenuTrigger,
 	navigationMenuTriggerStyle,
 } from "./navigation-menu";

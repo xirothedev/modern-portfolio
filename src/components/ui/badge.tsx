@@ -1,5 +1,6 @@
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import { Slot as SlotPrimitive } from "radix-ui";
+
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(

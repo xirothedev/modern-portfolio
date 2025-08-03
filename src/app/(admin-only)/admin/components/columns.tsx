@@ -1,5 +1,11 @@
 "use client";
 
+import { User, UserJSON } from "@clerk/nextjs/server";
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { MoreHorizontal, Shield, ShieldCheck, ShieldX, UserCog } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,12 +22,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { Roles } from "@/types/globals";
-import { User, UserJSON } from "@clerk/nextjs/server";
-import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import { MoreHorizontal, Shield, ShieldCheck, ShieldX, UserCog } from "lucide-react";
+
 import { removeRole, setRole } from "../actions";
-import { useRouter } from "next/navigation";
 
 interface UserData extends Partial<User> {
 	id: string;

@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { ChartContainer, ChartTooltipContent, ChartLegendContent } from "./chart";
+import { Monitor, Moon, Sun } from "lucide-react";
 import * as Recharts from "recharts";
-import { Monitor, Sun, Moon } from "lucide-react";
+
+import { ChartContainer, ChartLegendContent, ChartTooltipContent } from "./chart";
 
 const meta = {
 	title: "UI/Chart",

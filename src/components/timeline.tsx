@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const experiences = [

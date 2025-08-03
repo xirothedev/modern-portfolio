@@ -1,6 +1,7 @@
 "use client";
 
 import { Github } from "lucide-react";
+
 import { Badge } from "./ui/badge";
 
 interface GitHubInfoBadgeProps {

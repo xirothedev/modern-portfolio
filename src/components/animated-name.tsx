@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+
 import { useEffect, useState } from "react";
 
 const gradients = [
@@ -13,7 +14,7 @@ const gradients = [
 ];
 
 export function AnimatedName() {
-	const [index, setIndex] = useState(0);
+	const [index, setIndex] = useState<number>(0);
 	const [sparkles, setSparkles] = useState<Array<{ x: number; y: number }>>([]);
 
 	useEffect(() => {

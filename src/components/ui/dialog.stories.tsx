@@ -1,15 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
+import { useState } from "react";
+
+import { Button } from "./button";
 import {
 	Dialog,
-	DialogTrigger,
 	DialogContent,
-	DialogHeader,
-	DialogFooter,
-	DialogTitle,
 	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
 } from "./dialog";
-import { Button } from "./button";
-import { useState } from "react";
 
 const meta = {
 	title: "UI/Dialog",
@@ -25,7 +27,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	render: () => {
-		const [open, setOpen] = useState(false);
+		const [open, setOpen] = useState<boolean>(false);
 
 		return (
 			<Dialog open={open} onOpenChange={setOpen}>

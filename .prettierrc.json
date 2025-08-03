@@ -4,6 +4,9 @@
 	"printWidth": 120,
 	"useTabs": true,
 	"trailingComma": "all",
-	"plugins": ["prettier-plugin-tailwindcss"],
-	"tailwindAttributes": ["className"]
+	"plugins": ["prettier-plugin-tailwindcss", "@trivago/prettier-plugin-sort-imports"],
+	"tailwindAttributes": ["className"],
+	"importOrder": ["^react", "^@/", "^[./]"],
+	"importOrderSeparation": true,
+	"importOrderSortSpecifiers": true
 }

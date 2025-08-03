@@ -1,8 +1,10 @@
 "use client";
 
 import { Slider as SliderPrimitive } from "radix-ui";
-import { cn } from "@/lib/utils";
+
 import { useMemo } from "react";
+
+import { cn } from "@/lib/utils";
 
 function Slider({
 	className,

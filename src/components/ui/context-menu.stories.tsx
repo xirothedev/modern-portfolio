@@ -1,18 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
 import {
 	ContextMenu,
-	ContextMenuTrigger,
+	ContextMenuCheckboxItem,
 	ContextMenuContent,
 	ContextMenuItem,
-	ContextMenuCheckboxItem,
-	ContextMenuRadioItem,
 	ContextMenuLabel,
+	ContextMenuRadioGroup,
+	ContextMenuRadioItem,
 	ContextMenuSeparator,
 	ContextMenuShortcut,
 	ContextMenuSub,
 	ContextMenuSubContent,
 	ContextMenuSubTrigger,
-	ContextMenuRadioGroup,
+	ContextMenuTrigger,
 } from "./context-menu";
 
 const meta = {

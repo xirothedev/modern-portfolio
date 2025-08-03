@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "./resizable";
+
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable";
 
 const meta = {
 	title: "UI/Resizable",

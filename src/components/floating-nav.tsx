@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { motion } from "motion/react";
 import { Menu, X } from "lucide-react";
+import { motion } from "motion/react";
+import Link from "next/link";
+
+import { useEffect, useState } from "react";
+
+import { AuthButton } from "@/components/auth-button";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { AuthButton } from "@/components/auth-button";
 
 const navItems = [
 	{ name: "About", href: "#about" },
@@ -17,8 +19,8 @@ const navItems = [
 ];
 
 export function FloatingNav() {
-	const [isVisible, setIsVisible] = useState(false);
-	const [isOpen, setIsOpen] = useState(false);
+	const [isVisible, setIsVisible] = useState<boolean>(false);
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const isMobile = useIsMobile();
 
 	useEffect(() => {

@@ -1,8 +1,9 @@
 "use client";
 
-import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
-import * as React from "react";
 import * as RechartsPrimitive from "recharts";
+import type { NameType, ValueType } from "recharts/types/component/DefaultTooltipContent";
+
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 

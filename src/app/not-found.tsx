@@ -1,9 +1,10 @@
 "use client";
 
+import { ArrowLeft, Home, MapPin, Search } from "lucide-react";
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Home, Search, ArrowLeft, MapPin } from "lucide-react";
-import Link from "next/link";
 
 export default function NotFound() {
 	return (

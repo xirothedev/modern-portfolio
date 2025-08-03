@@ -4,7 +4,9 @@ import { ArrowUpRight, GitFork, Github, Star } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
+
 import { memo, useState } from "react";
+
 import { GitHubInfoBadge } from "./github-info-badge";
 import { LanguageBar } from "./language-bar";
 import { Badge } from "./ui/badge";
@@ -38,7 +40,7 @@ function ProjectCardComponent({
 	languages = {},
 	isFromGitHub = false,
 }: ProjectCardProps) {
-	const [isHovered, setIsHovered] = useState(false);
+	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const isComingSoon = !demoUrl || demoUrl === "#";
 
 	return (

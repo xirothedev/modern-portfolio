@@ -1,6 +1,6 @@
+import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
 import withDevToolsJSON from "next-plugin-devtools-json";
-import withSerwistInit from "@serwist/next";
 
 const nextConfig: NextConfig = {
 	output: "standalone",
@@ -13,7 +13,16 @@ const nextConfig: NextConfig = {
 		},
 	},
 	experimental: {
-		optimizePackageImports: ["lucide-react", "react-icons", "@radix-ui/react-icons", "animejs", "date-fns"],
+		optimizePackageImports: [
+			"lucide-react",
+			"react-icons",
+			"@radix-ui/react-icons",
+			"animejs",
+			"date-fns",
+			"three",
+			"@react-three/fiber",
+			"@react-three/drei",
+		],
 		optimizeCss: true,
 		viewTransition: true,
 	},

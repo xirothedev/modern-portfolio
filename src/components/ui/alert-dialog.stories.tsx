@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
 import { useState } from "react";
+
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -146,7 +148,7 @@ export const LongContent: Story = {
 // Interactive AlertDialog with state management
 export const Interactive: Story = {
 	render: () => {
-		const [isOpen, setIsOpen] = useState(false);
+		const [isOpen, setIsOpen] = useState<boolean>(false);
 		const [action, setAction] = useState<string | null>(null);
 
 		return (

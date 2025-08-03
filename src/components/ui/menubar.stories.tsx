@@ -1,18 +1,19 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
 import {
 	Menubar,
+	MenubarCheckboxItem,
 	MenubarContent,
 	MenubarItem,
 	MenubarMenu,
-	MenubarSeparator,
-	MenubarShortcut,
-	MenubarTrigger,
-	MenubarCheckboxItem,
 	MenubarRadioGroup,
 	MenubarRadioItem,
+	MenubarSeparator,
+	MenubarShortcut,
 	MenubarSub,
 	MenubarSubContent,
 	MenubarSubTrigger,
+	MenubarTrigger,
 } from "./menubar";
 
 const meta = {

@@ -1,6 +1,8 @@
-import { Button } from "./button";
-import { cn } from "@/lib/utils";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
+import { cn } from "@/lib/utils";
+
+import { Button } from "./button";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 const meta = {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ProjectData {
 	title: string;
@@ -26,6 +26,7 @@ export function useGitHubProjects(): UseGitHubProjectsReturn {
 	const [projects, setProjects] = useState<ProjectData[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [retryCount, setRetryCount] = useState<number>(0);
 
 	useEffect(() => {
 		const fetchProjects = async () => {
@@ -33,7 +34,9 @@ export function useGitHubProjects(): UseGitHubProjectsReturn {
 				setLoading(true);
 				setError(null);
 
-				const response = await fetch("/api/github");
+				const response = await fetch("/api/github", {
+					signal: AbortSignal.timeout(10000),
+				});
 
 				if (!response.ok) {
 					throw new Error("Failed to fetch projects");
@@ -48,13 +51,22 @@ export function useGitHubProjects(): UseGitHubProjectsReturn {
 			} catch (err) {
 				console.error("Error fetching GitHub projects:", err);
 				setError(err instanceof Error ? err.message : "Failed to fetch projects");
+
+				if (retryCount < 3) {
+					setTimeout(
+						() => {
+							setRetryCount((prev) => prev + 1);
+						},
+						1000 * (retryCount + 1),
+					);
+				}
 			} finally {
 				setLoading(false);
 			}
 		};
 
 		fetchProjects();
-	}, []);
+	}, [retryCount]);
 
 	return { projects, loading, error };
 }

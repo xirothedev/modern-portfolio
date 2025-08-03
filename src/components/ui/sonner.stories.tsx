@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { toast } from "sonner";
+
 import { Button } from "./button";
 import { Toaster } from "./sonner";
-import { toast } from "sonner";
 
 const meta = {
 	title: "UI/Sonner",

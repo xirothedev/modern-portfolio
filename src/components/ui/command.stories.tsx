@@ -1,15 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+
+import { useState } from "react";
+
 import {
 	CommandDialog,
-	CommandInput,
-	CommandList,
 	CommandEmpty,
 	CommandGroup,
+	CommandInput,
 	CommandItem,
-	CommandShortcut,
+	CommandList,
 	CommandSeparator,
+	CommandShortcut,
 } from "./command";
-import { useState } from "react";
 
 const meta = {
 	title: "UI/Command",
@@ -25,7 +27,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	render: () => {
-		const [open, setOpen] = useState(true);
+		const [open, setOpen] = useState<boolean>(true);
 
 		return (
 			<CommandDialog open={open} onOpenChange={setOpen}>

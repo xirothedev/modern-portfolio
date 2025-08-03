@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "./button";
-import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from "./input-otp";
 import type { SlotProps } from "input-otp";
+
+import { useState } from "react";
+
+import { Button } from "./button";
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "./input-otp";
 
 interface InputOTPDemoProps {
 	maxLength?: number;
@@ -28,8 +30,8 @@ export function InputOTPDemo({
 	showClearButton = false,
 	size = "default",
 }: InputOTPDemoProps) {
-	const [value, setValue] = useState("");
-	const [isValid, setIsValid] = useState(true);
+	const [value, setValue] = useState<string>("");
+	const [isValid, setIsValid] = useState<boolean>(true);
 
 	const handleChange = (newValue: string) => {
 		setValue(newValue);

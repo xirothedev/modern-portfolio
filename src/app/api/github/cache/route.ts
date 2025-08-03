@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { createGitHubAPI } from "@/lib/github-api";
 
 export async function GET() {

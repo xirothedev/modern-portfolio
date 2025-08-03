@@ -31,6 +31,7 @@ import {
 	Wifi,
 	WifiOff,
 } from "lucide-react";
+
 import { Toggle } from "./toggle";
 
 const meta = {
