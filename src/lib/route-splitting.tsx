@@ -3,9 +3,8 @@
  * Implements intelligent code splitting strategies for optimal bundle loading
  */
 
-import dynamic, { DynamicOptions } from "next/dynamic";
+import dynamic from "next/dynamic";
 import { ComponentType } from "react";
-import React from "react";
 
 // Route priorities for loading optimization
 export const ROUTE_PRIORITIES = {
@@ -36,22 +35,22 @@ export function createOptimizedDynamic<T extends ComponentType<any>>(
 	importFn: () => Promise<{ default: T }>,
 	config: SplitConfig = { strategy: "LAZY" },
 ) {
-	const baseOptions: DynamicOptions = {
-		ssr: false,
-		loading: () => (
-			<div className="flex h-64 items-center justify-center">
-				<div className="h-8 w-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
-			</div>
-		),
-	};
+	const defaultLoading = () => (
+		<div className="flex h-64 items-center justify-center">
+			<div className="h-8 w-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
+		</div>
+	);
 
 	switch (config.strategy) {
 		case "IMMEDIATE":
-			return dynamic(importFn, { ...baseOptions, ssr: true });
+			return dynamic(importFn, {
+				ssr: true,
+				loading: defaultLoading,
+			});
 
 		case "PRELOAD":
 			return dynamic(importFn, {
-				...baseOptions,
+				ssr: false,
 				loading: () => (
 					<div className="flex h-32 items-center justify-center">
 						<div className="text-center">
@@ -63,16 +62,22 @@ export function createOptimizedDynamic<T extends ComponentType<any>>(
 			});
 
 		case "LAZY":
-			return dynamic(importFn, baseOptions);
+			return dynamic(importFn, {
+				ssr: false,
+				loading: defaultLoading,
+			});
 
 		case "DEFER":
 			return dynamic(importFn, {
-				...baseOptions,
+				ssr: false,
 				loading: () => <div className="h-16 w-full animate-pulse rounded bg-zinc-800/50" />,
 			});
 
 		default:
-			return dynamic(importFn, baseOptions);
+			return dynamic(importFn, {
+				ssr: false,
+				loading: defaultLoading,
+			});
 	}
 }
 

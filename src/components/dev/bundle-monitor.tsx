@@ -38,17 +38,17 @@ export function BundleMonitor() {
 	const colorClasses = getColorClasses(color);
 
 	return (
-		<div className="fixed bottom-4 left-4 z-50">
+		<div className="fixed right-4 bottom-24 z-50">
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className={`rounded-full p-2 text-white shadow-lg hover:opacity-80 ${colorClasses.bg}`}
+				className={`cursor-pointer rounded-full p-2 text-white shadow-lg hover:opacity-80 ${colorClasses.bg}`}
 				title="Bundle Size Monitor"
 			>
 				📦
 			</button>
 
 			{isOpen && (
-				<div className="absolute bottom-12 left-0 max-h-96 w-96 overflow-y-auto rounded-lg border border-zinc-700 bg-zinc-900 p-4 shadow-xl">
+				<div className="absolute right-0 bottom-12 max-h-96 w-96 overflow-y-auto rounded-lg border border-zinc-700 bg-zinc-900 p-4 shadow-xl">
 					<div className="mb-4 flex items-center justify-between">
 						<h3 className="font-semibold text-white">Bundle Monitor</h3>
 						<button onClick={() => setIsOpen(false)} className="text-zinc-400 hover:text-white">

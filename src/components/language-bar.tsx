@@ -5,9 +5,10 @@ import { getLanguageColor } from "@/lib/github-colors";
 interface LanguageBarProps {
 	languages: { [key: string]: number };
 	className?: string;
+	showPercentages?: boolean;
 }
 
-export function LanguageBar({ languages, className = "" }: LanguageBarProps) {
+export function LanguageBar({ languages, className = "", showPercentages = false }: LanguageBarProps) {
 	if (!languages || Object.keys(languages).length === 0) {
 		return null;
 	}
@@ -52,7 +53,7 @@ export function LanguageBar({ languages, className = "" }: LanguageBarProps) {
 					<div key={language} className="flex items-center gap-1">
 						<div className="h-2 w-2 rounded-full" style={{ backgroundColor: getLanguageColor(language) }} />
 						<span className="font-medium">{language}</span>
-						<span className="text-zinc-500">{percentage.toFixed(1)}%</span>
+						{showPercentages && <span className="text-zinc-500">{percentage.toFixed(1)}%</span>}
 					</div>
 				))}
 			</div>

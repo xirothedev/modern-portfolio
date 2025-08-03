@@ -18,7 +18,7 @@ export function CacheDebug() {
 		<div className="fixed right-4 bottom-4 z-50">
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className="rounded-full bg-purple-600 p-2 text-white shadow-lg hover:bg-purple-700"
+				className="cursor-pointer rounded-full bg-purple-600 p-2 text-white shadow-lg hover:bg-purple-700"
 				title="Cache Debug Panel"
 			>
 				🔧

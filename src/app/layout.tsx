@@ -85,6 +85,8 @@ export default function RootLayout({
 				<GoogleTagManager gtmId="GTM-MMWR3898" />
 
 				<head>
+					<meta charSet="utf-8" />
+					<meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
 					{/* Preconnect to external domains */}
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

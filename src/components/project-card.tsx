@@ -12,6 +12,7 @@ import { LanguageBar } from "./language-bar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { generateProjectSlug } from "@/lib/project-utils";
 
 interface ProjectCardProps {
 	title: string;
@@ -26,6 +27,7 @@ interface ProjectCardProps {
 	languages?: { [key: string]: number };
 	lastUpdated?: string;
 	isFromGitHub?: boolean;
+	repoName?: string;
 }
 
 function ProjectCardComponent({
@@ -39,9 +41,29 @@ function ProjectCardComponent({
 	forks = 0,
 	languages = {},
 	isFromGitHub = false,
+	repoName,
 }: ProjectCardProps) {
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const isComingSoon = !demoUrl || demoUrl === "#";
+
+	// Generate project slug for detail page link
+	const projectSlug = repoName
+		? generateProjectSlug({
+				title,
+				repoName,
+				description,
+				tags,
+				image,
+				repoUrl,
+				demoUrl,
+				stars: stars || 0,
+				forks: forks || 0,
+				language: null,
+				languages,
+				lastUpdated: "",
+				isFromGitHub: isFromGitHub || false,
+			})
+		: null;
 
 	return (
 		<motion.div
@@ -112,9 +134,9 @@ function ProjectCardComponent({
 
 					<div className="flex h-full flex-col p-6">
 						{/* Top content - title and description */}
-						<div className="flex-1">
-							<h3 className="mb-2 text-xl font-bold">{title}</h3>
-							<p className="text-zinc-400">{description}</p>
+						<div className="flex flex-1 flex-col">
+							<h3 className="mb-2 line-clamp-2 text-xl font-bold">{title}</h3>
+							<p className="line-clamp-3 flex-1 text-zinc-400">{description}</p>
 						</div>
 
 						{/* Bottom content - tags, stats, and buttons */}
@@ -162,34 +184,41 @@ function ProjectCardComponent({
 							)}
 
 							{/* Buttons */}
-							<div className="flex justify-between border-t border-zinc-700/50 pt-4">
-								<Button
-									variant="ghost"
-									size="sm"
-									disabled={isComingSoon}
-									className={`${
-										isComingSoon
-											? "hover:text- cursor-not-allowed! text-zinc-500 hover:bg-transparent"
-											: "text-zinc-400 hover:bg-zinc-700/50 hover:text-white"
-									}`}
-									asChild
-								>
-									{!isComingSoon ? (
+							<div className="flex flex-col gap-2 border-t border-zinc-700/50 pt-4">
+								{/* Top row - Code and View Details */}
+								<div className="flex gap-2">
+									<Button
+										variant="ghost"
+										size="sm"
+										className="flex-1 text-zinc-400 hover:bg-zinc-700/50 hover:text-white"
+										asChild
+									>
 										<Link href={repoUrl} target="_blank" rel="noopener noreferrer">
 											<Github className="mr-2 h-4 w-4" />
 											Code
 										</Link>
-									) : (
-										<div>
-											<Github className="mr-2 h-4 w-4" />
-											Code
-										</div>
+									</Button>
+
+									{projectSlug && (
+										<Button
+											variant="outline"
+											size="sm"
+											className="flex-1 border-zinc-600 hover:border-purple-500 hover:bg-purple-500/10"
+											asChild
+										>
+											<Link href={`/projects/${projectSlug}`}>
+												<ArrowUpRight className="mr-2 h-4 w-4" />
+												Details
+											</Link>
+										</Button>
 									)}
-								</Button>
+								</div>
+
+								{/* Bottom row - Live Demo */}
 								<Button
 									size="sm"
 									disabled={isComingSoon}
-									className={`border-0 ${
+									className={`w-full border-0 ${
 										isComingSoon
 											? "cursor-not-allowed! bg-zinc-600/50 text-zinc-400"
 											: "bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"

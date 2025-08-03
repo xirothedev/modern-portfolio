@@ -299,3 +299,29 @@
 		transform: translateX(0);
 	}
 }
+
+/* Custom list styling for README viewer */
+.readme-content ol {
+	counter-reset: list-counter;
+}
+
+.readme-content ol > li {
+	counter-increment: list-counter;
+	position: relative;
+}
+
+.readme-content ol > li::before {
+	content: counter(list-counter) ".";
+	position: absolute;
+	left: -1.5rem;
+	font-weight: 500;
+	color: rgb(212 212 216); /* text-zinc-300 */
+	min-width: 1.25rem;
+}
+
+.readme-content ul > li::before {
+	content: "•";
+	position: absolute;
+	left: -1rem;
+	color: rgb(212 212 216); /* text-zinc-300 */
+}

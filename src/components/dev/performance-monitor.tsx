@@ -50,10 +50,10 @@ export function PerformanceMonitor() {
 	const { status, color, bg } = getPerformanceStatus();
 
 	return (
-		<div className="fixed right-4 bottom-20 z-50">
+		<div className="fixed right-4 bottom-14 z-50">
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className={`rounded-full p-2 text-white shadow-lg hover:opacity-80 ${bg}`}
+				className={`cursor-pointer rounded-full p-2 text-white shadow-lg hover:opacity-80 ${bg}`}
 				title="Performance Monitor"
 			>
 				📊
