@@ -28,7 +28,7 @@ export default async function AdminDashboard() {
 						<Settings className="relative z-10 h-7 w-7 animate-spin text-purple-300 drop-shadow-lg transition-all" />
 					</div>
 					<div>
-						<h1 className="text-3xl font-bold text-white">Content manager system</h1>
+						<h1 className="text-3xl font-bold text-white">Administration Dashboard</h1>
 						<p className="mt-1 text-gray-400">Manage users data</p>
 					</div>
 				</div>
