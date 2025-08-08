@@ -67,6 +67,88 @@ src/
 public/          # Static assets (images, CV, etc.)
 ```
 
+## 🔄 System Architecture Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant B as Browser
+    participant N as Next.js App
+    participant API as API Routes
+    participant GH as GitHub API
+    participant DB as Database
+    participant Email as Resend API
+
+    Note over U,Email: Portfolio Loading Flow
+    U->>B: Visit Portfolio
+    B->>N: Load Page
+    N->>API: GET /api/github
+    API->>GH: Fetch Repositories
+    GH-->>API: Repository Data
+    API->>GH: Fetch Languages
+    GH-->>API: Language Data
+    API-->>N: Projects Data
+    N-->>B: Render Projects
+    B-->>U: Display Portfolio
+
+    Note over U,Email: Skills Loading Flow
+    B->>API: GET /api/skills
+    API->>GH: Get User Repositories
+    GH-->>API: Repositories List
+    API->>GH: Get Languages for Each Repo
+    GH-->>API: Languages Data
+    API-->>B: Processed Skills Data
+
+    Note over U,Email: Contact Form Flow
+    U->>B: Fill Contact Form
+    B->>API: POST /api/contact
+    API->>API: Validate with Zod
+    API->>Email: Send Email
+    Email-->>API: Email Sent
+    API-->>B: Success Response
+    B-->>U: Show Success Message
+
+    Note over U,Email: Project Detail Flow
+    U->>B: Click Project
+    B->>API: GET /api/projects/[slug]
+    API->>DB: Query Project
+    DB-->>API: Project Data
+    API-->>B: Project Details
+    B-->>U: Display Project
+```
+
+### 📋 Flow Descriptions
+
+#### 🏠 Portfolio Loading Flow
+
+1. **User** visits the portfolio website
+2. **Browser** loads the Next.js application
+3. **Next.js App** requests project data from GitHub API
+4. **API Routes** fetch repository information and language statistics
+5. **GitHub API** returns structured data
+6. **Browser** renders the portfolio with real-time GitHub data
+
+#### 🛠️ Skills Loading Flow
+
+1. **Browser** requests skills data
+2. **API Routes** fetch all user repositories
+3. **GitHub API** provides repository and language information
+4. **Browser** displays processed skills with project associations
+
+#### 📧 Contact Form Flow
+
+1. **User** fills and submits contact form
+2. **API Routes** validate form data using Zod schema
+3. **Resend API** sends formatted email
+4. **Browser** shows success confirmation
+
+#### 📁 Project Detail Flow
+
+1. **User** clicks on a specific project
+2. **API Routes** query project details from database
+3. **Database** returns project information
+4. **Browser** displays detailed project view
+
 ## 🚀 Quick Start
 
 ### 1. Clone & Install
