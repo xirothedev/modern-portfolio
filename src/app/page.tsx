@@ -212,7 +212,7 @@ export default function Portfolio() {
 								<p className="mt-4 text-lg text-zinc-300">
 									My journey in tech started with a strong foundation in software development.
 									I&apos;ve worked with enthusiams friends to create intuitive, performant, and
-									accessible digital experiences. experiences.
+									accessible digital experiences.
 								</p>
 								<p className="mt-4 text-lg text-zinc-300">
 									When I&apos;m not coding, you can find me exploring new technologies, contributing
