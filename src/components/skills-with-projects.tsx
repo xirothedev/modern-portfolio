@@ -1,15 +1,14 @@
 "use client";
 
-import { ExternalLink, Github, Loader2, RefreshCw } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-
-import { useState } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSkills, useSkillsCache } from "@/hooks/use-skills";
+import { cn } from "@/lib/utils";
+import { ExternalLink, Github, Loader2, RefreshCw } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
+import { useState } from "react";
 
 export function SkillsWithProjects() {
 	const [selectedSkill, setSelectedSkill] = useState<string | null>(null);
@@ -105,17 +104,19 @@ export function SkillsWithProjects() {
 					>
 						<Badge
 							variant="secondary"
-							className={`relative cursor-pointer px-4 py-2 text-sm font-medium transition-all duration-300 ${
+							className={cn(
+								"relative cursor-pointer px-4 py-2 text-sm font-medium transition-all duration-300",
 								selectedSkill === skill.name
 									? "bg-linear-to-r from-purple-500 to-pink-500 text-white shadow-lg"
-									: "bg-zinc-800/50 text-zinc-300 hover:bg-zinc-700 hover:text-white"
-							} ${hoveredSkill === skill.name ? "shadow-md" : ""} `}
+									: "bg-zinc-800/50 text-zinc-300 hover:bg-zinc-700 hover:text-white",
+								hoveredSkill === skill.name && "shadow-md",
+							)}
 							onClick={() => handleSkillClick(skill.name)}
 							onMouseEnter={() => setHoveredSkill(skill.name)}
 							onMouseLeave={() => setHoveredSkill(null)}
 						>
 							<span className="relative z-10 flex items-center gap-2">
-								<div className={`h-2 w-2 rounded-full ${skill.color}`} />
+								<div className={cn("h-2 w-2 rounded-full", skill.color)} />
 								{skill.name}
 								<span className="text-xs opacity-70">({skill.projects.length})</span>
 							</span>
@@ -138,7 +139,9 @@ export function SkillsWithProjects() {
 							<CardHeader>
 								<div className="flex items-center justify-between">
 									<div className="flex items-center gap-3">
-										<div className={`h-4 w-4 rounded-full ${getSkillData(selectedSkill)?.color}`} />
+										<div
+											className={cn("h-4 w-4 rounded-full", getSkillData(selectedSkill)?.color)}
+										/>
 										<CardTitle className="text-2xl text-white">{selectedSkill}</CardTitle>
 										<Badge variant="outline" className="border-purple-400 text-purple-400">
 											{getSkillData(selectedSkill)?.type}
@@ -199,11 +202,12 @@ export function SkillsWithProjects() {
 															<Button
 																variant="ghost"
 																size="icon"
-																className={`h-6 w-6 transition-colors ${
+																className={cn(
+																	"h-6 w-6 transition-colors",
 																	project.private
 																		? "cursor-not-allowed text-zinc-600"
-																		: "text-zinc-400 hover:bg-purple-500/10 hover:text-purple-400"
-																}`}
+																		: "text-zinc-400 hover:bg-purple-500/10 hover:text-purple-400",
+																)}
 																disabled={project.private}
 																asChild={!project.private}
 															>
@@ -289,7 +293,7 @@ export function SkillsWithProjects() {
 							className="h-6 px-2 text-xs hover:bg-white/20 hover:text-white"
 							disabled={isValidating}
 						>
-							<RefreshCw className={`mr-1 h-3 w-3 ${isValidating ? "animate-spin" : ""}`} />
+							<RefreshCw className={cn("mr-1 h-3 w-3", isValidating && "animate-spin")} />
 							Refresh
 						</Button>
 					</div>

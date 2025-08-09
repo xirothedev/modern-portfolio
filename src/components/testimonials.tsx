@@ -8,7 +8,7 @@ export type VideoAspect = "16:9" | "9:16" | "1:1";
 export type TestimonialItem = {
 	name: string;
 	title: string;
-	avatar?: string;
+	avatar: string;
 	comment?: string;
 	imageSrc?: string; // optional image evidence
 	videoSrc?: string; // optional video evidence (mp4 or YouTube URL)
@@ -16,7 +16,6 @@ export type TestimonialItem = {
 };
 
 export type TestimonialsProps = {
-	items: TestimonialItem[];
 	id?: string;
 	title?: string;
 	subtitle?: string;
@@ -25,22 +24,31 @@ export type TestimonialsProps = {
 	defaultVideoAspect?: VideoAspect; // default if item not specified
 };
 
-function getYouTubeEmbedUrl(url: string) {
-	try {
-		if (url.includes("youtu.be/")) {
-			const id = url.split("youtu.be/")[1].split(/[?&]/)[0];
-			return `https://www.youtube.com/embed/${id}`;
-		}
-		const u = new URL(url);
-		const id = u.searchParams.get("v");
-		if (u.hostname.includes("youtube.") && id) {
-			return `https://www.youtube.com/embed/${id}`;
-		}
-		return url;
-	} catch {
-		return url;
-	}
-}
+const testimonials: TestimonialItem[] = [
+	{
+		name: "Thanh Tin",
+		title: "Customer",
+		avatar: "/testimonials/thanhtin.png",
+		comment:
+			"I'll tell you this — even though you don't have much experience, when you promise to make a bot, you actually get it done. You're reliable. Many others only make promises.",
+	},
+	{
+		name: "Lê Xuân Hiệp",
+		title: "CEO, Techbyte Technology Investment Company Limited",
+		avatar: "/testimonials/codertayto.png",
+		comment:
+			"Okay, for a high school student like you, this is already really good. Keep it up. You're doing much better than average. Any school will be fine for you. There's nothing to criticize.",
+		videoSrc: "/testimonials/codertayto.mp4",
+		videoAspect: "9:16",
+	},
+	{
+		name: "Nguyen Thai An",
+		title: "Collaborator",
+		avatar: "/testimonials/nguyenthaian.png",
+		comment:
+			"Okay, I'll say a few words to my brother. Actually, I can call him teacher or colleague hehe. He came to me very normally. He and I worked on a project together and built a platform. Over time, he supported me a lot, gave me new ideas and technologies. On the surface, he is cold but very friendly. Sometimes I wonder why he has so much knowledge, sometimes I feel sad because I'm not as good as him, but I know he is a hard worker. Keep it up, boy.",
+	},
+];
 
 function aspectClass(aspect: VideoAspect) {
 	switch (aspect) {
@@ -66,26 +74,15 @@ function MediaBlock({
 }) {
 	if (!imageSrc && !videoSrc) return null;
 
-	const isYouTube = !!videoSrc && (videoSrc.includes("youtube.com") || videoSrc.includes("youtu.be"));
 	const wrapperAspect = aspectClass(videoAspect);
 
 	return (
 		<div className="space-y-3">
 			{videoSrc && (
-				<div className={`overflow-hidden rounded-lg border border-zinc-800 ${wrapperAspect}`}>
-					{isYouTube ? (
-						<iframe
-							src={getYouTubeEmbedUrl(videoSrc)}
-							title="testimonial video"
-							className="h-full w-full"
-							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-							allowFullScreen
-						/>
-					) : (
-						<video controls className="h-full w-full object-cover">
-							<source src={videoSrc} />
-						</video>
-					)}
+				<div className={cn("overflow-hidden rounded-lg border border-zinc-800", wrapperAspect)}>
+					<video controls className="h-full w-full object-cover">
+						<source src={videoSrc} />
+					</video>
 				</div>
 			)}
 
@@ -105,7 +102,6 @@ function MediaBlock({
 }
 
 export function Testimonials({
-	items,
 	id = "testimonials",
 	title = "Testimonials",
 	subtitle = "What clients and peers say",
@@ -124,7 +120,7 @@ export function Testimonials({
 				<SectionHeading title={title} subtitle={subtitle} />
 
 				<div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-					{items.map((t, idx) => {
+					{testimonials.map((t, idx) => {
 						const hasMedia = !!(t.imageSrc || t.videoSrc);
 						const itemVideoAspect = (t.videoSrc ? (t as any).videoAspect : undefined) ?? defaultVideoAspect;
 						const isInlineForVideo = t.videoSrc
@@ -139,7 +135,7 @@ export function Testimonials({
 								key={`${t.name}-${idx}`}
 								className={cn(
 									"relative h-full rounded-2xl border border-zinc-700/50 bg-zinc-800/50 p-6 backdrop-blur-sm",
-									items.length === 1 && "col-start-2",
+									testimonials.length === 1 && "col-start-2",
 								)}
 							>
 								<GlowingEffect
@@ -152,7 +148,10 @@ export function Testimonials({
 
 								{useSideBySide ? (
 									<div
-										className={`grid gap-6 md:grid-cols-2 ${mediaFirst ? "" : "md:[&>*:first-child]:order-2"}`}
+										className={cn(
+											"grid gap-6 md:grid-cols-2",
+											!mediaFirst && "md:[&>*:first-child]:order-2",
+										)}
 									>
 										{/* Media */}
 										<div>
@@ -167,7 +166,7 @@ export function Testimonials({
 										<div className="min-w-0">
 											<div className="flex items-center gap-4">
 												<Image
-													src={t.avatar || "/thumbnail.jpeg"}
+													src={t.avatar}
 													alt={t.name}
 													width={48}
 													height={48}
@@ -186,7 +185,7 @@ export function Testimonials({
 										{/* Header */}
 										<div className="flex items-center gap-4">
 											<Image
-												src={t.avatar || "/thumbnail.jpeg"}
+												src={t.avatar}
 												alt={t.name}
 												width={48}
 												height={48}

@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 
-import { Component, ComponentType, Suspense } from "react";
+import { ComponentType } from "react";
 
 // Loading skeleton components
 export function HeavyComponentSkeleton() {
@@ -23,58 +23,6 @@ export function IconSkeleton() {
 
 export function ChartSkeleton() {
 	return <div className="h-64 w-full animate-pulse rounded-lg bg-zinc-800/50" />;
-}
-
-// Lazy loading wrapper with error boundary
-interface LazyWrapperProps {
-	children: React.ReactNode;
-	fallback?: React.ReactNode;
-	errorFallback?: React.ReactNode;
-}
-
-export function LazyWrapper({
-	children,
-	fallback = <HeavyComponentSkeleton />,
-	errorFallback = <div className="text-red-400">Failed to load component</div>,
-}: LazyWrapperProps) {
-	return (
-		<Suspense fallback={fallback}>
-			<ErrorBoundary fallback={errorFallback}>{children}</ErrorBoundary>
-		</Suspense>
-	);
-}
-
-// Simple error boundary
-interface ErrorBoundaryProps {
-	children: React.ReactNode;
-	fallback: React.ReactNode;
-}
-
-interface ErrorBoundaryState {
-	hasError: boolean;
-}
-
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-	constructor(props: ErrorBoundaryProps) {
-		super(props);
-		this.state = { hasError: false };
-	}
-
-	static getDerivedStateFromError(): ErrorBoundaryState {
-		return { hasError: true };
-	}
-
-	componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-		console.error("Lazy loading error:", error, errorInfo);
-	}
-
-	render() {
-		if (this.state.hasError) {
-			return this.props.fallback;
-		}
-
-		return this.props.children;
-	}
 }
 
 // Pre-configured lazy loaded components

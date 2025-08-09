@@ -1,10 +1,8 @@
 "use client";
 
-import { motion } from "motion/react";
-
-import { useEffect, useState } from "react";
-
 import { useIsMobile } from "@/hooks/use-mobile";
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 export const SCROLL_BAR_SIZE = 16;
 
@@ -35,7 +33,7 @@ export function MouseFollower() {
 
 			setIsVisible(true);
 
-			// Check if the element under cursor has cursor-pointer or is an anchor/button tag (including parent elements)
+			// Check if the element under cursor has cursor-pointer or is an anchor/button/canvas tag (including parent elements)
 			const element = document.elementFromPoint(e.clientX, e.clientY);
 			if (element) {
 				const computedStyle = window.getComputedStyle(element);

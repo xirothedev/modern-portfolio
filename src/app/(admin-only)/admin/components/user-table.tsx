@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -116,11 +117,12 @@ export function UserDataTable<TData, TValue>({ columns, data }: DataTableProps<T
 								<TableRow
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
-									className={`border-zinc-800 transition-colors duration-200 ${
+									className={cn(
+										"border-zinc-800 transition-colors duration-200",
 										index % 2 === 0
 											? "bg-zinc-900/30 hover:bg-zinc-800/40"
-											: "bg-zinc-900/50 hover:bg-zinc-800/50"
-									}`}
+											: "bg-zinc-900/50 hover:bg-zinc-800/50",
+									)}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell key={cell.id} className="border-zinc-800 px-4 py-3 text-zinc-100">

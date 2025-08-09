@@ -60,7 +60,7 @@ export default function CMSTabs() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<div className="py-12 text-center text-gray-500 dark:text-gray-400">
+						<div className="py-12 text-center text-gray-500">
 							<BarChart3 className="mx-auto mb-4 h-12 w-12 opacity-50" />
 							<p>Analytics dashboard coming soon...</p>
 							<p className="mt-2 text-sm">

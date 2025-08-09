@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { useGitHubProjects, useGitHubProjectsCache } from "@/hooks/use-github-projects";
+import { cn } from "@/lib/utils";
 
 export function CacheDebug() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -39,9 +40,10 @@ export function CacheDebug() {
 							<div className="font-medium text-zinc-300">Status:</div>
 							<div className="flex gap-2">
 								<span
-									className={`inline-block h-2 w-2 rounded-full ${
-										loading ? "bg-yellow-500" : error ? "bg-red-500" : "bg-green-500"
-									}`}
+									className={cn(
+										"inline-block h-2 w-2 rounded-full",
+										loading ? "bg-yellow-500" : error ? "bg-red-500" : "bg-green-500",
+									)}
 								/>
 								<span className="text-zinc-400">{loading ? "Loading" : error ? "Error" : "Ready"}</span>
 								{isValidating && <span className="text-blue-400">(Revalidating)</span>}

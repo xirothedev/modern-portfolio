@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 const experiences = [
 	{
@@ -70,12 +70,13 @@ export function Timeline() {
 			{experiences.map((experience, index) => (
 				<div
 					key={index}
-					className={`relative z-10 flex items-center ${
-						index % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"
-					}`}
+					className={cn(
+						"relative z-10 flex items-center",
+						index % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row",
+					)}
 				>
 					<motion.div
-						className={`w-full md:w-1/2 ${index % 2 === 0 ? "md:pl-10" : "md:pr-10"}`}
+						className={cn("w-full md:w-1/2", index % 2 === 0 ? "md:pl-10" : "md:pr-10")}
 						initial={{ opacity: 0, x: index % 2 === 0 ? 50 : -50 }}
 						whileInView={{ opacity: 1, x: 0 }}
 						transition={{ duration: 0.6, delay: index * 0.1 }}

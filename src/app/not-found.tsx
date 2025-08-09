@@ -1,10 +1,9 @@
 "use client";
 
-import { ArrowLeft, Home, MapPin, Search } from "lucide-react";
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, Home, MapPin, Search } from "lucide-react";
+import Link from "next/link";
 
 export default function NotFound() {
 	return (
@@ -19,12 +18,12 @@ export default function NotFound() {
 				<CardContent className="space-y-6 p-8 text-center">
 					{/* 404 Animation */}
 					<div className="relative">
-						<div className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-8xl font-bold text-transparent dark:from-purple-400 dark:to-pink-400">
+						<div className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-8xl font-bold text-transparent">
 							404
 						</div>
 						<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transform">
-							<div className="flex h-16 w-16 animate-bounce items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
-								<MapPin className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+							<div className="flex h-16 w-16 animate-bounce items-center justify-center rounded-full bg-purple-100">
+								<MapPin className="h-8 w-8 text-purple-600" />
 							</div>
 						</div>
 					</div>
@@ -39,11 +38,9 @@ export default function NotFound() {
 					</div>
 
 					{/* Suggestions */}
-					<div className="space-y-2 rounded-lg bg-slate-50 p-4 dark:bg-slate-700/50">
-						<h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-							Here&apos;s what you can do:
-						</h3>
-						<ul className="space-y-1 text-left text-sm text-slate-600 dark:text-slate-400">
+					<div className="space-y-2 rounded-lg bg-slate-50 p-4">
+						<h3 className="text-sm font-semibold text-slate-900">Here&apos;s what you can do:</h3>
+						<ul className="space-y-1 text-left text-sm text-slate-600">
 							<li className="flex items-center gap-2">
 								<div className="h-1.5 w-1.5 rounded-full bg-purple-500"></div>
 								Check the URL for typos
@@ -74,7 +71,7 @@ export default function NotFound() {
 					</div>
 
 					{/* Popular Links */}
-					<div className="border-t border-slate-200 pt-6 dark:border-slate-700">
+					<div className="border-t border-slate-200 pt-6">
 						<h3 className="mb-3 text-sm font-semibold text-white">Popular Pages</h3>
 						<div className="flex flex-wrap justify-center gap-2">
 							{[

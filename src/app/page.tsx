@@ -1,13 +1,5 @@
 "use client";
 
-import { createTimeline, stagger, text } from "animejs";
-import { ArrowRight, Download, Facebook, Github, Linkedin, Mail, MessageCircle } from "lucide-react";
-import dynamic from "next/dynamic";
-import Image from "next/image";
-import Link from "next/link";
-
-import { useEffect } from "react";
-
 import { ContactForm } from "@/components/contact-form";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { FloatingNav } from "@/components/floating-nav";
@@ -15,11 +7,17 @@ import { GlowingEffect } from "@/components/glowing-effect";
 import { HeroSkeleton, ProjectCardSkeleton } from "@/components/loading-skeleton";
 import { ProjectCard } from "@/components/project-card";
 import { SectionHeading } from "@/components/section-heading";
-import { Testimonials, type TestimonialItem } from "@/components/testimonials";
 import { SkillsWithProjects } from "@/components/skills-with-projects";
+import { Testimonials, type TestimonialItem } from "@/components/testimonials";
 import { Timeline } from "@/components/timeline";
 import { Button } from "@/components/ui/button";
 import { useGitHubProjects } from "@/hooks/use-github-projects";
+import { createTimeline, stagger, text } from "animejs";
+import { ArrowRight, Download, Facebook, Github, Linkedin, Mail, MessageCircle } from "lucide-react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect } from "react";
 
 const AnimatedName = dynamic(
 	() => import("@/components/animated-name").then((mod) => ({ default: mod.AnimatedName })),
@@ -35,32 +33,6 @@ const CreativeHero = dynamic(
 		loading: () => <HeroSkeleton />,
 	},
 );
-
-const testimonials: TestimonialItem[] = [
-	{
-		name: "Thanh Tin",
-		title: "Customer",
-		avatar: "/testimonials/thanhtin.png",
-		comment:
-			"I'll tell you this — even though you don't have much experience, when you promise to make a bot, you actually get it done. You're reliable. Many others only make promises.",
-	},
-	{
-		name: "Lê Xuân Hiệp",
-		title: "CEO, Techbyte Technology Investment Company Limited",
-		avatar: "/testimonials/codertayto.png",
-		comment:
-			"Okay, for a high school student like you, this is already really good. Keep it up. You're doing much better than average. Any school will be fine for you. There's nothing to criticize.",
-		videoSrc: "/testimonials/codertayto.mp4",
-		videoAspect: "9:16",
-	},
-	{
-		name: "Nguyen Thai An",
-		title: "Collaborator",
-		avatar: "/testimonials/nguyenthaian.png",
-		comment:
-			"Okay, I'll say a few words to my brother. Actually, I can call him teacher or colleague hehe. He came to me very normally. He and I worked on a project together and built a platform. Over time, he supported me a lot, gave me new ideas and technologies. On the surface, he is cold but very friendly. Sometimes I wonder why he has so much knowledge, sometimes I feel sad because I'm not as good as him, but I know he is a hard worker. Keep it up, boy.",
-	},
-];
 
 export default function Portfolio() {
 	const { projects, loading, error } = useGitHubProjects();
@@ -369,7 +341,7 @@ export default function Portfolio() {
 			</section>
 
 			{/* Testimonials Section */}
-			<Testimonials items={testimonials} layout="auto" />
+			<Testimonials layout="auto" />
 
 			{/* Contact Section */}
 			<section id="contact" className="relative py-32">

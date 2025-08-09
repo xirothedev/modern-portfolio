@@ -47,19 +47,6 @@ export function useSkills(username?: string): UseSkillsReturn {
 	const skills = data?.skills || [];
 	const errorMessage = error?.message || data?.error || null;
 
-	// Enhanced logging for debugging
-	if (process.env.NODE_ENV === "development") {
-		console.log("Skills Hook State:", {
-			hasData: !!data,
-			skillsCount: skills.length,
-			isLoading,
-			isValidating,
-			error: errorMessage,
-			url,
-			metadata: data?.metadata,
-		});
-	}
-
 	return {
 		skills,
 		loading: isLoading,

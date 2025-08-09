@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
 
 const meta = {
 	title: "UI/Carousel",
@@ -159,7 +160,10 @@ export const CustomContent: Story = {
 						<div className="p-1">
 							<Card>
 								<CardContent
-									className={`flex aspect-square items-center justify-center bg-gradient-to-br p-6 ${item.color} text-white`}
+									className={cn(
+										"flex aspect-square items-center justify-center bg-gradient-to-br p-6 text-white",
+										item.color,
+									)}
 								>
 									<div className="text-center">
 										<h3 className="mb-2 text-xl font-bold">{item.title}</h3>

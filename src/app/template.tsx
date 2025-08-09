@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect } from "react";
 import { Pacifico } from "next/font/google";
+import { cn } from "@/lib/utils";
 
 const font = Pacifico({
 	weight: ["400"],
@@ -60,7 +61,10 @@ export default function Template({ children }: { children: React.ReactNode }) {
 								transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
 							>
 								<h1
-									className={`mb-2 text-5xl font-light tracking-wider text-white md:text-7xl ${font.className}`}
+									className={cn(
+										"mb-2 text-5xl font-light tracking-wider text-white md:text-7xl",
+										font.className,
+									)}
 								>
 									{"XIRO THE DEV".split("").map((char, i) => (
 										<motion.span

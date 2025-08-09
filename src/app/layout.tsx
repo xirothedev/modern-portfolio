@@ -1,9 +1,3 @@
-import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
-import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
-import { Analytics } from "@vercel/analytics/next";
-import type { Metadata, Viewport } from "next";
-
 import { BundleMonitor } from "@/components/dev/bundle-monitor";
 import { CacheDebug } from "@/components/dev/cache-debug";
 import { PerformanceMonitor } from "@/components/dev/performance-monitor";
@@ -12,14 +6,20 @@ import { MouseFollower } from "@/components/mouse-follower";
 import { SWRProvider } from "@/components/providers/swr-provider";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { Toaster } from "@/components/ui/toaster";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/next";
+import type { Metadata, Viewport } from "next";
 
 import "./globals.css";
 
+const BASE_URL =
+	process.env.NEXT_PUBLIC_BASE_URL ??
+	(process.env.NODE_ENV === "production" ? "https://xiro-portfolio.vercel.app" : "http://localhost:3000");
+
 export const metadata: Metadata = {
-	metadataBase: new URL(
-		process.env.NEXT_PUBLIC_BASE_URL ??
-			(process.env.NODE_ENV === "production" ? "https://xiro-portfolio.vercel.app" : "http://localhost:3000"),
-	),
+	metadataBase: new URL(BASE_URL),
 	applicationName: "Xiro The Dev - Portfolio",
 	title: { default: "Xiro The Dev - Web Developer", template: "Xiro | %s" },
 	description: "Xiro's Portfolio - Full Stack & Discord Bot Developer",
@@ -50,6 +50,8 @@ export const metadata: Metadata = {
 		description: "Xiro's Portfolio - Full Stack & Discord Bot Developer",
 		type: "website",
 		locale: "vi_VN",
+		countryName: "Vietnam",
+		url: BASE_URL,
 	},
 	twitter: {
 		card: "summary_large_image",
@@ -109,10 +111,6 @@ export default function RootLayout({
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 					<link rel="preconnect" href="https://api.github.com" />
 					<link rel="preconnect" href="https://vercel.live" />
-
-					{/* Preload critical resources */}
-					<link rel="preload" href="/thumbnail.jpeg" as="image" type="image/jpeg" />
-					<link rel="preload" href="/placeholder.svg" as="image" type="image/svg+xml" />
 
 					{/* DNS prefetch for performance */}
 					<link rel="dns-prefetch" href="//fonts.googleapis.com" />

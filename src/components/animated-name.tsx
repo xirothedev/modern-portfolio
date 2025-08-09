@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
-
 import { useEffect, useState } from "react";
 
 const gradients = [

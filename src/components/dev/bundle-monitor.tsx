@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { analyzeBundleComposition, generateOptimizationReport, getBundleSizeCategory } from "@/lib/bundle-analyzer";
 import { analyzeBundleSplitting } from "@/lib/route-splitting";
+import { cn } from "@/lib/utils";
 
 export function BundleMonitor() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +42,7 @@ export function BundleMonitor() {
 		<div className="fixed right-4 bottom-24 z-50">
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className={`cursor-pointer rounded-full p-2 text-white shadow-lg hover:opacity-80 ${colorClasses.bg}`}
+				className={cn("cursor-pointer rounded-full p-2 text-white shadow-lg hover:opacity-80", colorClasses.bg)}
 				title="Bundle Size Monitor"
 			>
 				📦
@@ -61,7 +62,7 @@ export function BundleMonitor() {
 						<div>
 							<div className="font-medium text-zinc-300">Bundle Size:</div>
 							<div className="flex items-center gap-2">
-								<span className={`inline-block h-2 w-2 rounded-full ${colorClasses.bg}`} />
+								<span className={cn("inline-block h-2 w-2 rounded-full", colorClasses.bg)} />
 								<span className={colorClasses.text}>
 									{analysis.totalSize}KB ({category})
 								</span>
@@ -94,13 +95,14 @@ export function BundleMonitor() {
 										<div className="flex items-center justify-between">
 											<span className="font-medium text-zinc-300">{opp.library}</span>
 											<span
-												className={`rounded px-2 py-1 text-xs ${
+												className={cn(
+													"rounded px-2 py-1 text-xs",
 													opp.priority === "high"
 														? "bg-red-900 text-red-300"
 														: opp.priority === "medium"
 															? "bg-yellow-900 text-yellow-300"
-															: "bg-blue-900 text-blue-300"
-												}`}
+															: "bg-blue-900 text-blue-300",
+												)}
 											>
 												{opp.priority}
 											</span>

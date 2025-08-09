@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 const tabs = [
 	{ value: "repositories", icon: <Database className="h-4 w-4" />, label: "Repositories" },
@@ -43,11 +44,12 @@ export default function ClientTabs() {
 					<TabsTrigger
 						key={tab.value}
 						value={tab.value}
-						className={`relative z-10 flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-1 transition-all duration-200 ${
+						className={cn(
+							"relative z-10 flex cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-1 transition-all duration-200",
 							active === tab.value
 								? "bg-transparent! font-bold text-white"
-								: "bg-transparent text-zinc-400"
-						}`}
+								: "bg-transparent text-zinc-400",
+						)}
 						onMouseEnter={() => setHovered(tab.value)}
 						onMouseLeave={() => setHovered(null)}
 						onClick={() => setActive(tab.value)}

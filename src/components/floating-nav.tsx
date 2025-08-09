@@ -1,14 +1,13 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
-import { motion } from "motion/react";
-import Link from "next/link";
-
-import { useEffect, useState } from "react";
-
 import { AuthButton } from "@/components/auth-button";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+import { Menu, X } from "lucide-react";
+import { motion } from "motion/react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const navItems = [
 	{ name: "About", href: "#about" },
@@ -45,9 +44,10 @@ export function FloatingNav() {
 	return (
 		<>
 			<motion.div
-				className={`fixed top-6 left-1/2 z-50 -translate-x-1/2 ${
-					isVisible ? "opacity-100" : "pointer-events-none opacity-0"
-				}`}
+				className={cn(
+					"fixed top-6 left-1/2 z-50 -translate-x-1/2",
+					isVisible ? "opacity-100" : "pointer-events-none opacity-0",
+				)}
 				initial={{ y: -100 }}
 				animate={{ y: isVisible ? 0 : -100 }}
 				transition={{ duration: 0.3 }}
@@ -113,7 +113,11 @@ export function FloatingNav() {
 			{/* Mobile menu */}
 			{isMobile && (
 				<motion.div
-					className={`fixed inset-0 z-40 bg-black/90 backdrop-blur-md ${isOpen ? "block" : "hidden"}`}
+					className={cn(
+						"fixed inset-0 z-40 bg-black/90 backdrop-blur-md",
+						isOpen && "block",
+						!isOpen && "hidden",
+					)}
 					initial={{ opacity: 0 }}
 					animate={{ opacity: isOpen ? 1 : 0 }}
 					transition={{ duration: 0.3 }}

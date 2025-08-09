@@ -1,6 +1,7 @@
 "use client";
 
 import { getLanguageColor } from "@/lib/github-colors";
+import { cn } from "@/lib/utils";
 
 interface LanguageBarProps {
 	languages: { [key: string]: number };
@@ -8,7 +9,7 @@ interface LanguageBarProps {
 	showPercentages?: boolean;
 }
 
-export function LanguageBar({ languages, className = "", showPercentages = false }: LanguageBarProps) {
+export function LanguageBar({ languages, className, showPercentages = false }: LanguageBarProps) {
 	if (!languages || Object.keys(languages).length === 0) {
 		return null;
 	}
@@ -31,7 +32,7 @@ export function LanguageBar({ languages, className = "", showPercentages = false
 	}
 
 	return (
-		<div className={`space-y-2 ${className}`}>
+		<div className={cn("space-y-2", className)}>
 			{/* Language bar */}
 			<div className="flex h-2 overflow-hidden rounded-full bg-zinc-700/50">
 				{languagePercentages.map(({ language, percentage }) => (

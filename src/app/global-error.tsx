@@ -1,10 +1,9 @@
 "use client";
 
-import { AlertTriangle, Home, RefreshCw } from "lucide-react";
-import { useRouter } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AlertTriangle, Home, RefreshCw } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
 	const router = useRouter();
@@ -24,8 +23,8 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 							{/* Error Icon */}
 							<div className="flex justify-center">
 								<div className="relative">
-									<div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
-										<AlertTriangle className="h-10 w-10 text-red-600 dark:text-red-400" />
+									<div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
+										<AlertTriangle className="h-10 w-10 text-red-600" />
 									</div>
 									<div className="absolute -top-1 -right-1 h-6 w-6 animate-pulse rounded-full bg-red-500"></div>
 								</div>
@@ -42,14 +41,10 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 
 							{/* Error Details (Development) */}
 							{process.env.NODE_ENV === "development" && (
-								<div className="rounded-lg bg-slate-100 p-4 text-left dark:bg-slate-700">
-									<p className="font-mono text-xs break-all text-slate-700 dark:text-slate-300">
-										{error.message}
-									</p>
+								<div className="rounded-lg bg-slate-100 p-4 text-left">
+									<p className="font-mono text-xs break-all text-slate-700">{error.message}</p>
 									{error.digest && (
-										<p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-											Error ID: {error.digest}
-										</p>
+										<p className="mt-2 text-xs text-slate-500">Error ID: {error.digest}</p>
 									)}
 								</div>
 							)}
@@ -63,20 +58,21 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 									<RefreshCw className="mr-2 h-4 w-4 group-hover:animate-spin" />
 									Try Again
 								</Button>
-								<Button variant="outline" onClick={() => router.push("/")} className="flex-1">
+								<Button
+									variant="outline"
+									onClick={() => (window.location.href = "/")}
+									className="flex-1"
+								>
 									<Home className="mr-2 h-4 w-4" />
 									Go Home
 								</Button>
 							</div>
 
 							{/* Support Link */}
-							<div className="border-t border-slate-200 pt-4 dark:border-slate-700">
-								<p className="text-xs text-slate-500 dark:text-slate-400">
+							<div className="border-t border-slate-200 pt-4">
+								<p className="text-xs text-slate-500">
 									Need help?{" "}
-									<a
-										href="mailto:support@example.com"
-										className="text-blue-600 hover:underline dark:text-blue-400"
-									>
+									<a href="mailto:support@example.com" className="text-blue-600 hover:underline">
 										Contact Support
 									</a>
 								</p>

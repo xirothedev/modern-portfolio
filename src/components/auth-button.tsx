@@ -1,9 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { User } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 
 export function AuthButton() {
 	return (
@@ -44,7 +43,6 @@ export function AuthButton() {
 							},
 						},
 					}}
-					afterSignOutUrl="/"
 				/>
 			</SignedIn>
 		</>

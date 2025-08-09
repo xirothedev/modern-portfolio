@@ -1,18 +1,17 @@
 "use client";
 
+import { generateProjectSlug } from "@/lib/project-utils";
+import { cn } from "@/lib/utils";
 import { ArrowUpRight, GitFork, Github, Star } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
-
 import { memo, useState } from "react";
-
 import { GitHubInfoBadge } from "./github-info-badge";
 import { LanguageBar } from "./language-bar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { generateProjectSlug } from "@/lib/project-utils";
 
 interface ProjectCardProps {
 	title: string;
@@ -71,14 +70,15 @@ function ProjectCardComponent({
 			whileInView={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
 			viewport={{ once: true }}
-			className={`group ${isComingSoon ? "opacity-60" : ""}`}
+			className={cn("group", isComingSoon && "opacity-60")}
 		>
 			<div
-				className={`relative h-full overflow-hidden rounded-xl border bg-zinc-800/50 backdrop-blur-xs transition-all duration-300 ${
+				className={cn(
+					"relative h-full overflow-hidden rounded-xl border bg-zinc-800/50 backdrop-blur-xs transition-all duration-300",
 					isComingSoon
 						? "cursor-not-allowed border-zinc-600/30 bg-zinc-800/30"
-						: "border-zinc-700/50 group-hover:border-purple-500/50"
-				}`}
+						: "border-zinc-700/50 group-hover:border-purple-500/50",
+				)}
 				onMouseEnter={() => !isComingSoon && setIsHovered(true)}
 				onMouseLeave={() => !isComingSoon && setIsHovered(false)}
 			>
@@ -102,9 +102,10 @@ function ProjectCardComponent({
 											sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 											height={0}
 											width={0}
-											className={`h-full w-full object-cover object-top transition-transform duration-700 ${
-												isHovered ? "scale-110" : "scale-100"
-											}`}
+											className={cn(
+												"h-full w-full object-cover object-top transition-transform duration-700",
+												isHovered && "scale-110",
+											)}
 										/>
 									</button>
 								</DialogTrigger>
@@ -218,11 +219,12 @@ function ProjectCardComponent({
 								<Button
 									size="sm"
 									disabled={isComingSoon}
-									className={`w-full border-0 ${
+									className={cn(
+										"w-full border-0",
 										isComingSoon
 											? "cursor-not-allowed! bg-zinc-600/50 text-zinc-400"
-											: "bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500"
-									}`}
+											: "bg-linear-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-purple-500",
+									)}
 									asChild
 								>
 									{!isComingSoon ? (
@@ -243,9 +245,10 @@ function ProjectCardComponent({
 
 					<div className="absolute top-3 right-3 z-20">
 						<div
-							className={`h-3 w-3 rounded-full ${
-								isComingSoon ? "bg-yellow-500" : isHovered ? "bg-green-500" : "bg-zinc-500"
-							} transition-colors duration-300`}
+							className={cn(
+								"h-3 w-3 rounded-full transition-colors duration-300",
+								isComingSoon ? "bg-yellow-500" : isHovered ? "bg-green-500" : "bg-zinc-500",
+							)}
 						></div>
 					</div>
 				</div>

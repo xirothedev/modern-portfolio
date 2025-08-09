@@ -12,36 +12,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			priority: 1,
 		},
 		{
-			url: `${baseUrl}/#about`,
-			lastModified: currentDate,
-			changeFrequency: "monthly",
-			priority: 0.8,
-		},
-		{
-			url: `${baseUrl}/#skills`,
-			lastModified: currentDate,
-			changeFrequency: "monthly",
-			priority: 0.8,
-		},
-		{
-			url: `${baseUrl}/#projects`,
-			lastModified: currentDate,
-			changeFrequency: "weekly",
-			priority: 0.9,
-		},
-		{
-			url: `${baseUrl}/#experience`,
-			lastModified: currentDate,
-			changeFrequency: "monthly",
-			priority: 0.7,
-		},
-		{
-			url: `${baseUrl}/#contact`,
-			lastModified: currentDate,
-			changeFrequency: "monthly",
-			priority: 0.8,
-		},
-		{
 			url: `${baseUrl}/lethanhtrung-webdeveloper-cv.pdf`,
 			lastModified: currentDate,
 			changeFrequency: "monthly",
@@ -67,6 +37,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			priority: 0.5,
 		},
 		// Project repositories
+		{
+			url: "https://github.com/xirothedev/modern-portfolio",
+			lastModified: currentDate,
+			changeFrequency: "weekly",
+			priority: 0.9,
+		},
 		{
 			url: "https://github.com/xirothedev/discord.js-template-v14",
 			lastModified: currentDate,

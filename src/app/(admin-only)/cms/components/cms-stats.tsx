@@ -4,6 +4,7 @@ import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import { getCMSStats } from "../actions";
+import { cn } from "@/lib/utils";
 
 export async function CMSStatsComponent() {
 	const results = await getCMSStats();
@@ -66,8 +67,8 @@ export async function CMSStatsComponent() {
 							<p className="text-sm font-medium text-zinc-400">{stat.title}</p>
 							<p className="text-2xl font-bold text-white">{stat.value}</p>
 						</div>
-						<div className={`rounded-lg p-2 ${stat.bgColor} border border-white/10`}>
-							<stat.icon className={`h-6 w-6 ${stat.color}`} />
+						<div className={cn("rounded-lg border border-white/10 p-2", stat.bgColor)}>
+							<stat.icon className={cn("h-6 w-6", stat.color)} />
 						</div>
 					</div>
 					{/* Subtle gradient overlay */}

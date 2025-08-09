@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { performanceMonitor } from "@/lib/animation-utils";
+import { cn } from "@/lib/utils";
 
 export function PerformanceMonitor() {
 	// Only show in development
@@ -53,7 +54,7 @@ export function PerformanceMonitor() {
 		<div className="fixed right-4 bottom-14 z-50">
 			<button
 				onClick={() => setIsOpen(!isOpen)}
-				className={`cursor-pointer rounded-full p-2 text-white shadow-lg hover:opacity-80 ${bg}`}
+				className={cn("cursor-pointer rounded-full p-2 text-white shadow-lg hover:opacity-80", bg)}
 				title="Performance Monitor"
 			>
 				📊
@@ -73,7 +74,7 @@ export function PerformanceMonitor() {
 						<div>
 							<div className="font-medium text-zinc-300">Frame Rate:</div>
 							<div className="flex items-center gap-2">
-								<span className={`inline-block h-2 w-2 rounded-full ${bg}`} />
+								<span className={cn("inline-block h-2 w-2 rounded-full", bg)} />
 								<span className={color}>
 									{fps} FPS ({status})
 								</span>

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useGitHubProjects } from "@/hooks/use-github-projects";
 import { ProjectCardSkeleton } from "@/components/loading-skeleton";
+import { cn } from "@/lib/utils";
 
 export default function ProjectsPage() {
 	const { projects, loading, error } = useGitHubProjects();
@@ -112,11 +113,12 @@ export default function ProjectsPage() {
 						<div className="flex flex-wrap gap-2">
 							<Badge
 								variant={selectedTag === null ? "default" : "secondary"}
-								className={`cursor-pointer transition-colors ${
-									selectedTag === null
+								className={cn(
+									"cursor-pointer transition-colors",
+									!selectedTag
 										? "bg-purple-500 hover:bg-purple-600"
-										: "bg-zinc-700 hover:bg-zinc-600"
-								}`}
+										: "bg-zinc-200/80 hover:bg-zinc-100",
+								)}
 								onClick={() => setSelectedTag(null)}
 							>
 								All
@@ -125,11 +127,12 @@ export default function ProjectsPage() {
 								<Badge
 									key={tag}
 									variant={selectedTag === tag ? "default" : "secondary"}
-									className={`cursor-pointer transition-colors ${
+									className={cn(
+										"cursor-pointer transition-colors",
 										selectedTag === tag
 											? "bg-purple-500 hover:bg-purple-600"
-											: "bg-zinc-200/80 hover:bg-zinc-100"
-									}`}
+											: "bg-zinc-200/80 hover:bg-zinc-100",
+									)}
 									onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
 								>
 									{tag}

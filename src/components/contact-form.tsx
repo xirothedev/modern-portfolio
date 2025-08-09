@@ -14,7 +14,7 @@ import { Textarea } from "./ui/textarea";
 
 const contactFormSchema = z.object({
 	name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be less than 50 characters"),
-	email: z.string().email("Please enter a valid email address"),
+	email: z.email("Please enter a valid email address"),
 	subject: z
 		.string()
 		.min(5, "Subject must be at least 5 characters")
@@ -124,6 +124,7 @@ export function ContactForm() {
 								</p>
 							)}
 						</div>
+
 						<div className="space-y-2">
 							<Label htmlFor="email" className="text-sm font-medium text-zinc-200">
 								Email
@@ -144,6 +145,7 @@ export function ContactForm() {
 								</p>
 							)}
 						</div>
+
 						<div className="space-y-2">
 							<Label htmlFor="subject" className="text-sm font-medium text-zinc-200">
 								Subject
@@ -163,6 +165,7 @@ export function ContactForm() {
 								</p>
 							)}
 						</div>
+
 						<div className="space-y-2">
 							<Label htmlFor="message" className="text-sm font-medium text-zinc-200">
 								Message
@@ -183,6 +186,7 @@ export function ContactForm() {
 								</p>
 							)}
 						</div>
+
 						<Button type="submit" variant="primary" className="w-full" disabled={isSubmitting}>
 							{isSubmitting ? (
 								<>Sending...</>

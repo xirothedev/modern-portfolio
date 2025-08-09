@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "motion/react";
-
 import { useEffect, useRef } from "react";
 
 export function HeroAnimation() {

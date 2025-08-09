@@ -1,10 +1,17 @@
 "use client";
 
+import {
+	FrameRateLimiter,
+	ObjectPool,
+	cleanupManager,
+	getAnimationDuration,
+	getAnimationScale,
+	performanceMonitor,
+	prefersReducedMotion,
+} from "@/lib/animation-utils";
 import { Html, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { motion } from "motion/react";
-import * as THREE from "three";
-
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import {
 	SiDocker,
@@ -22,16 +29,7 @@ import {
 	SiThreedotjs,
 	SiTypescript,
 } from "react-icons/si";
-
-import {
-	FrameRateLimiter,
-	ObjectPool,
-	cleanupManager,
-	getAnimationDuration,
-	getAnimationScale,
-	performanceMonitor,
-	prefersReducedMotion,
-} from "@/lib/animation-utils";
+import * as THREE from "three";
 
 // Optimized performance configuration
 const OPTIMIZED_CONFIG = {
@@ -61,8 +59,9 @@ class OptimizedPerformanceDetector {
 	static detectHardwareCapabilities() {
 		const capabilities = {
 			cores: navigator.hardwareConcurrency || 4,
-			memory: (navigator as any).deviceMemory || 4,
-			connection: (navigator as any).connection?.effectiveType || "4g",
+			memory: (navigator as unknown as { deviceMemory: number }).deviceMemory || 4,
+			connection:
+				(navigator as unknown as { connection: { effectiveType: string } }).connection?.effectiveType || "4g",
 			isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
 			isLowEnd: false,
 			supportsWebGL2: false,
@@ -207,7 +206,7 @@ function OptimizedIcon3D({
 	delay = 0,
 }: {
 	children: React.ReactNode;
-	position: [number, number, number];
+	position: THREE.Vector3Tuple;
 	delay?: number;
 }) {
 	const groupRef = useRef<THREE.Group>(null);
@@ -249,56 +248,56 @@ function OptimizedIcon3D({
 const OptimizedTechLogos = memo(() => {
 	const techs = useMemo(
 		() => [
-			{ name: "react", position: [0, 1, 0] as [number, number, number], icon: <SiReact color="#61DAFB" /> },
-			{ name: "nextjs", position: [1, 0, 0] as [number, number, number], icon: <SiNextdotjs color="#FFFFFF" /> },
+			{ name: "react", position: new THREE.Vector3(0, 1, 0).toArray(), icon: <SiReact color="#61DAFB" /> },
+			{ name: "nextjs", position: new THREE.Vector3(1, 0, 0).toArray(), icon: <SiNextdotjs color="#FFFFFF" /> },
 			{
 				name: "threejs",
-				position: [-1, 0, 0] as [number, number, number],
+				position: new THREE.Vector3(-1, 0, 0).toArray(),
 				icon: <SiThreedotjs color="#FFFFFF" />,
 			},
 			{
 				name: "tailwind",
-				position: [0, -1, 0] as [number, number, number],
+				position: new THREE.Vector3(0, -1, 0).toArray(),
 				icon: <SiTailwindcss color="#38B2AC" />,
 			},
-			{ name: "nodejs", position: [0, 0, 1] as [number, number, number], icon: <SiNodedotjs color="#68A063" /> },
-			{ name: "nestjs", position: [0, 0, -1] as [number, number, number], icon: <SiNestjs color="#EA2859" /> },
+			{ name: "nodejs", position: new THREE.Vector3(0, 0, 1).toArray(), icon: <SiNodedotjs color="#68A063" /> },
+			{ name: "nestjs", position: new THREE.Vector3(0, 0, -1).toArray(), icon: <SiNestjs color="#EA2859" /> },
 			{
 				name: "expressjs",
-				position: [0.5, 0.5, -0.5] as [number, number, number],
+				position: new THREE.Vector3(0.5, 0.5, -0.5).toArray(),
 				icon: <SiExpress color="#FFFFFF" />,
 			},
 			{
 				name: "docker",
-				position: [0.5, 0.5, 0.5] as [number, number, number],
+				position: new THREE.Vector3(0.5, 0.5, 0.5).toArray(),
 				icon: <SiDocker color="#1D63ED" />,
 			},
 			{
 				name: "graphql",
-				position: [-0.5, -0.5, 0.5] as [number, number, number],
+				position: new THREE.Vector3(-0.5, -0.5, 0.5).toArray(),
 				icon: <SiGraphql color="#F6009B" />,
 			},
 			{
 				name: "postgresql",
-				position: [-0.5, -0.5, -0.5] as [number, number, number],
+				position: new THREE.Vector3(-0.5, -0.5, -0.5).toArray(),
 				icon: <SiPostgresql color="#336791" />,
 			},
 			{
 				name: "javascript",
-				position: [0.5, -0.5, -0.5] as [number, number, number],
+				position: new THREE.Vector3(0.5, -0.5, -0.5).toArray(),
 				icon: <SiJavascript color="#F7DF1E" className="rounded-lg" />,
 			},
 			{
 				name: "typescript",
-				position: [-0.5, 0.5, -0.5] as [number, number, number],
+				position: new THREE.Vector3(-0.5, 0.5, -0.5).toArray(),
 				icon: <SiTypescript color="#3178C6" className="rounded-lg" />,
 			},
 			{
 				name: "redis",
-				position: [0.5, -0.5, 0.5] as [number, number, number],
+				position: new THREE.Vector3(0.5, -0.5, 0.5).toArray(),
 				icon: <SiRedis color="#FF4438" />,
 			},
-			{ name: "git", position: [-0.5, 0.5, 0.5] as [number, number, number], icon: <SiGit color="#F05133" /> },
+			{ name: "git", position: new THREE.Vector3(-0.5, 0.5, 0.5).toArray(), icon: <SiGit color="#F05133" /> },
 		],
 		[],
 	);
@@ -386,7 +385,7 @@ function OptimizedParticleSystem() {
 			setTotalParticles(optimalParticles);
 			setIsPerformanceTestComplete(true);
 
-			console.log("Optimized Performance Analysis:", {
+			console.log("[Optimized Performance Analysis]:", {
 				avgFPS: performanceDetector.current.getAverageFPS(),
 				hardware: OptimizedPerformanceDetector.detectHardwareCapabilities(),
 				optimalParticles,

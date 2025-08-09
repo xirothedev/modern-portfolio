@@ -45,6 +45,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useToast } from "@/hooks/use-toast";
 
 import { addToken, deleteToken, getProjectsForSelect, updateToken } from "../actions";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -437,11 +438,12 @@ export function TokenManagerTable<TData, TValue>({ columns, data }: DataTablePro
 									<TableRow
 										key={row.id}
 										data-state={row.getIsSelected() && "selected"}
-										className={`border-zinc-800 transition-colors duration-200 ${
+										className={cn(
+											"border-zinc-800 transition-colors duration-200",
 											index % 2 === 0
 												? "bg-zinc-900/30 hover:bg-zinc-800/40"
-												: "bg-zinc-900/50 hover:bg-zinc-800/50"
-										}`}
+												: "bg-zinc-900/50 hover:bg-zinc-800/50",
+										)}
 									>
 										{row.getVisibleCells().map((cell) => (
 											<TableCell

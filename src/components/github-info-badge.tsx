@@ -1,8 +1,8 @@
 "use client";
 
 import { Github } from "lucide-react";
-
 import { Badge } from "./ui/badge";
+import { cn } from "@/lib/utils";
 
 interface GitHubInfoBadgeProps {
 	isFromGitHub: boolean;
@@ -15,7 +15,7 @@ export function GitHubInfoBadge({ isFromGitHub, className = "" }: GitHubInfoBadg
 	return (
 		<Badge
 			variant="outline"
-			className={`inline-flex items-center gap-1 border-purple-500/30 text-xs text-purple-400 ${className}`}
+			className={cn("inline-flex items-center gap-1 border-purple-500/30 text-xs text-purple-400", className)}
 		>
 			<Github className="h-3 w-3" />
 			<span>GitHub Topics</span>

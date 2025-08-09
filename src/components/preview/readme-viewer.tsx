@@ -1,19 +1,19 @@
 "use client";
 
-import { FileText, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { fetchGitHubReadme, processMarkdownContent } from "@/lib/readme-utils";
+import { cn } from "@/lib/utils";
+import { ExternalLink, FileText } from "lucide-react";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import remarkBreaks from "remark-breaks";
-import remarkGithub from "remark-github";
-import rehypeRaw from "rehype-raw";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { fetchGitHubReadme, processMarkdownContent } from "@/lib/readme-utils";
-import Image from "next/image";
+import rehypeRaw from "rehype-raw";
+import remarkBreaks from "remark-breaks";
+import remarkGfm from "remark-gfm";
+import remarkGithub from "remark-github";
 
 interface ReadmeViewerProps {
 	repoUrl: string;
@@ -104,22 +104,30 @@ const MarkdownComponents = {
 	},
 
 	// Headers with GitHub styling
-	h1: ({ children }: any) => (
+	h1: ({ children }: React.ComponentProps<"h1">) => (
 		<h1 className="mt-8 mb-6 border-b border-zinc-700 pb-3 text-3xl font-bold text-white first:mt-0">{children}</h1>
 	),
-	h2: ({ children }: any) => (
+	h2: ({ children }: React.ComponentProps<"h2">) => (
 		<h2 className="mt-8 mb-4 border-b border-zinc-800 pb-2 text-2xl font-semibold text-white">{children}</h2>
 	),
-	h3: ({ children }: any) => <h3 className="mt-6 mb-3 text-xl font-semibold text-white">{children}</h3>,
-	h4: ({ children }: any) => <h4 className="mt-4 mb-2 text-lg font-semibold text-white">{children}</h4>,
-	h5: ({ children }: any) => <h5 className="mt-4 mb-2 text-base font-semibold text-white">{children}</h5>,
-	h6: ({ children }: any) => <h6 className="mt-4 mb-2 text-sm font-semibold text-zinc-300">{children}</h6>,
+	h3: ({ children }: React.ComponentProps<"h3">) => (
+		<h3 className="mt-6 mb-3 text-xl font-semibold text-white">{children}</h3>
+	),
+	h4: ({ children }: React.ComponentProps<"h4">) => (
+		<h4 className="mt-4 mb-2 text-lg font-semibold text-white">{children}</h4>
+	),
+	h5: ({ children }: React.ComponentProps<"h5">) => (
+		<h5 className="mt-4 mb-2 text-base font-semibold text-white">{children}</h5>
+	),
+	h6: ({ children }: React.ComponentProps<"h6">) => (
+		<h6 className="mt-4 mb-2 text-sm font-semibold text-zinc-300">{children}</h6>
+	),
 
 	// Paragraphs
-	p: ({ children }: any) => <p className="mb-4 leading-relaxed text-zinc-300">{children}</p>,
+	p: ({ children }: React.ComponentProps<"p">) => <p className="mb-4 leading-relaxed text-zinc-300">{children}</p>,
 
 	// Links with GitHub styling
-	a: ({ href, children }: any) => {
+	a: ({ href, children }: React.ComponentProps<"a">) => {
 		// Check if this is a GitHub link (commit, issue, PR, mention)
 		const isGitHubLink = href && href.includes("github.com");
 		const isMention = children && typeof children === "string" && children.startsWith("@");
@@ -152,9 +160,9 @@ const MarkdownComponents = {
 	},
 
 	// Lists
-	ul: ({ children }: any) => <ul className="mb-4 space-y-1 pl-4 text-zinc-300">{children}</ul>,
-	ol: ({ children }: any) => <ol className="mb-4 space-y-1 pl-6 text-zinc-300">{children}</ol>,
-	li: ({ children, ...props }: any) => {
+	ul: ({ children }: React.ComponentProps<"ul">) => <ul className="mb-4 space-y-1 pl-4 text-zinc-300">{children}</ul>,
+	ol: ({ children }: React.ComponentProps<"ol">) => <ol className="mb-4 space-y-1 pl-6 text-zinc-300">{children}</ol>,
+	li: ({ children, ...props }: React.ComponentProps<"li">) => {
 		// Check if this is a task list item
 		const isTaskList =
 			typeof children === "string" &&
@@ -172,7 +180,7 @@ const MarkdownComponents = {
 						disabled
 						className="mt-1 rounded border-zinc-600 bg-zinc-800 text-blue-500 focus:ring-blue-500 focus:ring-offset-0"
 					/>
-					<span className={`${isChecked ? "text-zinc-500 line-through" : ""}`}>{text}</span>
+					<span className={cn(isChecked ? "text-zinc-500 line-through" : "")}>{text}</span>
 				</li>
 			);
 		}
@@ -185,23 +193,25 @@ const MarkdownComponents = {
 	},
 
 	// Blockquotes
-	blockquote: ({ children }: any) => (
+	blockquote: ({ children }: React.ComponentProps<"blockquote">) => (
 		<blockquote className="my-4 rounded-r-lg border-l-4 border-zinc-600 bg-zinc-900/30 py-2 pl-4">
 			<div className="text-zinc-400 italic">{children}</div>
 		</blockquote>
 	),
 
 	// Tables
-	table: ({ children }: any) => (
+	table: ({ children }: React.ComponentProps<"table">) => (
 		<div className="my-6 overflow-x-auto">
 			<table className="min-w-full overflow-hidden rounded-lg border border-zinc-700">{children}</table>
 		</div>
 	),
-	thead: ({ children }: any) => <thead className="bg-zinc-800">{children}</thead>,
-	th: ({ children }: any) => (
+	thead: ({ children }: React.ComponentProps<"thead">) => <thead className="bg-zinc-800">{children}</thead>,
+	th: ({ children }: React.ComponentProps<"th">) => (
 		<th className="border border-zinc-700 bg-zinc-800 px-4 py-3 text-left font-semibold text-white">{children}</th>
 	),
-	td: ({ children }: any) => <td className="border border-zinc-700 px-4 py-3 text-zinc-300">{children}</td>,
+	td: ({ children }: React.ComponentProps<"td">) => (
+		<td className="border border-zinc-700 px-4 py-3 text-zinc-300">{children}</td>
+	),
 
 	// Images with better styling and badge detection
 	img: ({ src, alt }: any) => {
@@ -226,7 +236,7 @@ const MarkdownComponents = {
 					src={src}
 					alt={alt}
 					className="mx-1 my-1 inline-block h-5 w-auto"
-					loading="lazy"
+					loading="eager"
 				/>
 			);
 		}
@@ -251,7 +261,7 @@ const MarkdownComponents = {
 	hr: () => <hr className="my-8 border-zinc-700" />,
 
 	// Strong and emphasis
-	strong: ({ children }: any) => {
+	strong: ({ children }: React.ComponentProps<"strong">) => {
 		// Check if this is a GitHub mention wrapped in strong (not package names)
 		const isGitHubMention =
 			children &&
@@ -263,10 +273,10 @@ const MarkdownComponents = {
 
 		return <strong className={className}>{children}</strong>;
 	},
-	em: ({ children }: any) => <em className="text-zinc-300 italic">{children}</em>,
+	em: ({ children }: React.ComponentProps<"em">) => <em className="text-zinc-300 italic">{children}</em>,
 
 	// Pre blocks (for code without language specification)
-	pre: ({ children }: any) => (
+	pre: ({ children }: React.ComponentProps<"pre">) => (
 		<pre className="overflow-x-auto rounded-lg bg-zinc-900/90 text-sm leading-6 whitespace-pre">
 			<code
 				className="block text-zinc-100"
@@ -283,10 +293,10 @@ const MarkdownComponents = {
 	),
 
 	// Details/Summary (collapsible sections)
-	details: ({ children }: any) => (
+	details: ({ children }: React.ComponentProps<"details">) => (
 		<details className="my-4 overflow-hidden rounded-lg border border-zinc-700">{children}</details>
 	),
-	summary: ({ children }: any) => (
+	summary: ({ children }: React.ComponentProps<"summary">) => (
 		<summary className="cursor-pointer bg-zinc-800 px-4 py-2 font-medium text-white transition-colors hover:bg-zinc-700">
 			{children}
 		</summary>
