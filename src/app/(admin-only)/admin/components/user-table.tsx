@@ -84,7 +84,11 @@ export function UserDataTable<TData, TValue>({ columns, data }: DataTableProps<T
 										checked={column.getIsVisible()}
 										onCheckedChange={(value) => column.toggleVisibility(!!value)}
 									>
-										{column.id}
+										{
+											column.id
+												.replace(/([A-Z])/g, " $1") // insert space before capital letters
+												.replace(/^./, (str) => str.toUpperCase()) // capitalize first letter
+										}
 									</DropdownMenuCheckboxItem>
 								);
 							})}

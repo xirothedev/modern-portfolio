@@ -32,6 +32,7 @@ interface UserData extends Partial<User> {
 	emailAddress: string;
 	username: string;
 	createdAt: number;
+	referralPlatform: string;
 	raw: UserJSON | null;
 }
 
@@ -73,11 +74,18 @@ export const columns: ColumnDef<UserData>[] = [
 		header: "Id",
 	},
 	{
+		accessorKey: "referralPlatform",
+		header: "Platform",
+	},
+	{
 		accessorKey: "emailAddress",
-		header: () => null,
-		cell: () => null,
-		enableSorting: false,
+		header: "Email",
+		enableSorting: true,
 		enableHiding: true,
+		cell: ({ row }) => {
+			const user = row.original;
+			return <div className="font-medium">{user.emailAddress}</div>;
+		},
 	},
 	{
 		accessorKey: "role",

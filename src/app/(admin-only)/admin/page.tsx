@@ -15,6 +15,7 @@ export default async function AdminDashboard() {
 		emailAddress: user.primaryEmailAddress?.emailAddress ?? "No email provided",
 		username: user.username ?? "-",
 		createdAt: user.createdAt,
+		referralPlatform: user.publicMetadata.referralPlatform as string,
 		raw: user.raw,
 	}));
 

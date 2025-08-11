@@ -40,7 +40,7 @@ export async function UserStats() {
 			bgColor: "bg-purple-400/20",
 		},
 		{
-			title: "No role",
+			title: "Users",
 			value: data?.noRole,
 			icon: ShieldX,
 			color: "text-zinc-300",
