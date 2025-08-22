@@ -11,6 +11,7 @@ import { dark } from "@clerk/themes";
 import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 
 import "./globals.css";
 
@@ -52,11 +53,22 @@ export const metadata: Metadata = {
 		locale: "vi_VN",
 		countryName: "Vietnam",
 		url: BASE_URL,
+		images: "/seo.png",
+		siteName: "Xiro The Dev Portfolio",
 	},
 	twitter: {
 		card: "summary_large_image",
 		title: "Xiro The Dev - Web Developer",
 		description: "Xiro's Portfolio - Full Stack & Discord Bot Developer",
+		images: "/seo.png",
+	},
+	icons: {
+		apple: "/apple-icon.png",
+		icon: "/icon.png",
+	},
+	manifest: "/manifest.json",
+	alternates: {
+		canonical: BASE_URL,
 	},
 	formatDetection: {
 		email: true,
@@ -64,6 +76,13 @@ export const metadata: Metadata = {
 		telephone: false,
 	},
 	referrer: "origin-when-cross-origin",
+	other: {
+		"apple-mobile-web-app-capable": "yes",
+		"apple-mobile-web-app-status-bar-style": "black-translucent",
+		"mobile-web-app-capable": "yes",
+		"msapplication-TileColor": "#8b5cf6",
+		"theme-color": "#8b5cf6",
+	},
 };
 
 export const viewport: Viewport = {
@@ -71,7 +90,31 @@ export const viewport: Viewport = {
 	initialScale: 1,
 	maximumScale: 1,
 	userScalable: false,
-	themeColor: "#000000",
+	themeColor: "#8b5cf6",
+	viewportFit: "cover",
+};
+
+const structuredData = {
+	"@context": "https://schema.org",
+	"@type": "Person",
+	name: "Xiro The Dev",
+	alternateName: "Lê Thành Trung",
+	jobTitle: "Full Stack Developer & Discord Bot Developer",
+	url: BASE_URL,
+	image: `${BASE_URL}/seo.png`,
+	description: "Full Stack Developer & Discord Bot Creator Portfolio",
+	email: "lethanhtrung.trungle@gmail.com",
+	address: {
+		"@type": "PostalAddress",
+		addressCountry: "VN",
+		addressLocality: "Vietnam",
+	},
+	sameAs: ["https://github.com/xirothedev", "https://linkedin.com/in/xirothedev", "https://facebook.com/xirothedev"],
+	knowsAbout: ["React", "Next.js", "TypeScript", "Node.js", "Discord Bot Development", "Full Stack Development"],
+	worksFor: {
+		"@type": "Organization",
+		name: "Freelance",
+	},
 };
 
 export default function RootLayout({
@@ -84,11 +127,11 @@ export default function RootLayout({
 			appearance={{
 				baseTheme: [dark],
 				variables: {
-					colorPrimary: "#a855f7", // Purple-500 to match your blob animation
-					colorBackground: "#18181b", // Zinc-900 to match your background
+					colorPrimary: "#a855f7",
+					colorBackground: "#18181b",
 					colorText: "#ffffff",
 					colorInputText: "#ffffff",
-					colorInputBackground: "#27272a", // Zinc-800 for subtle contrast
+					colorInputBackground: "#27272a",
 					borderRadius: "0.5rem",
 				},
 				elements: {
@@ -106,18 +149,21 @@ export default function RootLayout({
 				<head>
 					<meta charSet="utf-8" />
 					<meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-					{/* Preconnect to external domains */}
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 					<link rel="preconnect" href="https://api.github.com" />
 					<link rel="preconnect" href="https://vercel.live" />
 
-					{/* DNS prefetch for performance */}
 					<link rel="dns-prefetch" href="//fonts.googleapis.com" />
 					<link rel="dns-prefetch" href="//api.github.com" />
 					<link rel="dns-prefetch" href="//vercel.live" />
 				</head>
 				<body id="home" className="scroll-smooth">
+					<Script
+						id="structured-data"
+						type="application/ld+json"
+						dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+					/>
 					<MouseFollower />
 					<ScrollProgress />
 					<div className="pointer-events-none absolute inset-0 z-0">

@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-	const baseUrl = "https://portfolio.xirothedev.workers.dev/";
+	const baseUrl = "https://xiro-portfolio.vercel.app/";
 	const currentDate = new Date().toISOString();
 
 	return [
