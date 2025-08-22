@@ -76,8 +76,7 @@ export default function Footer() {
 						{[
 							{ href: "/", label: "Home" },
 							{ href: "/projects", label: "Projects" },
-							// { href: "/blogs", label: "Blogs" },
-							// { href: "/contact", label: "Contact" },
+							{ href: "/certs", label: "Certifications" },
 						].map(({ href, label }) => (
 							<Link key={label} href={href} className="text-zinc-400 transition-colors hover:text-white">
 								{label}
